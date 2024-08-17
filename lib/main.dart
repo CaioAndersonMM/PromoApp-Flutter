@@ -14,192 +14,374 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Promoapp'),
+          title: const Text(
+            'Promoapp',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color.fromRGBO(0, 12, 36, 1),
+            ),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.white,
         ),
         body: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 30),
-              Row(
-                children: <Widget>[
-                  const Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        // filled: true,
-                        // fillColor: Colors.white, // Cor de fundo do TextField
-                        border:
-                            OutlineInputBorder(), // Borda padrão do TextField
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors
-                                .white, // Cor da borda quando o campo está em foco
-                            width: 2.0, // Largura da borda
+          child: SingleChildScrollView(
+            // Envolva o Column com SingleChildScrollView
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20),
+                Row(
+                  children: <Widget>[
+                    const Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          labelText: 'Pesquisar',
+                          labelStyle: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 29, 48, 82),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
                           ),
                         ),
-                        labelText: 'Nome do Produto',
-                        labelStyle: TextStyle(
-                            color: Color(0xFF010B1D)), // Cor do texto do rótulo
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 60, // Ajuste a largura do botão
-                    height: 60, // Ajuste a altura do botão
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Ação do botão
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.blueAccent, // Cor de fundo do botão
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(18), // Bordas arredondadas
-                        ),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.search,
-                          size: 30,
-                          color: Colors.white,
+                        child: const Center(
+                          child: Icon(
+                            Icons.search,
+                            size: 30,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              SizedBox(
-                height: 180, // Ajuste a altura do slide conforme necessário
-                child: PageView(
-                  children: <Widget>[
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Em+Alta',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Anuncio',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Sobre+Nós',
-                      fit: BoxFit.cover,
-                    ),
-                    // Adicione mais imagens conforme necessário
                   ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Adicionando o tópico e a lista de produtos
-              Container(
-                alignment: Alignment.centerLeft, 
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: const Text(
-                  'Produtos',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 26, 40, 116),
+                const SizedBox(height: 15),
+                SizedBox(
+                  height: 180, // Ajuste a altura conforme necessário
+                  child: PageView(
+                    children: <Widget>[
+                      Image.network(
+                        'https://via.placeholder.com/400x200.png?text=Em+Alta',
+                        fit: BoxFit.cover,
+                      ),
+                      Image.network(
+                        'https://via.placeholder.com/400x200.png?text=Anuncio',
+                        fit: BoxFit.cover,
+                      ),
+                      Image.network(
+                        'https://via.placeholder.com/400x200.png?text=Sobre+Nós',
+                        fit: BoxFit.cover,
+                      ),
+                    ],
                   ),
                 ),
-              ),
-
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Lista de produtos ao lado do tópico
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          ProductItem(name: 'Produto 1'),
-                          ProductItem(name: 'Produto 2'),
-                          ProductItem(name: 'Produto 3'),
-                          ProductItem(name: 'Produto 4'),
-                          ProductItem(name: 'Produto 5'),
-                          // Adicione mais produtos conforme necessário
-                        ],
+                const SizedBox(height: 5),
+                const Wrap(
+                  spacing: 20.0,
+                  runSpacing: 10.0,
+                  children: <Widget>[
+                    TypeItem(name: 'Comidas'),
+                    TypeItem(name: 'Produtos'),
+                    TypeItem(name: 'Eventos'),
+                    // Adicione mais itens conforme necessário
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10, top: 10),
+                  color: const Color.fromRGBO(0, 87, 255, 1),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: const Text(
+                          'Produtos (-) Preço',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-
-               Container(
-                alignment: Alignment.centerLeft, 
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: const Text(
-                  'Produtos',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 26, 40, 116),
+                      const Spacer(),
+                      Container(
+                        alignment: Alignment.bottomRight,
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: const Text(
+                          'Categorias (-) Todos',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+          SizedBox(
+            height: 300, // Ajusta altura de visualização de produtos
+            child: GridView.builder(
+              itemCount: 6,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Dois produtos por linha
+                crossAxisSpacing: 2.0, //Espaçamento entre os produtos lateral
+                mainAxisSpacing: 10.0, // Espaçamento entre os produtos vertical
+                childAspectRatio: 3 / 2, // Proporção da altura dos produtos
               ),
-
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Lista de produtos ao lado do tópico
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          ProductItem(name: 'Produto 1'),
-                          ProductItem(name: 'Produto 2'),
-                          ProductItem(name: 'Produto 3'),
-                          ProductItem(name: 'Produto 4'),
-                          ProductItem(name: 'Produto 5'),
-                          // Adicione mais produtos conforme necessário
-                        ],
+              itemBuilder: (context, index) {
+                return ProductItem(
+                  name: 'Produto ${index + 1}',
+                  imageUrl: 'https://via.placeholder.com/50',
+                  location: 'Loja ${String.fromCharCode(65 + index)}',
+                  price: 19.99 + (index * 10),
+                );
+              },
+            ),
+          ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10, top: 20),
+                  color: const Color.fromRGBO(0, 87, 255, 1),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: const Text(
+                          'Produtos (-) Preço',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
+                      const Spacer(),
+                      Container(
+                        alignment: Alignment.bottomRight,
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: const Text(
+                          'Categorias (-) Todos',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 300, // Ajusta altura de vizualização de produtos
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Wrap(
+                          spacing: 10.0,
+                          runSpacing: 10.0,
+                          children: <Widget>[
+                            ProductItem(
+                              name: 'Produto 1',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja A',
+                              price: 19.99,
+                            ),
+                            ProductItem(
+                              name: 'Produto 2',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja B',
+                              price: 29.99,
+                            ),
+                            ProductItem(
+                              name: 'Produto 3',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja C',
+                              price: 39.99,
+                            ),
+                            ProductItem(
+                              name: 'Produto 4',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja D',
+                              price: 49.99,
+                            ),
+                            ProductItem(
+                              name: 'Produto 5',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja E',
+                              price: 59.99,
+                            ),
+                            ProductItem(
+                              name: 'Produto 6',
+                              imageUrl: 'https://via.placeholder.com/50',
+                              location: 'Loja F',
+                              price: 69.99,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
       ),
     );
   }
 }
 
-class ProductItem extends StatelessWidget {
+class BaseItem extends StatelessWidget {
   final String name;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
+  final double borderRadius;
 
-  const ProductItem({super.key, required this.name});
+  const BaseItem({
+    super.key,
+    required this.name,
+    required this.padding,
+    this.margin = EdgeInsets.zero,
+    this.borderRadius = 8.0,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
+      margin: margin,
+      padding: padding,
+      decoration: _containerDecoration(),
+      child: Text(
+        name,
+        style: _textStyle(),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  BoxDecoration _containerDecoration() {
+    // Style para diminuir do Builder
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(borderRadius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          spreadRadius: 1,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    );
+  }
+
+  TextStyle _textStyle() {
+    return const TextStyle(
+      fontSize: 16,
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+    );
+  }
+}
+
+class ProductItem extends BaseItem {
+  final String imageUrl;
+  final String location;
+  final double price;
+
+  const ProductItem({
+    super.key,
+    required String name,
+    required this.imageUrl,
+    required this.location,
+    required this.price,
+  }) : super(name: name, padding: const EdgeInsets.all(26));
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: _containerDecoration(),
+      child: Row(
+        children: [
+          Image.network(
+            imageUrl,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(width: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: _textStyle(),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                location,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'R\$ ${price.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 14, color: Colors.green),
+              ),
+            ],
           ),
         ],
       ),
-      child: Text(
-        name,
-        style: TextStyle(fontSize: 16, color: Colors.black),
+    );
+  }
+}
+
+class TypeItem extends BaseItem {
+  const TypeItem({super.key, required String name})
+      : super(
+          name: name,
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.only(bottom: 10, top: 20),
+          borderRadius: 2,
+        );
+}
+
+class ProductList extends StatelessWidget {
+  final List<ProductItem> products;
+
+  const ProductList({super.key, required this.products});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150, // Defina a altura adequada para os itens do produto
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: products,
       ),
     );
   }
