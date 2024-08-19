@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'pages/comidasPage.dart';
+import 'pages/produtosPage.dart';
+import 'pages/eventosPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -98,9 +101,9 @@ class MyApp extends StatelessWidget {
                   spacing: 20.0,
                   runSpacing: 10.0,
                   children: <Widget>[
-                    TypeItem(name: 'Comidas'),
-                    TypeItem(name: 'Produtos'),
-                    TypeItem(name: 'Eventos'),
+                    TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
+                    TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
+                    TypeItem(name: 'Eventos', destinationPage: EventosPage()),
                     // Adicione mais itens conforme necessário
                   ],
                 ),
@@ -138,26 +141,30 @@ class MyApp extends StatelessWidget {
                     ],
                   ),
                 ),
-          SizedBox(
-            height: 300, // Ajusta altura de visualização de produtos
-            child: GridView.builder(
-              itemCount: 6,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Dois produtos por linha
-                crossAxisSpacing: 2.0, //Espaçamento entre os produtos lateral
-                mainAxisSpacing: 10.0, // Espaçamento entre os produtos vertical
-                childAspectRatio: 3 / 2, // Proporção da altura dos produtos
-              ),
-              itemBuilder: (context, index) {
-                return ProductItem(
-                  name: 'Produto ${index + 1}',
-                  imageUrl: 'https://via.placeholder.com/50',
-                  location: 'Loja ${String.fromCharCode(65 + index)}',
-                  price: 19.99 + (index * 10),
-                );
-              },
-            ),
-          ),
+                SizedBox(
+                  height: 300, // Ajusta altura de visualização de produtos
+                  child: GridView.builder(
+                    itemCount: 6,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Dois produtos por linha
+                      crossAxisSpacing:
+                          2.0, //Espaçamento entre os produtos lateral
+                      mainAxisSpacing:
+                          10.0, // Espaçamento entre os produtos vertical
+                      childAspectRatio:
+                          3 / 2, // Proporção da altura dos produtos
+                    ),
+                    itemBuilder: (context, index) {
+                      return ProductItem(
+                        name: 'Produto ${index + 1}',
+                        imageUrl: 'https://via.placeholder.com/50',
+                        location: 'Loja ${String.fromCharCode(65 + index)}',
+                        price: 19.99 + (index * 10),
+                      );
+                    },
+                  ),
+                ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 10, top: 20),
                   color: const Color.fromRGBO(0, 87, 255, 1),
@@ -361,13 +368,37 @@ class ProductItem extends BaseItem {
 }
 
 class TypeItem extends BaseItem {
-  const TypeItem({super.key, required String name})
+  final Widget destinationPage;
+  const TypeItem(
+      {super.key, required String name, required this.destinationPage})
       : super(
           name: name,
           padding: const EdgeInsets.all(20),
           margin: const EdgeInsets.only(bottom: 10, top: 20),
           borderRadius: 2,
         );
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => destinationPage),
+        );
+      },
+      child:  Container(
+      margin: margin,
+      padding: padding,
+      decoration: _containerDecoration(),
+      child: Text(
+        name,
+        style: _textStyle(),
+        textAlign: TextAlign.center,
+      ),
+    )
+    );
+  }
 }
 
 class ProductList extends StatelessWidget {
@@ -377,7 +408,7 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 150, // Defina a altura adequada para os itens do produto
       child: ListView(
         scrollDirection: Axis.horizontal,
