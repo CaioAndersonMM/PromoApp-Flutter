@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meu_app/widgets/product_item.dart';
+import 'package:meu_app/widgets/type_item.dart';
 import 'pages/comidasPage.dart';
 import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
@@ -107,150 +109,8 @@ class MyApp extends StatelessWidget {
                     // Adicione mais itens conforme necessário
                   ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10, top: 10),
-                  color: const Color.fromRGBO(0, 87, 255, 1),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: const Text(
-                          'Produtos (-) Preço',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        alignment: Alignment.bottomRight,
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: const Text(
-                          'Categorias (-) Todos',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 300, // Ajusta altura de visualização de produtos
-                  child: GridView.builder(
-                    itemCount: 6,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Dois produtos por linha
-                      crossAxisSpacing:
-                          2.0, //Espaçamento entre os produtos lateral
-                      mainAxisSpacing:
-                          10.0, // Espaçamento entre os produtos vertical
-                      childAspectRatio:
-                          3 / 2, // Proporção da altura dos produtos
-                    ),
-                    itemBuilder: (context, index) {
-                      return ProductItem(
-                        name: 'Produto ${index + 1}',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja ${String.fromCharCode(65 + index)}',
-                        price: 19.99 + (index * 10),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10, top: 20),
-                  color: const Color.fromRGBO(0, 87, 255, 1),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: const Text(
-                          'Produtos (-) Preço',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        alignment: Alignment.bottomRight,
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: const Text(
-                          'Categorias (-) Todos',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 300, // Ajusta altura de vizualização de produtos
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Wrap(
-                          spacing: 10.0,
-                          runSpacing: 10.0,
-                          children: <Widget>[
-                            ProductItem(
-                              name: 'Produto 1',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja A',
-                              price: 19.99,
-                            ),
-                            ProductItem(
-                              name: 'Produto 2',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja B',
-                              price: 29.99,
-                            ),
-                            ProductItem(
-                              name: 'Produto 3',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja C',
-                              price: 39.99,
-                            ),
-                            ProductItem(
-                              name: 'Produto 4',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja D',
-                              price: 49.99,
-                            ),
-                            ProductItem(
-                              name: 'Produto 5',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja E',
-                              price: 59.99,
-                            ),
-                            ProductItem(
-                              name: 'Produto 6',
-                              imageUrl: 'https://via.placeholder.com/50',
-                              location: 'Loja F',
-                              price: 69.99,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildSectionHeader('Produtos (-) Preço', 'Categorias (-) Todos'),
+                _buildProductGrid(),
               ],
             ),
           ),
@@ -261,163 +121,103 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class BaseItem extends StatelessWidget {
-  final String name;
-  final EdgeInsetsGeometry padding;
-  final EdgeInsetsGeometry margin;
-  final double borderRadius;
-
-  const BaseItem({
-    super.key,
-    required this.name,
-    required this.padding,
-    this.margin = EdgeInsets.zero,
-    this.borderRadius = 8.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      padding: padding,
-      decoration: _containerDecoration(),
-      child: Text(
-        name,
-        style: _textStyle(),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  BoxDecoration _containerDecoration() {
-    // Style para diminuir do Builder
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(borderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 5,
-          offset: const Offset(0, 3),
+Widget _buildSectionHeader(String leftText, String rightText) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 10, top: 10),
+    color: const Color.fromRGBO(0, 87, 255, 1),
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            leftText,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const Spacer(),
+        Container(
+          alignment: Alignment.bottomRight,
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            rightText,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
-    );
-  }
-
-  TextStyle _textStyle() {
-    return const TextStyle(
-      fontSize: 16,
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
-    );
-  }
+    ),
+  );
 }
 
-class ProductItem extends BaseItem {
-  final String imageUrl;
-  final String location;
-  final double price;
+Widget _buildProductGrid() {
+  final List<ProductItem> products = _getProducts();
 
-  const ProductItem({
-    super.key,
-    required String name,
-    required this.imageUrl,
-    required this.location,
-    required this.price,
-  }) : super(name: name, padding: const EdgeInsets.all(26));
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      padding: padding,
-      decoration: _containerDecoration(),
-      child: Row(
-        children: [
-          Image.network(
-            imageUrl,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: _textStyle(),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                location,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                'R\$ ${price.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 14, color: Colors.green),
-              ),
-            ],
-          ),
-        ],
+  return SizedBox(
+    height: 300,
+    child: GridView.builder(
+      itemCount: products.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 2.0,
+        mainAxisSpacing: 10.0,
+        childAspectRatio: 3 / 2,
       ),
-    );
-  }
-}
-
-class TypeItem extends BaseItem {
-  final Widget destinationPage;
-  const TypeItem(
-      {super.key, required String name, required this.destinationPage})
-      : super(
-          name: name,
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.only(bottom: 10, top: 20),
-          borderRadius: 2,
-        );
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => destinationPage),
-        );
+      itemBuilder: (context, index) {
+        return products[index];
       },
-      child:  Container(
-      margin: margin,
-      padding: padding,
-      decoration: _containerDecoration(),
-      child: Text(
-        name,
-        style: _textStyle(),
-        textAlign: TextAlign.center,
-      ),
-    )
-    );
-  }
+    ),
+  );
 }
 
-class ProductList extends StatelessWidget {
-  final List<ProductItem> products;
-
-  const ProductList({super.key, required this.products});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 150, // Defina a altura adequada para os itens do produto
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: products,
+List<ProductItem> _getProducts() {
+    return [
+      const ProductItem(
+        name: 'Produto X',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja A',
+        price: 19.99,
       ),
-    );
+      const ProductItem(
+        name: 'Produto 2',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja B',
+        price: 29.99,
+      ),
+      const ProductItem(
+        name: 'Produto 3',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja C',
+        price: 39.99,
+      ),
+      const ProductItem(
+        name: 'Produto 4',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja D',
+        price: 49.99,
+      ),
+      const ProductItem(
+        name: 'Produto 5',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja E',
+        price: 59.99,
+      ),
+      const ProductItem(
+        name: 'Produto 6',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Loja F',
+        price: 69.99,
+      ),
+    ];
   }
-}
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
