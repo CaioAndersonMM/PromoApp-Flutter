@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meu_app/main.dart';
+import 'package:meu_app/widgets/product_item.dart';
 
 class EventosPage extends StatelessWidget {
   const EventosPage({super.key});
