@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/product_item.dart';
 import 'package:meu_app/widgets/type_item.dart';
 import 'pages/comidasPage.dart';
@@ -32,6 +33,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String selectedCity = 'Selecione uma cidade';
   List<String> cidades = ['Mossoró', 'Natal', 'Jucurutu', 'João Pessoa', 'Campina Grande', 'Fortaleza', 'Recife'];
 
+  Map<String, dynamic> dadosUsuario = {
+    'userName': 'Bruno',
+    'postCount': 5,
+    'reviewCount': 15,
+    'userLevel': '2',
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +54,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserProfilePage(
+                    dadosUsuario: dadosUsuario,
+                    selectedCity: selectedCity,
+                  )),
+              );
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
