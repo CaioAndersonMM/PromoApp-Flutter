@@ -5,13 +5,15 @@ class ProductItem extends StatelessWidget {
   final String imageUrl;
   final String location;
   final double price;
+  final String type;
+
 
   const ProductItem({
     super.key,
     required this.name,
     required this.imageUrl,
     required this.location,
-    required this.price, required String type,
+    required this.price, required this.type,
   });
 
   @override

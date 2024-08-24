@@ -10,6 +10,7 @@ import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

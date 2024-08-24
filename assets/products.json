@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Comida 1",
+    "imageUrl": "https://via.placeholder.com/50",
+    "location": "Tá no Json",
+    "price": 19.99,
+    "type": "Comida"
+  },
+  {
+    "name": "Comida 2",
+    "imageUrl": "https://via.placeholder.com/50",
+    "location": "Tá no Json",
+    "price": 29.99,
+    "type": "Comida"
+  },
+  {
+    "name": "Comida 3",
+    "imageUrl": "https://via.placeholder.com/50",
+    "location": "Tá no Json",
+    "price": 29.99,
+    "type": "Comida"
+  }
+]
