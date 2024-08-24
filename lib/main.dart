@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
+import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/product_grid.dart';
 import 'package:meu_app/widgets/type_item.dart';
 import 'pages/comidasPage.dart';
@@ -34,16 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late String selectedCity;
-  List<String> cidades = [
-    'Mossoró',
-    'Natal',
-    'Jucurutu',
-    'João Pessoa',
-    'Campina Grande',
-    'Fortaleza',
-    'Recife'
-  ];
-
+  
   Map<String, dynamic> dadosUsuario = {
     'city': 'Mossoró',
     'userName': 'Bruno',
@@ -142,36 +134,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(0, 12, 36, 1),
-              ),
-              child: Text(
-                'Escolha uma cidade para ver as promoções',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ...cidades.map((cidade) {
-              return ListTile(
-                // Cria um item de lista para cada cidade
-                leading: const Icon(Icons.location_city),
-                title: Text(cidade),
-                onTap: () {
-                  _updateSelectedCity(cidade);
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
-            // Adicione mais cidades conforme necessário
-          ],
-        ),
+      drawer: MenuCidades(
+        onCitySelected: (newCity) {
+          _updateSelectedCity(newCity);
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
