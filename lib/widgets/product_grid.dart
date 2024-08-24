@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meu_app/widgets/product_item.dart';
 
-Widget product_grid(BuildContext context) {
+Widget productGrid(BuildContext context) {
   final List<ProductItem> products = _getProducts();
 
   return SizedBox(

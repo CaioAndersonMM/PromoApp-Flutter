@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget caixa_pesquisa(String placeholder) {
+Widget caixaPesquisa(String placeholder) {
   return Row(
     children: <Widget>[
       Expanded(

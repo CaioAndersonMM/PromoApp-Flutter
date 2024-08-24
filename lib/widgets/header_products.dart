@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget header_products(String leftText, String rightText) {
+Widget headerProducts() {
   String selectedSortOption1 = 'Mais Baratos';
   String selectedSortOption2 = 'Tudo';
 
