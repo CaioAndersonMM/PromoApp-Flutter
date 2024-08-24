@@ -19,20 +19,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(),
+      home: MyHomePage(selectedCity: 'Selecione uma cidade'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final String selectedCity;
+  const MyHomePage({super.key, required this.selectedCity});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String selectedCity = 'Selecione uma cidade';
+  late String selectedCity;
   List<String> cidades = [
     'Mossoró',
     'Natal',
@@ -44,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   Map<String, dynamic> dadosUsuario = {
+    'city': 'Mossoró',
     'userName': 'Bruno',
     'postCount': 5,
     'reviewCount': 15,
@@ -52,28 +54,61 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    selectedCity = widget.selectedCity;
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 0) {
         // Navigate to the home page
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MyHomePage()),
+          MaterialPageRoute(builder: (context) => MyHomePage(selectedCity: selectedCity)),
         );
       } else if (index == 1) {
         // Navigate to the products page
       } else if (index == 2) {
-        // Navigate to the profile page
+        // Navigate to the publication page
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(
-        //       builder: (context) => UserProfilePage(
-        //             dadosUsuario: dadosUsuario,
-        //             selectedCity: selectedCity,
-        //           )),
+        //     builder: (context) => PublicationPage(
+        //       dadosUsuario: dadosUsuario,
+        //     ),
+        //   ),
         // );
       }
+    });
+  }
+
+  void _showCitySelectionAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Seleção de Cidade'),
+          content: const Text('Por favor, selecione uma cidade no menu esquerdo para continuar.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateSelectedCity(String newCity) {
+    setState(() {
+      selectedCity = newCity;
+      dadosUsuario['city'] = newCity; // Atualize a cidade no mapa de dados do usuário
     });
   }
 
@@ -98,10 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => UserProfilePage(
-                          dadosUsuario: dadosUsuario,
-                          selectedCity: selectedCity,
-                        )),
+                  builder: (context) => UserProfilePage(
+                    dadosUsuario: dadosUsuario,
+                  ),
+                ),
               );
             },
           ),
@@ -129,9 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 leading: const Icon(Icons.location_city),
                 title: Text(cidade),
                 onTap: () {
-                  setState(() {
-                    selectedCity = cidade;
-                  });
+                  _updateSelectedCity(cidade);
                   Navigator.pop(context);
                 },
               );
@@ -193,7 +226,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Color.fromARGB(255, 3, 26, 102),
-        onTap: _onItemTapped,
+        onTap: (index) {
+          if (selectedCity == 'Selecione uma cidade') {
+            _showCitySelectionAlert();
+          } else {
+            _onItemTapped(index);
+          }
+        },
       ),
     );
   }
