@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:meu_app/services/storage_service.dart';
 import 'package:meu_app/widgets/product_item.dart';
 
 class ComidasPage extends StatefulWidget {
@@ -9,15 +12,73 @@ class ComidasPage extends StatefulWidget {
 }
 
 class _ComidasPageState extends State<ComidasPage> {
-  final List<ProductItem> _products = [
-    const ProductItem(name: 'Comida 1', imageUrl: 'https://via.placeholder.com/50', location: 'Loja A', price: 19.99, type: 'Comida'),
-    const ProductItem(name: 'Comida 2', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99, type: 'Comida'),
-    const ProductItem(name: 'Comida 3', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99, type: 'Comida'),
-  ];
+  final StorageService _storageService = StorageService();
+  List<ProductItem> _products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      final jsonString = await _storageService.readFromFile('products.json');
+      print('JSON String read from file: $jsonString'); // Debug print
+
+      if (jsonString.isNotEmpty) {
+        final List<dynamic> jsonProducts =
+            jsonDecode(jsonString) as List<dynamic>;
+        print('Decoded JSON: $jsonProducts'); // Debug print
+
+        final products = jsonProducts
+            .map((dynamic json) {
+              if (json is Map<String, dynamic>) {
+                return ProductItem(
+                  name: json['name'] as String,
+                  imageUrl: json['imageUrl'] as String,
+                  location: json['location'] as String,
+                  price: (json['price'] as num).toDouble(),
+                  type: json['type'] as String,
+                );
+              } else {
+                return null; // Pode adicionar tratamento para dados inválidos
+              }
+            })
+            .where((product) => product != null)
+            .cast<ProductItem>()
+            .toList();
+
+        setState(() {
+          _products = products;
+        });
+      } else {
+        print('No products found in JSON string.'); // Debug print
+      }
+    } catch (e) {
+      print('Error loading products: $e'); // Debug print
+    }
+  }
+
+  Future<void> _saveProducts() async {
+    final productsJson = _products.map((product) {
+      return {
+        'name': product.name,
+        'imageUrl': product.imageUrl,
+        'location': product.location,
+        'price': product.price,
+        'type': product.type,
+      };
+    }).toList();
+
+    final jsonString = jsonEncode(productsJson);
+    await _storageService.writeToFile('products.json', jsonString);
+  }
 
   void _addProduct(ProductItem product) {
     setState(() {
       _products.add(product); // Adiciona o produto à lista
+      _saveProducts(); // Salva os produtos de volta no JSON
     });
   }
 
@@ -25,7 +86,11 @@ class _ComidasPageState extends State<ComidasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Comidas', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('Comidas',
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -42,7 +107,8 @@ class _ComidasPageState extends State<ComidasPage> {
                     _showAddProductDialog(context);
                   },
                 ),
-                const Text('Adicionar nova comida', style: TextStyle(color: Colors.white)),
+                const Text('Adicionar nova comida',
+                    style: TextStyle(color: Colors.white)),
               ],
             ),
           ),
@@ -108,7 +174,8 @@ class _ComidasPageState extends State<ComidasPage> {
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
                   _addProduct(ProductItem(
                     name: name,
-                    imageUrl: "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    imageUrl:
+                        "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
                     location: location,
                     price: price,
                     type: 'Comida', // Define o tipo como 'Comida'
