@@ -154,28 +154,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(height: 20),
+
               // _caixaPesquisa('Pesquisar promoções'),
-              const SizedBox(height: 15),
-              SizedBox(
-                height: 150,
-                child: PageView(
-                  children: <Widget>[
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Em+Alta',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Anuncio',
-                      fit: BoxFit.cover,
-                    ),
-                    Image.network(
-                      'https://via.placeholder.com/400x200.png?text=Sobre+Nós',
-                      fit: BoxFit.cover,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 5),
+              // const SizedBox(height: 15),
+              // SizedBox(
+              //   height: 150,
+              //   child: PageView(
+              //     children: <Widget>[
+              //       Image.network(
+              //         'https://via.placeholder.com/400x200.png?text=Em+Alta',
+              //         fit: BoxFit.cover,
+              //       ),
+              //       Image.network(
+              //         'https://via.placeholder.com/400x200.png?text=Anuncio',
+              //         fit: BoxFit.cover,
+              //       ),
+              //       Image.network(
+              //         'https://via.placeholder.com/400x200.png?text=Sobre+Nós',
+              //         fit: BoxFit.cover,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 5),
               const Wrap(
                 spacing: 20.0,
                 runSpacing: 10.0,
@@ -186,6 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Adicione mais itens conforme necessário
                 ],
               ),
+              const SizedBox(height: 25),
+              _caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
+              const SizedBox(height: 5),
               _buildSectionHeader('Produtos (-) Preço', 'Categorias (-) Todos'),
               _buildProductGrid(),
             ],
@@ -222,39 +226,26 @@ Widget _caixaPesquisa(String placeholder) {
       Expanded(
         child: TextField(
           decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.1),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25),
+              borderSide: const BorderSide(
                 color: Colors.white,
                 width: 2.0,
               ),
             ),
-            labelText: placeholder,
-            labelStyle: const TextStyle(color: Colors.white),
+            hintText: placeholder,
+            hintStyle: const TextStyle(color: Colors.white70),
+            prefixIcon: const Icon(Icons.search, color: Colors.white70),
           ),
         ),
-      ),
-      const SizedBox(width: 10),
-      SizedBox(
-        width: 60,
-        height: 60,
-        child: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 29, 48, 82),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.search,
-              size: 30,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
+      )
+
     ],
   );
 }
@@ -274,45 +265,85 @@ Widget _buildSectionHeader(String leftText, String rightText) {
     builder: (BuildContext context, StateSetter setState) {
       return Container(
         margin: const EdgeInsets.only(bottom: 5, top: 10),
-        color: const Color.fromARGB(255, 255, 255, 255),
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 255, 255, 255),
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             Expanded(
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: DropdownButton<String>(
-                  value: selectedSortOption1,
-                  items: sortOptions.map((String option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedSortOption1 = newValue!;
-                    });
-                  },
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.sort,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 8.0),
+                    DropdownButton<String>(
+                      value: selectedSortOption1,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      underline: Container(),
+                      items: sortOptions.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedSortOption1 = newValue!;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
             Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: DropdownButton<String>(
-                  value: selectedSortOption2,
-                  items: sortOptions2.map((String option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedSortOption2 = newValue!;
-                    });
-                  },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(
+                      Icons.filter_list,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 8.0),
+                    DropdownButton<String>(
+                      value: selectedSortOption2,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      underline: Container(),
+                      items: sortOptions2.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedSortOption2 = newValue!;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -327,7 +358,7 @@ Widget _buildProductGrid() {
   final List<ProductItem> products = _getProducts();
 
   return SizedBox(
-    height: 300,
+    height: 1900,
     child: GridView.builder(
       itemCount: products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
