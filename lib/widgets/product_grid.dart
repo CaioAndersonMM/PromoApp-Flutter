@@ -28,37 +28,37 @@ List<ProductItem> _getProducts() {
       name: 'Produto X',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja A',
-      price: 19.99,
+      price: 19.99, type: 'Produto',
     ),
     const ProductItem(
       name: 'Produto 2',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja B',
-      price: 29.99,
+      price: 29.99, type: 'Produto',
     ),
     const ProductItem(
       name: 'Produto 3',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja C',
-      price: 39.99,
+      price: 39.99, type: 'Produto',
     ),
     const ProductItem(
       name: 'Produto 4',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja D',
-      price: 49.99,
+      price: 49.99, type: 'Evento',
     ),
     const ProductItem(
       name: 'Produto 5',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja E',
-      price: 59.99,
+      price: 59.99, type: 'Produto',
     ),
     const ProductItem(
       name: 'Produto 6',
       imageUrl: 'https://via.placeholder.com/50',
       location: 'Loja F',
-      price: 69.99,
+      price: 69.99, type: 'Comida',
     ),
   ];
 }

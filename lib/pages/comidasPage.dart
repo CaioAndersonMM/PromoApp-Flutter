@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meu_app/main.dart';
 import 'package:meu_app/widgets/product_item.dart';
 
 class ComidasPage extends StatefulWidget {
@@ -11,15 +10,14 @@ class ComidasPage extends StatefulWidget {
 
 class _ComidasPageState extends State<ComidasPage> {
   final List<ProductItem> _products = [
-    const ProductItem(name: 'Comida 1', imageUrl: 'https://via.placeholder.com/50', location: 'Loja A', price: 19.99),
-    const ProductItem(name: 'Comida 2', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99),
-    const ProductItem(name: 'Comida 3', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99),
-
+    const ProductItem(name: 'Comida 1', imageUrl: 'https://via.placeholder.com/50', location: 'Loja A', price: 19.99, type: 'Comida'),
+    const ProductItem(name: 'Comida 2', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99, type: 'Comida'),
+    const ProductItem(name: 'Comida 3', imageUrl: 'https://via.placeholder.com/50', location: 'Loja B', price: 29.99, type: 'Comida'),
   ];
 
   void _addProduct(ProductItem product) {
     setState(() {
-      _products.add(product); //Adiciona product a lista
+      _products.add(product); // Adiciona o produto à lista
     });
   }
 
@@ -81,12 +79,7 @@ class _ComidasPageState extends State<ComidasPage> {
                   name = value;
                 },
               ),
-              // TextField(
-              //   decoration: const InputDecoration(labelText: 'URL da Imagem'),
-              //   onChanged: (value) {
-              //     imageUrl = value;
-              //   },
-              // ),
+              // Adicione o campo URL da Imagem se necessário
               TextField(
                 decoration: const InputDecoration(labelText: 'Localização'),
                 onChanged: (value) {
@@ -113,7 +106,13 @@ class _ComidasPageState extends State<ComidasPage> {
               child: const Text('Adicionar'),
               onPressed: () {
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
-                  _addProduct(ProductItem(name: name, imageUrl: "https://via.placeholder.com/50", location: location, price: price));
+                  _addProduct(ProductItem(
+                    name: name,
+                    imageUrl: "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    location: location,
+                    price: price,
+                    type: 'Comida', // Define o tipo como 'Comida'
+                  ));
                   Navigator.of(context).pop();
                 }
               },

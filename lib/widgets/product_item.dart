@@ -11,7 +11,7 @@ class ProductItem extends StatelessWidget {
     required this.name,
     required this.imageUrl,
     required this.location,
-    required this.price,
+    required this.price, required String type,
   });
 
   @override
