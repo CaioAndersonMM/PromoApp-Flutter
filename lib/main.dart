@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 0, 0, 0),
+              color: Color.fromRGBO(0, 12, 36, 1),
               ),
               child: Text(
                 'Escolha uma cidade para ver as promoções',
@@ -191,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
               const SizedBox(height: 5),
               _buildSectionHeader('Produtos (-) Preço', 'Categorias (-) Todos'),
-              _buildProductGrid(),
+              _buildProductGrid(context),
             ],
           ),
         ),
@@ -354,22 +354,23 @@ Widget _buildSectionHeader(String leftText, String rightText) {
   );
 }
 
-Widget _buildProductGrid() {
+Widget _buildProductGrid(BuildContext context) {
   final List<ProductItem> products = _getProducts();
 
   return SizedBox(
-    height: 1900,
+    height: MediaQuery.of(context).size.height, // Define a altura total
     child: GridView.builder(
       itemCount: products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 2.0,
+        crossAxisCount: 1, // Mostra um produto por linha
+        crossAxisSpacing: 10.0,
         mainAxisSpacing: 10.0,
-        childAspectRatio: 3 / 2,
+        childAspectRatio: 4 / 2, // Ajuste o aspecto conforme necessário
       ),
       itemBuilder: (context, index) {
         return products[index];
       },
+      shrinkWrap: true, // Ajusta o tamanho da GridView para o conteúdo
     ),
   );
 }
