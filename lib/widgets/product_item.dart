@@ -1,65 +1,109 @@
-// widgets/product_item.dart
-
 import 'package:flutter/material.dart';
-import 'base_item.dart';
 
-class ProductItem extends BaseItem {
+class ProductItem extends StatelessWidget {
+  final String name;
   final String imageUrl;
   final String location;
   final double price;
 
   const ProductItem({
     super.key,
-    required String name,
+    required this.name,
     required this.imageUrl,
     required this.location,
     required this.price,
-  }) : super(name: name, padding: const EdgeInsets.all(26));
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      padding: padding,
-      decoration: containerDecoration(),
-      child: Row(
-        children: [
-          Image.network(
-            imageUrl,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-             Text(
-                name,
-                style: _nameTextStyle(), // Novo estilo para o nome
+    return SizedBox(
+      width: double.infinity, // Ajusta para preencher a largura disponível
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8.0,
+              spreadRadius: 2.0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Imagem do produto
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
-              
-              const SizedBox(height: 5),
-              Text(
-                location,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(width: 36.0),
+            // Informações do produto
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    location,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'R\$ ${price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 5),
-              Text(
-                'R\$ ${price.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 14, color: Colors.green),
+            ),
+            const SizedBox(width: 16.0),
+            // Ícone para ver mais detalhes
+              IconButton(
+              icon: const Icon(
+                Icons.report_gmailerrorred_rounded,
+                color: Colors.blue,
               ),
-            ],
-          ),
-        ],
+              onPressed: () {
+                // Ação quando o ícone é pressionado
+              },
+            ),
+              IconButton(
+              icon: const Icon(
+                Icons.remove_red_eye_rounded,
+                color: Colors.blue,
+              ),
+              onPressed: () {
+                // Ação quando o ícone é pressionado
+              },
+            ),
+          ],
+        ),
       ),
-    );
-  } 
-  TextStyle _nameTextStyle() {
-    return const TextStyle(
-      fontSize: 14, // Ajuste o tamanho da fonte conforme necessário
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
     );
   }
 }
