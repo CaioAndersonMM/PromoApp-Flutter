@@ -31,7 +31,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String selectedCity = 'Selecione uma cidade';
-  List<String> cidades = ['Mossoró', 'Natal', 'Jucurutu', 'João Pessoa', 'Campina Grande', 'Fortaleza', 'Recife'];
+  List<String> cidades = [
+    'Mossoró',
+    'Natal',
+    'Jucurutu',
+    'João Pessoa',
+    'Campina Grande',
+    'Fortaleza',
+    'Recife'
+  ];
 
   Map<String, dynamic> dadosUsuario = {
     'userName': 'Bruno',
@@ -39,6 +47,37 @@ class _MyHomePageState extends State<MyHomePage> {
     'reviewCount': 15,
     'userLevel': '2',
   };
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        // Navigate to the home page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const MyHomePage(
+
+                  )),
+        );
+      } else if (index == 1) {
+        // Navigate to the products page
+      } else if (index == 2) {
+
+        // Navigate to the profile page
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => UserProfilePage(
+        //             dadosUsuario: dadosUsuario,
+        //             selectedCity: selectedCity,
+        //           )),
+        // );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => UserProfilePage(
-                    dadosUsuario: dadosUsuario,
-                    selectedCity: selectedCity,
-                  )),
+                MaterialPageRoute(
+                    builder: (context) => UserProfilePage(dadosUsuario: dadosUsuario, selectedCity: selectedCity,)),
               );
             },
           ),
@@ -102,7 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: SingleChildScrollView(
@@ -157,6 +193,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
+      bottomNavigationBar: BottomNavigationBar( //Menu abaixo
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            label: 'Desejos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: 'Publicar',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color.fromARGB(255, 3, 26, 102),
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
@@ -202,21 +257,23 @@ Widget _caixaPesquisa(String placeholder) {
       ),
     ],
   );
-
 }
 
 Widget _buildSectionHeader(String leftText, String rightText) {
   String selectedSortOption1 = 'Mais Baratos';
   String selectedSortOption2 = 'Tudo';
 
-  final List<String> sortOptions = ['Mais Baratos', 'Mais Recentes', 'Mais Comprados'];
+  final List<String> sortOptions = [
+    'Mais Baratos',
+    'Mais Recentes',
+    'Mais Comprados'
+  ];
   final List<String> sortOptions2 = ['Tudo', 'Comidas', 'Produtos', 'Eventos'];
-
 
   return StatefulBuilder(
     builder: (BuildContext context, StateSetter setState) {
       return Container(
-        margin: const EdgeInsets.only(bottom: 10, top: 10),
+        margin: const EdgeInsets.only(bottom: 5, top: 10),
         color: const Color.fromARGB(255, 255, 255, 255),
         padding: const EdgeInsets.all(8.0),
         child: Row(
