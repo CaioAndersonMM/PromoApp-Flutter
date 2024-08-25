@@ -13,7 +13,7 @@ class MyHomePageController extends GetxController {
   Future<void> _clearDatabase() async {
     try {
       final dbHelper = DatabaseHelper();
-      await dbHelper.clearDatabase(); // Certifique-se de usar `await`
+      await dbHelper.clearDatabase();
       print('Banco de dados limpo!');
     } catch (e) {
       print('Erro ao limpar o banco de dados: $e');
@@ -48,7 +48,21 @@ class MyHomePageController extends GetxController {
         imageUrl: 'https://via.placeholder.com/50',
         location: 'Mossoró Rio Branco, 789',
         price: 9.99,
-        type: 'Eventos',
+        type: 'Evento',
+      ),
+      ProductItem(
+        name: 'Calourada Computação',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Ufersa, 789',
+        price: 0.00,
+        type: 'Evento',
+      ),
+      ProductItem(
+        name: 'Monitor Gamer',
+        imageUrl: 'https://via.placeholder.com/50',
+        location: 'Americanas, 789',
+        price: 500.00,
+        type: 'Produtos',
       ),
     ];
 
@@ -91,8 +105,7 @@ class MyHomePageController extends GetxController {
   var selectedIndex = 0.obs;
 
   void updateSelectedCity(String newCity) {
-
-     _clearDatabase(); //LEMBRAR DE TIRAR ISSO
+    _clearDatabase(); //LEMBRAR DE TIRAR ISSO
 
     selectedCity.value = newCity;
     dadosUsuario['city'] = newCity;
