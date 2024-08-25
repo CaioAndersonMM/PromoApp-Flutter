@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:meu_app/main.dart';
-import 'package:meu_app/widgets/product_item.dart';
-
+import 'package:get/get.dart';
+import 'package:meu_app/controllers/produto_controller.dart';
+import 'package:meu_app/models/product_item.dart';
+import 'package:meu_app/widgets/product_widget.dart';
 class ProdutosPage extends StatelessWidget {
   const ProdutosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ProdutosController controller = Get.put(ProdutosController()); // Instanciar o controlador
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -25,119 +28,99 @@ class ProdutosPage extends StatelessWidget {
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
       body: Column(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.add, color: Colors.white),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Adicionar produto'),
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      TextField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Nome do produto',
-                                        ),
-                                      ),
-                                      TextField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Preço',
-                                        ),
-                                        keyboardType: TextInputType.number,
-                                      ),
-                                      TextField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Localização',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Cancelar'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text('Adicionar'),
-                                      onPressed: () {
-                                        // Ação ao adicionar a Produto
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        const Text(
-                          'Adicionar novo produto',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Wrap(
-                    // spacing: 40.0,
-                    runSpacing: 10.0,
-                    children: <Widget>[
-                      ProductItem(
-                        name: 'Produto 1',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja A',
-                        price: 19.99, type: 'Produto',
-                      ),
-                      ProductItem(
-                        name: 'Produto 2',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja B',
-                        price: 29.99, type: 'Produto',
-                      ),
-                      ProductItem(
-                        name: 'Produto 3',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja C',
-                        price: 39.99, type: 'Produto',
-                      ),
-                      ProductItem(
-                        name: 'Produto 4',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja D', 
-                        price: 49.99, type: 'Produto',
-                      ),
-                      ProductItem(
-                        name: 'Produto 5',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja E',
-                        price: 59.99, type: 'Produto',
-                      ),
-                      ProductItem(
-                        name: 'Produto 6',
-                        imageUrl: 'https://via.placeholder.com/50',
-                        location: 'Loja F',
-                        price: 69.99, type: 'Produto',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  onPressed: () {
+                    _showAddEventDialog(context, controller);
+                  },
+                ),
+                const Text(
+                  'Adicionar novo produto',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
             ),
+          ),
+          Expanded(
+            child: Obx(() {
+              return SingleChildScrollView(
+                child: Wrap(
+                  runSpacing: 10.0,
+                  children: controller.products.map((event) {
+                    return ProductWidget(product: event); // Certifique-se de que ProductWidget seja usado para exibir os eventos
+                  }).toList(),
+                ),
+              );
+            }),
           ),
         ],
       ),
+    );
+  }
+
+  void _showAddEventDialog(BuildContext context, ProdutosController controller) {
+    String name = '';
+    String location = '';
+    double price = 0.0;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Adicionar Produto'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                decoration: const InputDecoration(labelText: 'Nome do Produto'),
+                onChanged: (value) {
+                  name = value;
+                },
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Localização'),
+                onChanged: (value) {
+                  location = value;
+                },
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Preço'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  price = double.tryParse(value) ?? 0.0;
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Adicionar'),
+              onPressed: () {
+                if (name.isNotEmpty && location.isNotEmpty && price > 0) {
+                  controller.addEvent(ProductItem(
+                    name: name,
+                    imageUrl: "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    location: location,
+                    price: price,
+                    type: 'Evento', // Define o tipo como 'Evento'
+                  ));
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
