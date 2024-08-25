@@ -28,9 +28,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/home', page: () => MyHomePage()),
         GetPage(
             name: '/userProfile',
-            page: () => UserProfilePage(
-                dadosUsuario: {})), // Ajuste conforme necessário
-        // Adicione outras rotas conforme necessário
+            page: () => const UserProfilePage(dadosUsuario: {})
+          ),
       ],
     );
   }
@@ -84,7 +83,7 @@ class MyHomePage extends StatelessWidget {
                     ),
                   )),
               const SizedBox(height: 20),
-              const Wrap(
+              Wrap(
                 spacing: 20.0,
                 runSpacing: 10.0,
                 children: <Widget>[
@@ -111,16 +110,16 @@ class MyHomePage extends StatelessWidget {
                 label: 'Início',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_basket),
-                label: 'Desejos',
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(Icons.add_circle_outline),
                 label: 'Publicar',
               ),
+               BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_basket),
+                label: 'Desejos',
+              ),
             ],
             currentIndex: controller.selectedIndex.value,
-            selectedItemColor: Color.fromARGB(255, 3, 26, 102),
+            selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
             onTap: (index) {
               if (controller.selectedCity.value == 'Selecione uma cidade') {
                 controller.showCitySelectionAlert();
@@ -129,9 +128,9 @@ class MyHomePage extends StatelessWidget {
                 if (index == 0) {
                   Get.offNamed('/home');
                 } else if (index == 1) {
-                  // Navegar para a página de produtos
-                } else if (index == 2) {
                   // Navegar para a página de publicação
+                } else if (index == 2) {
+                  // Navegar para a página de desejos
                 }
               }
             },
