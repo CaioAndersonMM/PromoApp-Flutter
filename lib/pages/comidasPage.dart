@@ -1,86 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:meu_app/services/storage_service.dart';
-import 'package:meu_app/widgets/product_item.dart';
+import 'package:get/get.dart';
+import 'package:meu_app/controllers/comida_controller.dart';
+import 'package:meu_app/models/product_item.dart';
+import 'package:meu_app/widgets/product_widget.dart';
 
-class ComidasPage extends StatefulWidget {
-  const ComidasPage({super.key});
-
-  @override
-  _ComidasPageState createState() => _ComidasPageState();
-}
-
-class _ComidasPageState extends State<ComidasPage> {
-  final StorageService _storageService = StorageService();
-  List<ProductItem> _products = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProducts();
-  }
-
-  Future<void> _loadProducts() async {
-    try {
-      final jsonString = await _storageService.readFromFile('products.json');
-      print('JSON String read from file: $jsonString'); // Debug print
-
-      if (jsonString.isNotEmpty) {
-        final List<dynamic> jsonProducts =
-            jsonDecode(jsonString) as List<dynamic>;
-        print('Decoded JSON: $jsonProducts'); // Debug print
-
-        final products = jsonProducts
-            .map((dynamic json) {
-              if (json is Map<String, dynamic>) {
-                return ProductItem(
-                  name: json['name'] as String,
-                  imageUrl: json['imageUrl'] as String,
-                  location: json['location'] as String,
-                  price: (json['price'] as num).toDouble(),
-                  type: json['type'] as String,
-                );
-              } else {
-                return null; // Pode adicionar tratamento para dados inválidos
-              }
-            })
-            .where((product) => product != null)
-            .cast<ProductItem>()
-            .toList();
-
-        setState(() {
-          _products = products;
-        });
-      } else {
-        print('No products found in JSON string.'); // Debug print
-      }
-    } catch (e) {
-      print('Error loading products: $e'); // Debug print
-    }
-  }
-
-  Future<void> _saveProducts() async {
-    final productsJson = _products.map((product) {
-      return {
-        'name': product.name,
-        'imageUrl': product.imageUrl,
-        'location': product.location,
-        'price': product.price,
-        'type': product.type,
-      };
-    }).toList();
-
-    final jsonString = jsonEncode(productsJson);
-    await _storageService.writeToFile('products.json', jsonString);
-  }
-
-  void _addProduct(ProductItem product) {
-    setState(() {
-      _products.add(product); // Adiciona o produto à lista
-      _saveProducts(); // Salva os produtos de volta no JSON
-    });
-  }
+class ComidasPage extends StatelessWidget {
+  ComidasPage({super.key}); // Remover const
 
   @override
   Widget build(BuildContext context) {
@@ -95,37 +20,50 @@ class _ComidasPageState extends State<ComidasPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  onPressed: () {
-                    _showAddProductDialog(context);
-                  },
+      body: GetBuilder<ComidasController>(
+        init: ComidasController(),
+        builder: (controller) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.add, color: Colors.white),
+                      onPressed: () {
+                        _showAddProductDialog(context, controller);
+                      },
+                    ),
+                    const Text('Adicionar nova comida',
+                        style: TextStyle(color: Colors.white)),
+                  ],
                 ),
-                const Text('Adicionar nova comida',
-                    style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Wrap(
-                runSpacing: 10.0,
-                children: _products,
               ),
-            ),
-          ),
-        ],
+              Expanded(
+                child: Obx(() {
+                  if (controller.products.isEmpty) {
+                    return const Center(child: Text('Nenhum produto disponível', style: TextStyle(color: Colors.white)));
+                  }
+
+                  return SingleChildScrollView(
+                    child: Wrap(
+                      runSpacing: 10.0,
+                      children: controller.products.map((product) {
+                        return ProductWidget(product: product);
+                      }).toList(),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  void _showAddProductDialog(BuildContext context) {
+  void _showAddProductDialog(BuildContext context, ComidasController controller) {
     String name = '';
     String imageUrl = '';
     String location = '';
@@ -145,7 +83,6 @@ class _ComidasPageState extends State<ComidasPage> {
                   name = value;
                 },
               ),
-              // Adicione o campo URL da Imagem se necessário
               TextField(
                 decoration: const InputDecoration(labelText: 'Localização'),
                 onChanged: (value) {
@@ -172,13 +109,12 @@ class _ComidasPageState extends State<ComidasPage> {
               child: const Text('Adicionar'),
               onPressed: () {
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
-                  _addProduct(ProductItem(
+                  controller.addProduct(ProductItem(
                     name: name,
-                    imageUrl:
-                        "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    imageUrl: "https://via.placeholder.com/50",
                     location: location,
                     price: price,
-                    type: 'Comida', // Define o tipo como 'Comida'
+                    type: 'Comida',
                   ));
                   Navigator.of(context).pop();
                 }
