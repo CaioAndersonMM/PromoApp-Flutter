@@ -96,16 +96,17 @@ class MyHomePageController extends GetxController {
 
   var selectedCity = 'Selecione uma cidade'.obs;
   var dadosUsuario = {
-    'city': 'Mossoró',
-    'userName': 'Bruno',
-    'postCount': 5,
-    'reviewCount': 15,
+    'userName': 'João Silva',
+    'postCount': 10,
+    'reviewCount': 25,
     'userLevel': '2',
+    'city': 'Mossoró',
   }.obs;
+
   var selectedIndex = 0.obs;
 
   void updateSelectedCity(String newCity) {
-    _clearDatabase(); //LEMBRAR DE TIRAR ISSO
+    // _clearDatabase(); //LEMBRAR DE TIRAR ISSO
 
     selectedCity.value = newCity;
     dadosUsuario['city'] = newCity;

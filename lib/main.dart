@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/home', page: () => MyHomePage()),
         GetPage(
             name: '/userProfile',
-            page: () => const UserProfilePage(dadosUsuario: {})
+            page: () => const UserProfilePage(),
           ),
       ],
     );
