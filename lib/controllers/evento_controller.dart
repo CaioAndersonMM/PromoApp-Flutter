@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/services/database.dart';
-import 'package:meu_app/services/storage_service.dart';
 
 class EventosController extends GetxController {
   final DatabaseHelper _databaseService = DatabaseHelper();
