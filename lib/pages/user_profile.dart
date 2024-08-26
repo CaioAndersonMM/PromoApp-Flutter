@@ -1,43 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:meu_app/controllers/user_profile_controller.dart'; // Importa o controlador
 
-class UserProfilePage extends StatefulWidget {
-  final Map<String, dynamic> dadosUsuario;
+class UserProfilePage extends StatelessWidget {
+  const UserProfilePage({super.key});
 
-  const UserProfilePage({
-    Key? key,
-    required this.dadosUsuario  
-    }) : super(key: key);
-
-  @override
-  _UserProfilePageState createState() => _UserProfilePageState();
-}
-
-class _UserProfilePageState extends State<UserProfilePage> {
-  late String _selectedCity;
-
-  @override
-  void initState() {
-    super.initState();
-    // Inicialize _selectedCity com a cidade do mapa de dados do usuário
-    _selectedCity = widget.dadosUsuario['city'] ?? 'Mossoró'; // Valor padrão se não houver cidade
-  }
-  
   @override
   Widget build(BuildContext context) {
-    // Extraindo dados do mapa
-    final userName = widget.dadosUsuario['userName'] ?? 'Desconhecido';
-    final postCount = widget.dadosUsuario['postCount'] ?? 0;
-    final reviewCount = widget.dadosUsuario['reviewCount'] ?? 0;
-    final userLevel = widget.dadosUsuario['userLevel'] ?? '0';
+    // Obtém o controller
+    final UserProfileController controller = Get.put(UserProfileController());
+
+    // Recupera dados do usuário do GetX
+    final userName = controller.userName.value;
+    final postCount = controller.postCount.value;
+    final reviewCount = controller.reviewCount.value;
+    final userLevel = controller.userLevel.value;
+    final selectedCity = controller.selectedCity.value;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil do Usuário',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            )),
+        title: const Text(
+          'Perfil do Usuário',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
         iconTheme: const IconThemeData(
           color: Colors.white,
@@ -73,21 +62,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            DropdownButton<String>(
-              value: _selectedCity,
-              items:
-                  <String>['Mossoró', 'Natal', 'Jucurutu'].map((String city) {
+            Obx(() => DropdownButton<String>(
+              value: controller.selectedCity.value,
+              items: <String>['Mossoró', 'Natal', 'Jucurutu'].map((String city) {
                 return DropdownMenuItem<String>(
                   value: city,
                   child: Text(city),
                 );
               }).toList(),
               onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCity = newValue!;
-                });
+                if (newValue != null) {
+                  controller.selectedCity.value = newValue;
+                }
               },
-            ),
+            )),
           ],
         ),
       ),
