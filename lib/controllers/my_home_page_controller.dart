@@ -3,7 +3,10 @@ import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/services/database.dart';
 
 class MyHomePageController extends GetxController {
+  var allproducts = <ProductItem>[].obs;
+
   void onInit() {
+    // _clearDatabase();
     //initState não existe aqui
     print('Iniciando MyHomePageController');
     // _addInitialProducts();
@@ -62,7 +65,7 @@ class MyHomePageController extends GetxController {
         imageUrl: 'https://via.placeholder.com/50',
         location: 'Americanas, 789',
         price: 500.00,
-        type: 'Produtos',
+        type: 'Produto',
       ),
     ];
 
@@ -85,10 +88,11 @@ class MyHomePageController extends GetxController {
     }
   }
 
-  Future<void> _loadProducts() async {
+   Future<void> _loadProducts() async {
     try {
       final dbHelper = DatabaseHelper();
       List<ProductItem> products = await dbHelper.getProducts();
+      allproducts.value = products; // Atualiza a lista de produtos
     } catch (e) {
       print('Erro ao carregar produtos: $e');
     }

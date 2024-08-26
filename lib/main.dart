@@ -4,12 +4,13 @@ import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
 import 'package:meu_app/widgets/menu_cidades.dart';
-import 'package:meu_app/widgets/product_grid.dart';
 import 'package:meu_app/widgets/type_item.dart';
+import 'package:meu_app/widgets/product_widget.dart'; // Certifique-se de importar o ProductWidget
 import 'pages/comidasPage.dart';
 import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
 import 'controllers/my_home_page_controller.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,36 +71,50 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 20),
-              Obx(() => Text(
-                    'Cidade Selecionada: ${controller.selectedCity}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  )),
-              const SizedBox(height: 20),
-              Wrap(
-                spacing: 20.0,
-                runSpacing: 10.0,
-                children: <Widget>[
-                  TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
-                  TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
-                  TypeItem(name: 'Eventos', destinationPage: EventosPage()),
-                  // Adicione mais itens conforme necessário
-                ],
-              ),
-              const SizedBox(height: 25),
-              caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
-              const SizedBox(height: 5),
-              headerProducts(),
-              productGrid(context),
-            ],
-          ),
+        child: Column(
+          children: <Widget>[
+            const SizedBox(height: 20),
+            Obx(() => Text(
+                  'Cidade Selecionada: ${controller.selectedCity}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )),
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 20.0,
+              runSpacing: 10.0,
+              children: <Widget>[
+                TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
+                TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
+                TypeItem(name: 'Eventos', destinationPage: EventosPage()),
+              ],
+            ),
+            const SizedBox(height: 25),
+            caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
+            const SizedBox(height: 5),
+            headerProducts(),
+            Expanded(
+              child: Obx(() {
+                if (controller.allproducts.isEmpty) {
+                  return const Center(
+                      child: Text('Nenhum produto disponível',
+                          style: TextStyle(color: Colors.white)));
+                }
+
+                return SingleChildScrollView(
+                  child: Wrap(
+                    runSpacing: 10.0,
+                    children: controller.allproducts.map((product) {
+                      return ProductWidget(product: product);
+                    }).toList(),
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ),
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
@@ -113,7 +128,7 @@ class MyHomePage extends StatelessWidget {
                 icon: Icon(Icons.add_circle_outline),
                 label: 'Publicar',
               ),
-               BottomNavigationBarItem(
+              BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_basket),
                 label: 'Desejos',
               ),
