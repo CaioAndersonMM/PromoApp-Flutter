@@ -4,13 +4,16 @@ import 'package:meu_app/services/database.dart';
 
 class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
+  var filteredProducts = <ProductItem>[].obs;
 
   void onInit() {
     // _clearDatabase();
     //initState não existe aqui
     print('Iniciando MyHomePageController');
     // _addInitialProducts();
-    _loadProducts();
+    _loadProducts().then((__){
+      filterAndSortProducts('Mais Baratos', 'Tudo'); //Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
+    });
   }
 
   Future<void> _clearDatabase() async {
@@ -88,7 +91,7 @@ class MyHomePageController extends GetxController {
     }
   }
 
-   Future<void> _loadProducts() async {
+  Future<void> _loadProducts() async {
     try {
       final dbHelper = DatabaseHelper();
       List<ProductItem> products = await dbHelper.getProducts();
@@ -124,5 +127,42 @@ class MyHomePageController extends GetxController {
       textConfirm: 'OK',
       onConfirm: () => Get.back(),
     );
+  }
+
+  void filterAndSortProducts(String sortCriteria, String filterCriteria) {
+    List<ProductItem> tempProducts = List.from(allproducts);
+
+    switch (filterCriteria){
+      case 'Comidas':
+        filterCriteria = 'Comida';
+        break;
+      case 'Produtos':
+        filterCriteria = 'Produto';
+        break;
+      case 'Eventos':
+        filterCriteria = 'Evento';
+        break;
+    }
+
+    // Filtrando produtos por tipo
+    if (filterCriteria != 'Tudo') {
+      tempProducts = tempProducts
+          .where((product) => product.type == filterCriteria)
+          .toList();
+    }
+
+    switch (sortCriteria) {
+      case 'Mais Baratos':
+        tempProducts.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Mais Recentes':
+        //Não tem lógica ainda
+        break;
+      case 'Mais Comprados':
+        // Adicione aqui a lógica de "mais comprados" se disponível
+        break;
+    }
+
+    filteredProducts.value = tempProducts;
   }
 }

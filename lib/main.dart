@@ -98,7 +98,7 @@ class MyHomePage extends StatelessWidget {
             headerProducts(),
             Expanded(
               child: Obx(() {
-                if (controller.allproducts.isEmpty) {
+                if (controller.filteredProducts.isEmpty) {
                   return const Center(
                       child: Text('Nenhum produto disponível',
                           style: TextStyle(color: Colors.white)));
@@ -107,7 +107,7 @@ class MyHomePage extends StatelessWidget {
                 return SingleChildScrollView(
                   child: Wrap(
                     runSpacing: 10.0,
-                    children: controller.allproducts.map((product) {
+                    children: controller.filteredProducts.map((product) {
                       return ProductWidget(product: product);
                     }).toList(),
                   ),

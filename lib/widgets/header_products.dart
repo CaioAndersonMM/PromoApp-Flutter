@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 
 Widget headerProducts() {
+  final MyHomePageController controller = Get.find();
+
   String selectedSortOption1 = 'Mais Baratos';
   String selectedSortOption2 = 'Tudo';
 
@@ -9,6 +13,7 @@ Widget headerProducts() {
     'Mais Recentes',
     'Mais Comprados'
   ];
+
   final List<String> sortOptions2 = ['Tudo', 'Comidas', 'Produtos', 'Eventos'];
 
   return StatefulBuilder(
@@ -54,8 +59,9 @@ Widget headerProducts() {
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        setState(() {
+                      setState(() {
                           selectedSortOption1 = newValue!;
+                          controller.filterAndSortProducts(selectedSortOption1, selectedSortOption2);
                         });
                       },
                     ),
@@ -88,8 +94,9 @@ Widget headerProducts() {
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        setState(() {
+                         setState(() {
                           selectedSortOption2 = newValue!;
+                          controller.filterAndSortProducts(selectedSortOption1, selectedSortOption2);
                         });
                       },
                     ),
