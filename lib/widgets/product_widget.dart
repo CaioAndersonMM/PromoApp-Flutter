@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/pages/produtosDetailPage.dart';
+import 'package:meu_app/services/database.dart';
 import '../models/product_item.dart';
 
 class ProductWidget extends StatelessWidget {
@@ -10,6 +12,7 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Get.find<MyHomePageController>().dadosUsuario['id'];
     return GestureDetector(
       onTap: () {
         // Navega para a página de detalhes do produto
@@ -90,8 +93,23 @@ class ProductWidget extends StatelessWidget {
                       Icons.shopping_bag_outlined,
                       color: Colors.blue,
                     ),
-                    onPressed: () {
-                      // Ação quando o ícone é pressionado
+                    onPressed: () async {
+                      final dbHelper = DatabaseHelper();
+                      await dbHelper.inserirDesejo(1, product.id!);
+                      Get.snackbar(
+                        'Sucesso',
+                        'Produto adicionado aos desejos!',
+                        backgroundColor: Colors.white, // Fundo branco
+                        colorText: Colors.blue[800], // Texto azul escuro
+                        snackPosition: SnackPosition
+                            .BOTTOM, // Posiciona o snackbar na parte inferior
+                        borderRadius: 8.0, // Borda arredondada opcional
+                        margin: const EdgeInsets.all(10.0), // Margem opcional
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0,
+                            vertical: 10.0), // Padding opcional
+                        duration: const Duration(seconds: 2), // Duração do snackbar
+                      );
                     },
                   ),
                   IconButton(
