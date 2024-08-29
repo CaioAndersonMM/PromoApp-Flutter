@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/pages/desejosPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
@@ -11,9 +12,10 @@ import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
 import 'controllers/my_home_page_controller.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(MyHomePageController());
+
   runApp(const MyApp());
 }
 
@@ -27,10 +29,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home',
       getPages: [
         GetPage(name: '/home', page: () => MyHomePage()),
-        GetPage(
-            name: '/userProfile',
-            page: () => const UserProfilePage(),
-          ),
+        GetPage(name: '/userProfile', page: () => const UserProfilePage()),
+        GetPage(name: '/desejo', page: () => DesejosPage()),
       ],
     );
   }
@@ -145,7 +145,7 @@ class MyHomePage extends StatelessWidget {
                 } else if (index == 1) {
                   // Navegar para a página de publicação
                 } else if (index == 2) {
-                  // Navegar para a página de desejos
+                  Get.offNamed('/desejo');
                 }
               }
             },
