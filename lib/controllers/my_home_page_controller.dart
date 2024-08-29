@@ -103,6 +103,7 @@ class MyHomePageController extends GetxController {
 
   var selectedCity = 'Selecione uma cidade'.obs;
   var dadosUsuario = {
+    'id': 1,
     'userName': 'João Silva',
     'postCount': 10,
     'reviewCount': 25,
