@@ -23,8 +23,10 @@ class DatabaseHelper {
       String path = join(await getDatabasesPath(), 'products.db');
       return await openDatabase(
         path,
-        version: 1,
+        version: 2, //Todo atualizar a versão do banco de dados sempre que houver mudanças na estrutura
         onCreate: _onCreate,
+        onUpgrade: _onUpgrade, // Adicione o método onUpgrade
+
       );
     } catch (e) {
       print('Erro ao inicializar o banco de dados: $e');
@@ -32,7 +34,24 @@ class DatabaseHelper {
     }
   }
 
- Future<void> clearDatabase() async {
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  // Lida com as atualizações da estrutura do banco de dados
+  if (oldVersion < 2) {
+
+    //Já passou aqui
+
+    // await db.execute('''
+    //   CREATE TABLE desejo(
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //     userId INTEGER NOT NULL,
+    //     productId INTEGER NOT NULL,
+    //     FOREIGN KEY (productId) REFERENCES products(id)
+    //   )
+    // ''');
+  }
+}
+
+  Future<void> clearDatabase() async {
     try {
       Database db = await database;
       // Excluir todas as tabelas
@@ -45,7 +64,6 @@ class DatabaseHelper {
     }
   }
 
-
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE products(
@@ -55,6 +73,16 @@ class DatabaseHelper {
         imageUrl TEXT,
         location TEXT,
         type TEXT
+      )
+    ''');
+
+    // Criação da tabela desejo apenas no método _onCreate
+    await db.execute('''
+      CREATE TABLE desejo(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER NOT NULL,
+        productId INTEGER NOT NULL,
+        FOREIGN KEY (productId) REFERENCES products(id)
       )
     ''');
   }
@@ -79,6 +107,40 @@ class DatabaseHelper {
     } catch (e) {
       print('Erro ao buscar produtos: $e');
       rethrow;
+    }
+  }
+
+  Future<void> inserirDesejo(int userId, int productId) async {
+    final db = await database;
+    await db.insert('desejo', {
+      'userId': userId,
+      'productId': productId,
+    });
+  }
+
+  Future<List<ProductItem>> getDesejos(int userId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'desejo',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+
+    List<ProductItem> desejos = [];
+    for (var map in maps) {
+      final product = await getProductById(map['productId']);
+      desejos.add(product);
+    }
+    return desejos;
+  }
+
+  Future<ProductItem> getProductById(int id) async {
+    final db = await database;
+    final maps = await db.query('products', where: 'id = ?', whereArgs: [id]);
+    if (maps.isNotEmpty) {
+      return ProductItem.fromMap(maps.first);
+    } else {
+      throw Exception('Produto não encontrado');
     }
   }
 }
