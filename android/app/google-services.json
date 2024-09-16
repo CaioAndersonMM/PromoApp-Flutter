@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "71353572223",
+    "project_id": "promoapp-519fb",
+    "storage_bucket": "promoapp-519fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71353572223:android:4df1285639810c4d55184a",
+        "android_client_info": {
+          "package_name": "com.example.meu_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoHgZCEwN5zIZ3xvIGxAEIu33wdxongTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,6 +11,8 @@ import 'pages/comidasPage.dart';
 import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
 import 'controllers/my_home_page_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
