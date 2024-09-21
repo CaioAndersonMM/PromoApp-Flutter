@@ -6,13 +6,15 @@ class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
   var filteredProducts = <ProductItem>[].obs;
 
+  @override
   void onInit() {
     // _clearDatabase();
     //initState não existe aqui
     print('Iniciando MyHomePageController');
     // _addInitialProducts();
-    _loadProducts().then((__){
-      filterAndSortProducts('Mais Baratos', 'Tudo'); //Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
+    _loadProducts().then((__) {
+      filterAndSortProducts('Mais Baratos',
+          'Tudo'); //Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
     });
   }
 
@@ -133,7 +135,7 @@ class MyHomePageController extends GetxController {
   void filterAndSortProducts(String sortCriteria, String filterCriteria) {
     List<ProductItem> tempProducts = List.from(allproducts);
 
-    switch (filterCriteria){
+    switch (filterCriteria) {
       case 'Comidas':
         filterCriteria = 'Comida';
         break;

@@ -14,9 +14,13 @@ import 'controllers/my_home_page_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(MyHomePageController());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
@@ -90,8 +94,9 @@ class MyHomePage extends StatelessWidget {
               runSpacing: 10.0,
               children: <Widget>[
                 TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
-                TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
-                TypeItem(name: 'Eventos', destinationPage: EventosPage()),
+                const TypeItem(
+                    name: 'Produtos', destinationPage: ProdutosPage()),
+                const TypeItem(name: 'Eventos', destinationPage: EventosPage()),
               ],
             ),
             const SizedBox(height: 25),

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/services/database.dart';

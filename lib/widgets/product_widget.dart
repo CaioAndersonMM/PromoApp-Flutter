@@ -8,7 +8,7 @@ import '../models/product_item.dart';
 class ProductWidget extends StatelessWidget {
   final ProductItem product;
 
-  const ProductWidget({Key? key, required this.product}) : super(key: key);
+  const ProductWidget({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,8 @@ class ProductWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0,
                             vertical: 10.0), // Padding opcional
-                        duration: const Duration(seconds: 2), // Duração do snackbar
+                        duration:
+                            const Duration(seconds: 2), // Duração do snackbar
                       );
                     },
                   ),

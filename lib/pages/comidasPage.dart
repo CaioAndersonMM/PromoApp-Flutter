@@ -43,7 +43,9 @@ class ComidasPage extends StatelessWidget {
               Expanded(
                 child: Obx(() {
                   if (controller.products.isEmpty) {
-                    return const Center(child: Text('Nenhum produto disponível', style: TextStyle(color: Colors.white)));
+                    return const Center(
+                        child: Text('Nenhum produto disponível',
+                            style: TextStyle(color: Colors.white)));
                   }
 
                   return SingleChildScrollView(
@@ -63,7 +65,8 @@ class ComidasPage extends StatelessWidget {
     );
   }
 
-  void _showAddProductDialog(BuildContext context, ComidasController controller) {
+  void _showAddProductDialog(
+      BuildContext context, ComidasController controller) {
     String name = '';
     String imageUrl = '';
     String location = '';

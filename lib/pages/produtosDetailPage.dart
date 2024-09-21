@@ -4,7 +4,7 @@ import '../models/product_item.dart';
 class ProductDetailsPage extends StatelessWidget {
   final ProductItem product;
 
-  const ProductDetailsPage({Key? key, required this.product}) : super(key: key);
+  const ProductDetailsPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class ProductDetailsPage extends StatelessWidget {
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Text(
                   product.name,
                   style: const TextStyle(
@@ -81,7 +81,7 @@ class ProductDetailsPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 15, 0, 66),
+                color: const Color.fromARGB(255, 15, 0, 66),
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
@@ -101,17 +101,25 @@ class ProductDetailsPage extends StatelessWidget {
                         icon: const Icon(Icons.favorite_border),
                         label: const Text('Desejos'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                          backgroundColor:
+                              const Color.fromARGB(255, 255, 255, 255),
                         ),
                         onPressed: () {
                           // Ação para adicionar aos favoritos
                         },
                       ),
                       ElevatedButton.icon(
-                        icon: const Icon(Icons.report_problem, color: Colors.white,),
-                        label: const Text('Reportar!', style: const TextStyle(color: Colors.white),),
+                        icon: const Icon(
+                          Icons.report_problem,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'Reportar!',
+                          style: TextStyle(color: Colors.white),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 154, 21, 12),
+                          backgroundColor:
+                              const Color.fromARGB(255, 154, 21, 12),
                         ),
                         onPressed: () {
                           // Ação para denunciar
@@ -120,7 +128,7 @@ class ProductDetailsPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16.0),
-                                   Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(

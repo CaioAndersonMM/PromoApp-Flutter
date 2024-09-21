@@ -15,9 +15,9 @@ class MenuCidades extends StatelessWidget {
   ];
 
   MenuCidades({
-    Key? key,
+    super.key,
     required this.onCitySelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class MenuCidades extends StatelessWidget {
                 Navigator.pop(context); // Fecha o Drawer após seleção
               },
             );
-          }).toList(),
+          }),
         ],
       ),
     );

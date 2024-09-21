@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/widgets/product_widget.dart';
+
 class ProdutosPage extends StatelessWidget {
   const ProdutosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ProdutosController controller = Get.put(ProdutosController()); // Instanciar o controlador
+    final ProdutosController controller = Get.put(ProdutosController());
 
     return Scaffold(
       appBar: AppBar(
@@ -21,9 +22,7 @@ class ProdutosPage extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
       body: Column(
@@ -35,7 +34,7 @@ class ProdutosPage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    _showAddEventDialog(context, controller);
+                    _showAddProductDialog(context, controller);
                   },
                 ),
                 const Text(
@@ -47,11 +46,17 @@ class ProdutosPage extends StatelessWidget {
           ),
           Expanded(
             child: Obx(() {
+              if (controller.products.isEmpty) {
+                return const Center(
+                    child: Text('Nenhum produto disponível',
+                        style: TextStyle(color: Colors.white)));
+              }
+
               return SingleChildScrollView(
                 child: Wrap(
                   runSpacing: 10.0,
-                  children: controller.products.map((event) {
-                    return ProductWidget(product: event); // Certifique-se de que ProductWidget seja usado para exibir os eventos
+                  children: controller.products.map((product) {
+                    return ProductWidget(product: product);
                   }).toList(),
                 ),
               );
@@ -62,7 +67,8 @@ class ProdutosPage extends StatelessWidget {
     );
   }
 
-  void _showAddEventDialog(BuildContext context, ProdutosController controller) {
+  void _showAddProductDialog(
+      BuildContext context, ProdutosController controller) {
     String name = '';
     String location = '';
     double price = 0.0;
@@ -107,12 +113,13 @@ class ProdutosPage extends StatelessWidget {
               child: const Text('Adicionar'),
               onPressed: () {
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
-                  controller.addEvent(ProductItem(
+                  controller.addProduct(ProductItem(
                     name: name,
-                    imageUrl: "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    imageUrl:
+                        "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
                     location: location,
                     price: price,
-                    type: 'Evento', // Define o tipo como 'Evento'
+                    type: 'Produto', // Define o tipo como 'Produto'
                   ));
                   Navigator.of(context).pop();
                 }

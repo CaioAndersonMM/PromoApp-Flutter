@@ -8,6 +8,8 @@ import 'package:meu_app/services/database.dart';
 import 'package:meu_app/widgets/product_widget.dart'; // Supondo que você tenha um widget para exibir produtos
 
 class DesejosPage extends StatelessWidget {
+  const DesejosPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final DesejosController controller = Get.put(DesejosController());
@@ -15,7 +17,8 @@ class DesejosPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         // ignore: prefer_const_constructors
-        title: Text('Desejos',
+        title: Text(
+          'Desejos',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -42,7 +45,9 @@ class DesejosPage extends StatelessWidget {
           itemCount: controller.desejos.length,
           itemBuilder: (context, index) {
             final product = controller.desejos[index];
-            return ProductWidget(product: product); // Certifique-se de que ProductWidget está configurado para exibir produtos
+            return ProductWidget(
+                product:
+                    product); // Certifique-se de que ProductWidget está configurado para exibir produtos
           },
         );
       }),
