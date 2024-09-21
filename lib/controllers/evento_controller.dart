@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:meu_app/databases/db_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventosController extends GetxController {
-  final DatabaseHelper _databaseService = DatabaseHelper();
   var events = <ProductItem>[].obs;
+  final FirebaseFirestore _firestore = DBFirestore.get();
 
   @override
   void onInit() {
@@ -13,37 +14,47 @@ class EventosController extends GetxController {
     _loadEvents();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    print('Tela Eventos');
-    _loadEvents();
-  }
-
   Future<void> _loadEvents() async {
     try {
-      final allProducts =
-          await _databaseService.getProducts(); // Obtendo todos os produtos
-      final eventsProducts = allProducts
+      final QuerySnapshot snapshot =
+          await _firestore.collection('produtos').get(); // Coleção 'eventos'
+      List<ProductItem> eventList = snapshot.docs
+          .map((doc) {
+            var data = doc.data() as Map<String, dynamic>;
+            return ProductItem(
+              name: data['name'],
+              imageUrl: data['imageUrl'],
+              location: data['location'],
+              price: data['price'],
+              type: data['type'],
+            );
+          })
           .where((product) => product.type == 'Evento')
-          .toList(); // Filtrando eventos
+          .toList(); // Filtrar eventos
 
-      events.assignAll(eventsProducts); // Atualiza a lista de eventos
+      events.assignAll(eventList);
+      print('Eventos filtrados: $events');
     } catch (e) {
-      print('Error loading events: $e'); // Debug print
+      print('Erro ao carregar eventos: $e');
     }
   }
 
-  Future<void> _saveEvents(ProductItem event) async {
+  Future<void> addEvent(ProductItem event) async {
     try {
-      await _databaseService.insertProduct(event);
-    } catch (e) {
-      print('Error saving event: $e'); // Debug print
-    }
-  }
+      // Adiciona o evento ao Firestore
+      await _firestore.collection('produtos').add({
+        'name': event.name,
+        'imageUrl': event.imageUrl,
+        'location': event.location,
+        'price': event.price,
+        'type': event.type,
+      });
 
-  void addEvent(ProductItem event) {
-    events.add(event); // Adiciona o evento à lista
-    _saveEvents(event); // Salva os eventos de volta no Banco
+      // Atualiza a lista de eventos após a inserção
+      events.add(event);
+      print('Evento salvo no Firestore: ${event.name}');
+    } catch (e) {
+      print('Erro ao salvar evento: $e');
+    }
   }
 }

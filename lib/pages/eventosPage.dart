@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/widgets/product_widget.dart';
+
 class EventosPage extends StatelessWidget {
   const EventosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final EventosController controller = Get.put(EventosController()); // Instanciar o controlador
+    final EventosController controller =
+        Get.put(EventosController()); // Instanciar o controlador
 
     return Scaffold(
       appBar: AppBar(
@@ -47,11 +49,22 @@ class EventosPage extends StatelessWidget {
           ),
           Expanded(
             child: Obx(() {
+              if (controller.events.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'Nenhum evento disponível',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
               return SingleChildScrollView(
                 child: Wrap(
                   runSpacing: 10.0,
                   children: controller.events.map((event) {
-                    return ProductWidget(product: event); // Certifique-se de que ProductWidget seja usado para exibir os eventos
+                    return ProductWidget(
+                        product:
+                            event); // Certifique-se de que ProductWidget seja usado para exibir os eventos
                   }).toList(),
                 ),
               );
@@ -109,7 +122,8 @@ class EventosPage extends StatelessWidget {
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
                   controller.addEvent(ProductItem(
                     name: name,
-                    imageUrl: "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
+                    imageUrl:
+                        "https://via.placeholder.com/50", // Defina a URL da imagem ou peça ao usuário
                     location: location,
                     price: price,
                     type: 'Evento', // Define o tipo como 'Evento'
