@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/pages/desejosPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
@@ -18,6 +19,7 @@ import 'firebase_options.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(MyHomePageController());
@@ -51,7 +53,85 @@ class MyHomePage extends StatelessWidget {
 
   final MyHomePageController controller = Get.put(MyHomePageController());
 
- Future<void> _pickImageFromCamera() async {
+Future<void> showProductForm(String imageUrl) async {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  
+  // Variável para armazenar o tipo selecionado
+  String selectedType = 'Comida'; // Valor padrão
+
+  await showDialog<void>(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Adicionar Produto'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nome do Produto'),
+              ),
+              TextField(
+                controller: locationController,
+                decoration: const InputDecoration(labelText: 'Localização'),
+              ),
+              TextField(
+                controller: priceController,
+                decoration: const InputDecoration(labelText: 'Preço'),
+                keyboardType: TextInputType.number,
+              ),
+              // Dropdown para selecionar o tipo
+              DropdownButton<String>(
+                value: selectedType,
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    selectedType = newValue;
+                  }
+                },
+                items: <String>['Comida', 'Produto', 'Evento']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Fecha o dialog
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              double price = double.tryParse(priceController.text) ?? 0.0;
+
+              // Cria o objeto do produto e adiciona ao Firestore
+              controller.addProduct(ProductItem(
+                name: nameController.text,
+                imageUrl: imageUrl,
+                location: locationController.text,
+                price: price,
+                type: selectedType, // Usa o tipo selecionado
+              ));
+
+              Navigator.of(context).pop(); // Fecha o dialog
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
@@ -69,6 +149,9 @@ class MyHomePage extends StatelessWidget {
 
       // Aqui você pode navegar para a página de criação de produto, por exemplo
       Get.snackbar('Foto Capturada', 'A imagem foi salva com sucesso!');
+
+      // Chama o método para mostrar o formulário de adição do produto
+      await showProductForm(savedImage.path);
     } else {
       Get.snackbar('Erro', 'Nenhuma imagem foi capturada.');
     }
