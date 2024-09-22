@@ -6,6 +6,9 @@ class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
   var filteredProducts = <ProductItem>[].obs;
 
+    // Variável reativa para armazenar o caminho da imagem
+  var imagePath = ''.obs;
+
   @override
   void onInit() {
     // _clearDatabase();
