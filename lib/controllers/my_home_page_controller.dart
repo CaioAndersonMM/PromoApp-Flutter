@@ -79,14 +79,14 @@ class MyHomePageController extends GetxController {
 
     // Adiciona cada produto no banco de dados
     for (var product in initialProducts) {
-      await _addProduct(product);
+      await addProduct(product);
     }
 
     // Recarrega os produtos após a inserção
     _loadProducts();
   }
 
-  Future<void> _addProduct(ProductItem product) async {
+  Future<void> addProduct(ProductItem product) async {
     try {
       final dbHelper = DatabaseHelper();
       await dbHelper
