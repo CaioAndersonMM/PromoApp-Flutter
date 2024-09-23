@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/product_item.dart';
 
@@ -30,12 +31,23 @@ class ProductDetailsPage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                ),
+                width: double.infinity, // Preenche a largura disponível
+                height: 250,
+                child: product.imageUrl.startsWith('http')
+                    ? Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error);
+                        },
+                      )
+                    : Image.file(
+                        File(product.imageUrl),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error);
+                        },
+                      ),
               ),
             ),
             const SizedBox(height: 16.0),
@@ -59,7 +71,7 @@ class ProductDetailsPage extends StatelessWidget {
                     backgroundColor: Color.fromARGB(255, 38, 31, 73),
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                )
+                ),
               ],
             ),
             Text(
@@ -79,7 +91,6 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Container(
-              padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 15, 0, 66),
                 borderRadius: BorderRadius.circular(12.0),
@@ -95,75 +106,75 @@ class ProductDetailsPage extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center, // Centraliza os botões
                     children: [
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.favorite_border),
-                        label: const Text('Desejos'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        onPressed: () {
-                          // Ação para adicionar aos favoritos
-                        },
-                      ),
                       ElevatedButton.icon(
                         icon: const Icon(
                           Icons.report_problem,
-                          color: Colors.white,
+                          color: Color.fromARGB(255, 255, 0, 0),
                         ),
                         label: const Text(
                           'Reportar!',
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 154, 21, 12),
+                          backgroundColor: Color.fromARGB(255, 105, 15, 8),
                         ),
                         onPressed: () {
                           // Ação para denunciar
                         },
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                      const SizedBox(width: 40.0), // Espaço entre os botões
                       ElevatedButton(
                         onPressed: () {
                           // Ação para avaliar o produto
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                        ),
-                        child: const Icon(
-                          Icons.thumb_up,
-                          color: Colors.white,
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Ação para avaliar o produto
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
                         child: const Icon(
                           Icons.thumb_down,
-                          color: Colors.white,
+                          color: Color.fromARGB(255, 230, 1, 1),
                         ),
                       ),
-                      const SizedBox(width: 50),
+                      const SizedBox(width: 16.0), // Espaço entre os botões
+                      ElevatedButton(
+                        onPressed: () {
+                          // Ação para avaliar o produto
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 251, 251, 251),
+                        ),
+                        child: const Icon(
+                          Icons.thumb_up,
+                          color: Color.fromARGB(255, 0, 41, 246),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // Centraliza os botões
+                    children: [
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.favorite_border),
+                        label: const Text('Desejos   '),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        onPressed: () {
+                          // Ação para adicionar aos favoritos
+                        },
+                      ),
+                        const SizedBox(width: 40.0), // Espaço entre os botões
                       ElevatedButton(
                         onPressed: () {
                           // Ação para ver avaliações
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
                         ),
-                        child: const Text('Ver Avaliações'),
+                        child: const Text('    Ver Avaliações  '),
                       ),
                     ],
                   ),
