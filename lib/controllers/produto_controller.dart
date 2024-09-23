@@ -15,17 +15,26 @@ class ProdutosController extends GetxController {
     _loadProducts();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    print('Tela ProdutosController');
+  }
+
   Future<void> _loadProducts() async {
     try {
       final QuerySnapshot snapshot =
-          await _firestore.collection('produtos').get(); // Coleção 'produtos'
+          await _firestore.collection('produtos').get();
+
       List<ProductItem> productList = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
+        double price = (data['price'] as num).toDouble();
+
         return ProductItem(
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
-          price: data['price'],
+          price: price,
           type: "Produto",
         );
       }).toList();
@@ -39,6 +48,24 @@ class ProdutosController extends GetxController {
 
   Future<void> addProduct(ProductItem product) async {
     try {
+      // Verificar permissões de localização
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Serviço de localização desativado.');
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Permissão de localização negada.');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Permissão de localização permanentemente negada.');
+      }
+
       // Obtém a posição atual
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
