@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/databases/db_firestore.dart';
@@ -38,11 +39,20 @@ class ProdutosController extends GetxController {
 
   Future<void> addProduct(ProductItem product) async {
     try {
+      // Obtém a posição atual
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
       // Adiciona o produto ao Firestore
       await _firestore.collection('produtos').add({
         'name': product.name,
         'imageUrl': product.imageUrl,
         'location': product.location,
+        'coords': {
+          'latitude': position.latitude,
+          'longitude': position.longitude,
+        },
         'price': product.price,
       });
 

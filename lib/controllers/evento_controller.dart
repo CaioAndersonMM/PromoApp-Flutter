@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/databases/db_firestore.dart';
@@ -38,10 +39,19 @@ class EventosController extends GetxController {
 
   Future<void> addEvent(ProductItem event) async {
     try {
+      // Obtém a posição atual
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
       // Adiciona o evento ao Firestore
       await _firestore.collection('eventos').add({
         'name': event.name,
         'imageUrl': event.imageUrl,
+        'coords': {
+          'latitude': position.latitude,
+          'longitude': position.longitude,
+        },
         'location': event.location,
         'price': event.price,
       });
