@@ -23,20 +23,17 @@ class ComidasController extends GetxController {
   Future<void> _loadProducts() async {
     try {
       final QuerySnapshot snapshot =
-          await _firestore.collection('produtos').get();
-      List<ProductItem> foodProducts = snapshot.docs
-          .map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return ProductItem(
-              name: data['name'],
-              imageUrl: data['imageUrl'],
-              location: data['location'],
-              price: data['price'],
-              type: data['type'],
-            );
-          })
-          .where((product) => product.type == 'Comida')
-          .toList();
+          await _firestore.collection('comidas').get();
+      List<ProductItem> foodProducts = snapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: data['price'],
+          type: "Comida",
+        );
+      }).toList();
 
       products.assignAll(foodProducts);
       print('Produtos filtrados: $products');
@@ -48,12 +45,11 @@ class ComidasController extends GetxController {
   Future<void> addProduct(ProductItem product) async {
     try {
       // Adiciona o produto ao Firestore
-      await _firestore.collection('produtos').add({
+      await _firestore.collection('comidas').add({
         'name': product.name,
         'imageUrl': product.imageUrl,
         'location': product.location,
         'price': product.price,
-        'type': product.type,
       });
 
       // Atualiza a lista de produtos após a inserção

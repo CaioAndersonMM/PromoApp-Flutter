@@ -17,20 +17,17 @@ class EventosController extends GetxController {
   Future<void> _loadEvents() async {
     try {
       final QuerySnapshot snapshot =
-          await _firestore.collection('produtos').get(); // Coleção 'eventos'
-      List<ProductItem> eventList = snapshot.docs
-          .map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return ProductItem(
-              name: data['name'],
-              imageUrl: data['imageUrl'],
-              location: data['location'],
-              price: data['price'],
-              type: data['type'],
-            );
-          })
-          .where((product) => product.type == 'Evento')
-          .toList(); // Filtrar eventos
+          await _firestore.collection('eventos').get(); // Coleção 'eventos'
+      List<ProductItem> eventList = snapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: data['price'],
+          type: "Evento",
+        );
+      }).toList();
 
       events.assignAll(eventList);
       print('Eventos filtrados: $events');
@@ -42,15 +39,13 @@ class EventosController extends GetxController {
   Future<void> addEvent(ProductItem event) async {
     try {
       // Adiciona o evento ao Firestore
-      await _firestore.collection('produtos').add({
+      await _firestore.collection('eventos').add({
         'name': event.name,
         'imageUrl': event.imageUrl,
         'location': event.location,
         'price': event.price,
-        'type': event.type,
       });
 
-      // Atualiza a lista de eventos após a inserção
       events.add(event);
       print('Evento salvo no Firestore: ${event.name}');
     } catch (e) {

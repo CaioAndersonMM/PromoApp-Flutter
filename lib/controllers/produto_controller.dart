@@ -18,19 +18,16 @@ class ProdutosController extends GetxController {
     try {
       final QuerySnapshot snapshot =
           await _firestore.collection('produtos').get(); // Coleção 'produtos'
-      List<ProductItem> productList = snapshot.docs
-          .map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return ProductItem(
-              name: data['name'],
-              imageUrl: data['imageUrl'],
-              location: data['location'],
-              price: data['price'],
-              type: data['type'],
-            );
-          })
-          .where((product) => product.type == 'Produto')
-          .toList();
+      List<ProductItem> productList = snapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: data['price'],
+          type: "Produto",
+        );
+      }).toList();
 
       products.assignAll(productList);
       print('Produtos filtrados: $products');
@@ -47,7 +44,6 @@ class ProdutosController extends GetxController {
         'imageUrl': product.imageUrl,
         'location': product.location,
         'price': product.price,
-        'type': product.type,
       });
 
       // Atualiza a lista de produtos após a inserção
