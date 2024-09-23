@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/databases/db_firestore.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/services/database.dart';
 
@@ -6,91 +8,32 @@ class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
   var filteredProducts = <ProductItem>[].obs;
 
-    // Variável reativa para armazenar o caminho da imagem
+  // Variável reativa para armazenar o caminho da imagem
   var imagePath = ''.obs;
+
+  final FirebaseFirestore _firestore = DBFirestore.get();
 
   @override
   void onInit() {
-    // _clearDatabase();
-    //initState não existe aqui
     print('Iniciando MyHomePageController');
-    // _addInitialProducts();
+    print(filteredProducts);
     _loadProducts().then((__) {
       filterAndSortProducts('Mais Baratos',
-          'Tudo'); //Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
+          'Tudo'); // Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
     });
-  }
-
-  Future<void> _clearDatabase() async {
-    try {
-      final dbHelper = DatabaseHelper();
-      await dbHelper.clearDatabase();
-      print('Banco de dados limpo!');
-    } catch (e) {
-      print('Erro ao limpar o banco de dados: $e');
-    }
-  }
-
-  void _addInitialProducts() async {
-    List<ProductItem> initialProducts = [
-      ProductItem(
-        name: 'Hamburguer',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Rua das Flores, 123',
-        price: 12.99,
-        type: 'Comida',
-      ),
-      ProductItem(
-        name: 'Pizza',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Avenida Brasil, 456',
-        price: 24.99,
-        type: 'Comida',
-      ),
-      ProductItem(
-        name: 'Sushi',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Praça da Liberdade, 789',
-        price: 29.99,
-        type: 'Comida',
-      ),
-      ProductItem(
-        name: 'Cidade Junina',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Mossoró Rio Branco, 789',
-        price: 9.99,
-        type: 'Evento',
-      ),
-      ProductItem(
-        name: 'Calourada Computação',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Ufersa, 789',
-        price: 0.00,
-        type: 'Evento',
-      ),
-      ProductItem(
-        name: 'Monitor Gamer',
-        imageUrl: 'https://via.placeholder.com/50',
-        location: 'Americanas, 789',
-        price: 500.00,
-        type: 'Produto',
-      ),
-    ];
-
-    // Adiciona cada produto no banco de dados
-    for (var product in initialProducts) {
-      await addProduct(product);
-    }
-
-    // Recarrega os produtos após a inserção
-    _loadProducts();
   }
 
   Future<void> addProduct(ProductItem product) async {
     try {
-      final dbHelper = DatabaseHelper();
-      await dbHelper
-          .insertProduct(product); // Insere o produto no banco de dados
+      await _firestore.collection(product.type.toLowerCase() + 's').add({
+        'name': product.name,
+        'imageUrl': product.imageUrl,
+        'location': product.location,
+        'price': product.price,
+        'type': product.type,
+      });
+      print('Produto adicionado ao Firestore: ${product.name}');
+      await _loadProducts(); // Recarrega produtos após a adição
     } catch (e) {
       print('Erro ao adicionar produto: $e');
     }
@@ -98,9 +41,68 @@ class MyHomePageController extends GetxController {
 
   Future<void> _loadProducts() async {
     try {
-      final dbHelper = DatabaseHelper();
-      List<ProductItem> products = await dbHelper.getProducts();
-      allproducts.value = products; // Atualiza a lista de produtos
+      allproducts.clear(); // Limpa a lista antes de carregar novos produtos
+
+      // Carregar produtos das coleções
+      final QuerySnapshot comidasSnapshot =
+          await _firestore.collection('comidas').get();
+      final QuerySnapshot produtosSnapshot =
+          await _firestore.collection('produtos').get();
+      final QuerySnapshot eventosSnapshot =
+          await _firestore.collection('eventos').get();
+
+      // Mapeia produtos da coleção 'comidas'
+      List<ProductItem> comidaProducts = comidasSnapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: (data['price'] is num)
+              ? (data['price'] as num).toDouble()
+              : 0.0, // Verifica se é num
+          type: "Comida",
+        );
+      }).toList();
+
+      // Mapeia produtos da coleção 'produtos'
+      List<ProductItem> produtosList = produtosSnapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: (data['price'] is num)
+              ? (data['price'] as num).toDouble()
+              : 0.0, // Verifica se é num
+          type: "Produto",
+        );
+      }).toList();
+
+      // Mapeia produtos da coleção 'eventos'
+      List<ProductItem> eventosList = eventosSnapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return ProductItem(
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          location: data['location'],
+          price: (data['price'] is num)
+              ? (data['price'] as num).toDouble()
+              : 0.0, // Verifica se é num
+          type: "Evento",
+        );
+      }).toList();
+
+      // Combina todas as listas em uma única lista
+      List<ProductItem> allProducts = [
+        ...comidaProducts,
+        ...produtosList,
+        ...eventosList,
+      ];
+
+      // Atualiza a lista observável
+      allproducts.assignAll(allProducts);
+      print('Todos os produtos carregados: $allProducts');
     } catch (e) {
       print('Erro ao carregar produtos: $e');
     }
@@ -119,8 +121,6 @@ class MyHomePageController extends GetxController {
   var selectedIndex = 0.obs;
 
   void updateSelectedCity(String newCity) {
-    // _clearDatabase(); //LEMBRAR DE TIRAR ISSO
-
     selectedCity.value = newCity;
     dadosUsuario['city'] = newCity;
   }
@@ -162,7 +162,7 @@ class MyHomePageController extends GetxController {
         tempProducts.sort((a, b) => a.price.compareTo(b.price));
         break;
       case 'Mais Recentes':
-        //Não tem lógica ainda
+        // Lógica para ordenar mais recentes pode ser implementada aqui
         break;
       case 'Mais Comprados':
         // Adicione aqui a lógica de "mais comprados" se disponível
