@@ -1,31 +1,41 @@
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-  // Função para obter a posição atual
+  // Função para verificar se o serviço de localização está habilitado e se as permissões estão corretas
+  Future<void> _handleLocationPermissions() async {
+    // Verifica se o serviço de localização está habilitado
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception("Serviço de localização desativado. Habilite o GPS.");
+    }
+
+    // Verifica as permissões de localização
+    LocationPermission permission = await Geolocator.checkPermission();
+    
+    // Solicita permissão se estiver negada
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception("Permissão de localização negada.");
+      }
+    }
+
+    // Verifica se a permissão foi negada permanentemente
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+          "Permissão de localização negada permanentemente. Altere isso nas configurações.");
+    }
+  }
+
+  // Função principal para obter a posição atual com permissões tratadas
   Future<Position> getCurrentPosition() async {
     try {
-      // Verifica se o serviço de localização está habilitado
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw Exception("Serviço de localização desativado");
-      }
+      // Trata as permissões
+      await _handleLocationPermissions();
 
-      // Verifica as permissões de localização
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception("Permissão de localização negada");
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        throw Exception("Permissão de localização negada permanentemente");
-      }
-
-      // Obtém a posição atual
+      // Obtém a posição atual após as permissões serem garantidas
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: LocationAccuracy.high, // Precisão alta
       );
 
       return position; // Retorna a posição obtida
@@ -35,15 +45,16 @@ class LocationService {
   }
 }
 
-// Uso
 void getLocation() async {
   try {
     Position position = await LocationService().getCurrentPosition();
-    double latitude = position.latitude; // Obtém a latitude
-    double longitude = position.longitude; // Obtém a longitude
+    
+    // Obtém a latitude e a longitude da posição
+    double latitude = position.latitude;
+    double longitude = position.longitude;
 
     print('Latitude: $latitude, Longitude: $longitude');
   } catch (e) {
-    print('Erro: $e');
+    print('Erro ao obter localização: $e');
   }
 }
