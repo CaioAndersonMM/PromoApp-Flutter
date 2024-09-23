@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
+import 'package:meu_app/controllers/comida_controller.dart';
+import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/pages/desejosPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
@@ -23,12 +25,8 @@ import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Get.put(MyHomePageController());
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
   runApp(const MyApp());
 }
 
@@ -54,6 +52,8 @@ class MyHomePage extends StatelessWidget {
 
   final MyHomePageController controller = Get.put(MyHomePageController());
   final ProdutosController controllerProduto = Get.put(ProdutosController());
+  final ComidasController controllerComida = Get.put(ComidasController());
+  final EventosController controllerEvento = Get.put(EventosController());
 
   Future<void> showProductForm(String imageUrl) async {
     final TextEditingController nameController = TextEditingController();
@@ -119,14 +119,22 @@ class MyHomePage extends StatelessWidget {
                   onPressed: () {
                     double price = double.tryParse(priceController.text) ?? 0.0;
 
-                    // Cria o objeto do produto e adiciona ao Firestore
-                    controllerProduto.addProduct(ProductItem(
+                    // Cria o objeto do produto
+                    ProductItem product = ProductItem(
                       name: nameController.text,
                       imageUrl: imageUrl,
                       location: locationController.text,
                       price: price,
-                      type: selectedType, // Usa o tipo selecionado
-                    ));
+                      type: selectedType,
+                    );
+                    // Chama o controlador apropriado com base no tipo selecionado
+                    if (selectedType == 'Comida') {
+                      controllerComida.addProduct(product);
+                    } else if (selectedType == 'Produto') {
+                      controllerProduto.addProduct(product);
+                    } else if (selectedType == 'Evento') {
+                      controllerEvento.addEvent(product);
+                    }
 
                     Navigator.of(context).pop(); // Fecha o dialog
                   },
@@ -258,9 +266,27 @@ class MyHomePage extends StatelessWidget {
                 icon: Icon(Icons.shopping_basket),
                 label: 'Desejos',
               ),
+              BottomNavigationBarItem(
+                icon:
+                    Icon(Icons.star),
+                label: 'Interesses',
+              ),
             ],
             currentIndex: controller.selectedIndex.value,
-            selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
+            selectedItemColor: const Color.fromARGB(
+                255, 3, 26, 102), // Cor dos itens selecionados
+            unselectedItemColor: const Color.fromARGB(255, 70, 142,
+                167),
+            showSelectedLabels: true,
+            showUnselectedLabels:
+                true,
+            selectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 3, 26, 102),
+            ),
+            unselectedLabelStyle: const TextStyle(
+              color: Color.fromARGB(255, 70, 142, 167),
+            ),
             onTap: (index) async {
               if (controller.selectedCity.value == 'Selecione uma cidade') {
                 controller.showCitySelectionAlert();
@@ -273,6 +299,9 @@ class MyHomePage extends StatelessWidget {
                   await _pickImageFromCamera();
                 } else if (index == 2) {
                   Get.offNamed('/desejo');
+                } else if (index == 3) {
+                  Get.offNamed(
+                      '/interesses');
                 }
               }
             },
