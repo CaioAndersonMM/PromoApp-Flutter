@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/pages/desejosPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
@@ -9,7 +10,7 @@ import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
 import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/type_item.dart';
-import 'package:meu_app/widgets/product_widget.dart'; // Certifique-se de importar o ProductWidget
+import 'package:meu_app/widgets/product_widget.dart';
 import 'pages/comidasPage.dart';
 import 'pages/produtosPage.dart';
 import 'pages/eventosPage.dart';
@@ -52,84 +53,92 @@ class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
   final MyHomePageController controller = Get.put(MyHomePageController());
+  final ProdutosController controllerProduto = Get.put(ProdutosController());
 
-Future<void> showProductForm(String imageUrl) async {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-  
-  // Variável para armazenar o tipo selecionado
-  String selectedType = 'Comida'; // Valor padrão
+  Future<void> showProductForm(String imageUrl) async {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController locationController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
 
-  await showDialog<void>(
-    context: Get.context!,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Adicionar Produto'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nome do Produto'),
-              ),
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(labelText: 'Localização'),
-              ),
-              TextField(
-                controller: priceController,
-                decoration: const InputDecoration(labelText: 'Preço'),
-                keyboardType: TextInputType.number,
-              ),
-              // Dropdown para selecionar o tipo
-              DropdownButton<String>(
-                value: selectedType,
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    selectedType = newValue;
-                  }
-                },
-                items: <String>['Comida', 'Produto', 'Evento']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fecha o dialog
-            },
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              double price = double.tryParse(priceController.text) ?? 0.0;
+    // Variável para armazenar o tipo selecionado
+    String selectedType = 'Comida'; // Valor padrão
 
-              // Cria o objeto do produto e adiciona ao Firestore
-              controller.addProduct(ProductItem(
-                name: nameController.text,
-                imageUrl: imageUrl,
-                location: locationController.text,
-                price: price,
-                type: selectedType, // Usa o tipo selecionado
-              ));
+    await showDialog<void>(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          // Aqui usamos o StatefulBuilder
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Adicionar Produto'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      controller: nameController,
+                      decoration:
+                          const InputDecoration(labelText: 'Nome do Produto'),
+                    ),
+                    TextField(
+                      controller: locationController,
+                      decoration:
+                          const InputDecoration(labelText: 'Localização'),
+                    ),
+                    TextField(
+                      controller: priceController,
+                      decoration: const InputDecoration(labelText: 'Preço'),
+                      keyboardType: TextInputType.number,
+                    ),
+                    // Dropdown para selecionar o tipo
+                    DropdownButton<String>(
+                      value: selectedType,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedType = newValue ?? 'Comida';
+                        });
+                      },
+                      items: <String>['Comida', 'Produto', 'Evento']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Fecha o dialog
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    double price = double.tryParse(priceController.text) ?? 0.0;
 
-              Navigator.of(context).pop(); // Fecha o dialog
-            },
-            child: const Text('Adicionar'),
-          ),
-        ],
-      );
-    },
-  );
-}
+                    // Cria o objeto do produto e adiciona ao Firestore
+                    controllerProduto.addProduct(ProductItem(
+                      name: nameController.text,
+                      imageUrl: imageUrl,
+                      location: locationController.text,
+                      price: price,
+                      type: selectedType, // Usa o tipo selecionado
+                    ));
+
+                    Navigator.of(context).pop(); // Fecha o dialog
+                  },
+                  child: const Text('Adicionar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
