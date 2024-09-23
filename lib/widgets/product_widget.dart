@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/my_home_page_controller.dart';
@@ -43,10 +45,24 @@ class ProductWidget extends StatelessWidget {
                 child: SizedBox(
                   width: 80,
                   height: 80,
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
+                  child: product.imageUrl
+                          .startsWith('http') // Verifica se a URL é de rede
+                      ? Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                                Icons.error); // Ícone de erro se falhar
+                          },
+                        )
+                      : Image.file(
+                          File(product.imageUrl), // Carrega a imagem local
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                                Icons.error); // Ícone de erro se falhar
+                          },
+                        ),
                 ),
               ),
               const SizedBox(width: 16.0),
