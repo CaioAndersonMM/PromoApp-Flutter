@@ -27,11 +27,15 @@ class ComidasController extends GetxController {
           await _firestore.collection('comidas').get();
       List<ProductItem> foodProducts = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
+        // Conversão do 'price' para double
+        double price = (data['price'] as num)
+            .toDouble();
+
         return ProductItem(
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
-          price: data['price'],
+          price: price,
           type: "Comida",
         );
       }).toList();
