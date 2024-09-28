@@ -7,6 +7,7 @@ import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/pages/desejosPage.dart';
+import 'package:meu_app/pages/interessesPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/home', page: () => MyHomePage()),
         GetPage(name: '/userProfile', page: () => const UserProfilePage()),
         GetPage(name: '/desejo', page: () => DesejosPage()),
+        GetPage(name: '/interesses', page: () => InteressesPage()),
       ],
     );
   }
@@ -56,153 +58,156 @@ class MyHomePage extends StatelessWidget {
   final EventosController controllerEvento = Get.put(EventosController());
 
   Future<void> showProductForm(String imageUrl) async {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController locationController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
 
-  String selectedType = 'Produto'; // Valor padrão
+    String selectedType = 'Produto'; // Valor padrão
 
-  await showDialog<void>(
-    context: Get.context!,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      // Ajusta o padding inferior quando o teclado é mostrado
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      // Define um tamanho mínimo para evitar quebra
-                      constraints: BoxConstraints(
-                        minHeight: MediaQuery.of(context).size.height * 0.7,
+    await showDialog<void>(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        // Ajusta o padding inferior quando o teclado é mostrado
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          const Text(
-                            'Adicionar Produto',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        // Define um tamanho mínimo para evitar quebra
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height * 0.7,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const Text(
+                              'Adicionar Produto',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          // Preview da imagem capturada
-                          if (imageUrl.isNotEmpty)
-                            Container(
-                              height: 150,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  image: FileImage(File(imageUrl)),
-                                  fit: BoxFit.cover,
+                            const SizedBox(height: 20),
+                            // Preview da imagem capturada
+                            if (imageUrl.isNotEmpty)
+                              Container(
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: FileImage(File(imageUrl)),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            controller: nameController,
-                            decoration: const InputDecoration(
-                              labelText: 'Nome do Produto',
-                            ),
-                          ),
-                          TextField(
-                            controller: locationController,
-                            decoration: const InputDecoration(
-                              labelText: 'Estabelecimento',
-                            ),
-                          ),
-                          TextField(
-                            controller: priceController,
-                            decoration: const InputDecoration(
-                              labelText: 'Preço',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                          TextField(
-                            controller: descriptionController,
-                            decoration: const InputDecoration(
-                              labelText: 'Descrição',
-                            ),
-                          ),
-                          DropdownButton<String>(
-                            value: selectedType,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedType = newValue ?? 'Comida';
-                              });
-                            },
-                            items: <String>['Comida', 'Produto', 'Evento']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Cancelar'),
+                            const SizedBox(height: 20),
+                            TextField(
+                              controller: nameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Nome do Produto',
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  double price =
-                                      double.tryParse(priceController.text) ??
-                                          0.0;
-
-                                  ProductItem product = ProductItem(
-                                    name: nameController.text,
-                                    imageUrl: imageUrl,
-                                    location: locationController.text,
-                                    price: price,
-                                    type: selectedType,
-                                  );
-
-                                  if (selectedType == 'Comida') {
-                                    controllerComida.addProduct(product);
-                                  } else if (selectedType == 'Produto') {
-                                    controllerProduto.addProduct(product);
-                                  } else if (selectedType == 'Evento') {
-                                    controllerEvento.addEvent(product);
-                                  }
-
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Adicionar'),
+                            ),
+                            TextField(
+                              controller: locationController,
+                              decoration: const InputDecoration(
+                                labelText: 'Estabelecimento',
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            TextField(
+                              controller: priceController,
+                              decoration: const InputDecoration(
+                                labelText: 'Preço',
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            TextField(
+                              controller: descriptionController,
+                              decoration: const InputDecoration(
+                                labelText: 'Descrição',
+                              ),
+                            ),
+                            DropdownButton<String>(
+                              value: selectedType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedType = newValue ?? 'Comida';
+                                });
+                              },
+                              items: <String>[
+                                'Comida',
+                                'Produto',
+                                'Evento'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancelar'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    double price =
+                                        double.tryParse(priceController.text) ??
+                                            0.0;
+
+                                    ProductItem product = ProductItem(
+                                      name: nameController.text,
+                                      imageUrl: imageUrl,
+                                      location: locationController.text,
+                                      price: price,
+                                      type: selectedType,
+                                    );
+
+                                    if (selectedType == 'Comida') {
+                                      controllerComida.addProduct(product);
+                                    } else if (selectedType == 'Produto') {
+                                      controllerProduto.addProduct(product);
+                                    } else if (selectedType == 'Evento') {
+                                      controllerEvento.addEvent(product);
+                                    }
+
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Adicionar'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
@@ -345,15 +350,20 @@ class MyHomePage extends StatelessWidget {
                 controller.showCitySelectionAlert();
               } else {
                 controller.selectedIndex.value = index;
-                if (index == 0) {
-                  Get.offNamed('/home');
-                } else if (index == 1) {
-                  print('Abrindo câmera...');
-                  await _pickImageFromCamera();
-                } else if (index == 2) {
-                  Get.offNamed('/desejo');
-                } else if (index == 3) {
-                  Get.offNamed('/interesses');
+                switch (index) {
+                  case 0:
+                    Get.toNamed('/home'); // Navega para a tela inicial
+                    break;
+                  case 1:
+                    await _pickImageFromCamera(); // Abre a câmera
+                    break;
+                  case 2:
+                    Get.toNamed('/desejo'); // Navega para a tela de desejos
+                    break;
+                  case 3:
+                    Get.toNamed(
+                        '/interesses'); // Navega para a tela de interesses
+                    break;
                 }
               }
             },
