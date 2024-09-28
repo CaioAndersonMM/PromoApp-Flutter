@@ -56,97 +56,153 @@ class MyHomePage extends StatelessWidget {
   final EventosController controllerEvento = Get.put(EventosController());
 
   Future<void> showProductForm(String imageUrl) async {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController locationController = TextEditingController();
-    final TextEditingController priceController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
-    // Variável para armazenar o tipo selecionado
-    String selectedType = 'Comida'; // Valor padrão
+  String selectedType = 'Produto'; // Valor padrão
 
-    await showDialog<void>(
-      context: Get.context!,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          // Aqui usamos o StatefulBuilder
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text('Adicionar Produto'),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    TextField(
-                      controller: nameController,
-                      decoration:
-                          const InputDecoration(labelText: 'Nome do Produto'),
+  await showDialog<void>(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      // Ajusta o padding inferior quando o teclado é mostrado
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
                     ),
-                    TextField(
-                      controller: locationController,
-                      decoration:
-                          const InputDecoration(labelText: 'Localização'),
-                    ),
-                    TextField(
-                      controller: priceController,
-                      decoration: const InputDecoration(labelText: 'Preço'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    // Dropdown para selecionar o tipo
-                    DropdownButton<String>(
-                      value: selectedType,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedType = newValue ?? 'Comida';
-                        });
-                      },
-                      items: <String>['Comida', 'Produto', 'Evento']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Fecha o dialog
-                  },
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    double price = double.tryParse(priceController.text) ?? 0.0;
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      // Define um tamanho mínimo para evitar quebra
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height * 0.7,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          const Text(
+                            'Adicionar Produto',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          // Preview da imagem capturada
+                          if (imageUrl.isNotEmpty)
+                            Container(
+                              height: 150,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: FileImage(File(imageUrl)),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Nome do Produto',
+                            ),
+                          ),
+                          TextField(
+                            controller: locationController,
+                            decoration: const InputDecoration(
+                              labelText: 'Estabelecimento',
+                            ),
+                          ),
+                          TextField(
+                            controller: priceController,
+                            decoration: const InputDecoration(
+                              labelText: 'Preço',
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                          TextField(
+                            controller: descriptionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Descrição',
+                            ),
+                          ),
+                          DropdownButton<String>(
+                            value: selectedType,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedType = newValue ?? 'Comida';
+                              });
+                            },
+                            items: <String>['Comida', 'Produto', 'Evento']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancelar'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  double price =
+                                      double.tryParse(priceController.text) ??
+                                          0.0;
 
-                    // Cria o objeto do produto
-                    ProductItem product = ProductItem(
-                      name: nameController.text,
-                      imageUrl: imageUrl,
-                      location: locationController.text,
-                      price: price,
-                      type: selectedType,
-                    );
-                    // Chama o controlador apropriado com base no tipo selecionado
-                    if (selectedType == 'Comida') {
-                      controllerComida.addProduct(product);
-                    } else if (selectedType == 'Produto') {
-                      controllerProduto.addProduct(product);
-                    } else if (selectedType == 'Evento') {
-                      controllerEvento.addEvent(product);
-                    }
+                                  ProductItem product = ProductItem(
+                                    name: nameController.text,
+                                    imageUrl: imageUrl,
+                                    location: locationController.text,
+                                    price: price,
+                                    type: selectedType,
+                                  );
 
-                    Navigator.of(context).pop(); // Fecha o dialog
-                  },
-                  child: const Text('Adicionar'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+                                  if (selectedType == 'Comida') {
+                                    controllerComida.addProduct(product);
+                                  } else if (selectedType == 'Produto') {
+                                    controllerProduto.addProduct(product);
+                                  } else if (selectedType == 'Evento') {
+                                    controllerEvento.addEvent(product);
+                                  }
+
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Adicionar'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
@@ -267,19 +323,16 @@ class MyHomePage extends StatelessWidget {
                 label: 'Desejos',
               ),
               BottomNavigationBarItem(
-                icon:
-                    Icon(Icons.star),
+                icon: Icon(Icons.star),
                 label: 'Interesses',
               ),
             ],
             currentIndex: controller.selectedIndex.value,
             selectedItemColor: const Color.fromARGB(
                 255, 3, 26, 102), // Cor dos itens selecionados
-            unselectedItemColor: const Color.fromARGB(255, 70, 142,
-                167),
+            unselectedItemColor: const Color.fromARGB(255, 70, 142, 167),
             showSelectedLabels: true,
-            showUnselectedLabels:
-                true,
+            showUnselectedLabels: true,
             selectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 3, 26, 102),
@@ -300,8 +353,7 @@ class MyHomePage extends StatelessWidget {
                 } else if (index == 2) {
                   Get.offNamed('/desejo');
                 } else if (index == 3) {
-                  Get.offNamed(
-                      '/interesses');
+                  Get.offNamed('/interesses');
                 }
               }
             },
