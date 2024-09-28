@@ -18,7 +18,7 @@ class DesejosPage extends StatelessWidget {
       appBar: AppBar(
         // ignore: prefer_const_constructors
         title: Text(
-          'Desejos',
+          'Sacola de itens desejados',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -45,9 +45,7 @@ class DesejosPage extends StatelessWidget {
           itemCount: controller.desejos.length,
           itemBuilder: (context, index) {
             final product = controller.desejos[index];
-            return ProductWidget(
-                product:
-                    product); // Certifique-se de que ProductWidget está configurado para exibir produtos
+            return ProductWidget(product: product); // Certifique-se de que ProductWidget está configurado para exibir produtos
           },
         );
       }),

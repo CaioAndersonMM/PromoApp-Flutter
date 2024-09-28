@@ -325,7 +325,7 @@ class MyHomePage extends StatelessWidget {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_basket),
-                label: 'Desejos',
+                label: 'Sacola',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.star),
