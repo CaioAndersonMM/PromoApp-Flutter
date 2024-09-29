@@ -79,7 +79,6 @@ class MyHomePage extends StatelessWidget {
                   return SingleChildScrollView(
                     child: Padding(
                       padding: EdgeInsets.only(
-                        // Ajusta o padding inferior quando o teclado é mostrado
                         bottom: MediaQuery.of(context).viewInsets.bottom,
                       ),
                       child: Container(
@@ -224,8 +223,6 @@ class MyHomePage extends StatelessWidget {
 
       // Armazena a URL do arquivo salvo no controlador (ou use onde precisar)
       controller.imagePath.value = savedImage.path;
-
-      // Aqui você pode navegar para a página de criação de produto, por exemplo
       Get.snackbar('Foto Capturada', 'A imagem foi salva com sucesso!');
 
       // Chama o método para mostrar o formulário de adição do produto
@@ -235,7 +232,7 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -268,22 +265,47 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             const SizedBox(height: 20),
-            Obx(() => Text(
+            Obx(() {
+              // Verifica se a cidade foi selecionada
+              if (controller.selectedCity.value == 'Selecione uma cidade') {
+                return Column(
+                  children: [
+                    const Text(
+                      'Nenhuma cidade selecionada',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Ação para ativar localização
+                        controller.activateLocation();
+                      },
+                      child: const Text('Ligar Localização'),
+                    ),
+                  ],
+                );
+              } else {
+                return Text(
                   'Cidade Selecionada: ${controller.selectedCity}',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                )),
+                );
+              }
+            }),
             const SizedBox(height: 20),
             Wrap(
               spacing: 20.0,
               runSpacing: 10.0,
               children: <Widget>[
                 TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
-                const TypeItem(
-                    name: 'Produtos', destinationPage: ProdutosPage()),
+                const TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
                 const TypeItem(name: 'Eventos', destinationPage: EventosPage()),
               ],
             ),
@@ -333,8 +355,7 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
             currentIndex: controller.selectedIndex.value,
-            selectedItemColor: const Color.fromARGB(
-                255, 3, 26, 102), // Cor dos itens selecionados
+            selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
             unselectedItemColor: const Color.fromARGB(255, 70, 142, 167),
             showSelectedLabels: true,
             showUnselectedLabels: true,
@@ -352,17 +373,16 @@ class MyHomePage extends StatelessWidget {
                 controller.selectedIndex.value = index;
                 switch (index) {
                   case 0:
-                    Get.toNamed('/home'); // Navega para a tela inicial
+                    Get.toNamed('/home');
                     break;
                   case 1:
-                    await _pickImageFromCamera(); // Abre a câmera
+                    await _pickImageFromCamera();
                     break;
                   case 2:
-                    Get.toNamed('/desejo'); // Navega para a tela de desejos
+                    Get.toNamed('/desejo');
                     break;
                   case 3:
-                    Get.toNamed(
-                        '/interesses'); // Navega para a tela de interesses
+                    Get.toNamed('/interesses');
                     break;
                 }
               }
