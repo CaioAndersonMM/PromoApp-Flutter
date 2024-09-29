@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 
 class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
@@ -122,17 +126,11 @@ class MyHomePageController extends GetxController {
 
   void updateSelectedCity(String newCity) {
     selectedCity.value = newCity;
-    dadosUsuario['city'] = newCity;
   }
 
   void showCitySelectionAlert() {
-    Get.defaultDialog(
-      title: 'Seleção de Cidade',
-      middleText:
-          'Por favor, selecione uma cidade no menu esquerdo para continuar.',
-      textConfirm: 'OK',
-      onConfirm: () => Get.back(),
-    );
+    Get.snackbar(
+        'Aviso', 'Por favor, selecione uma cidade ou ative a localização.');
   }
 
   void filterAndSortProducts(String sortCriteria, String filterCriteria) {
@@ -171,4 +169,26 @@ class MyHomePageController extends GetxController {
 
     filteredProducts.value = tempProducts;
   }
+
+  var isLocationEnabled = false.obs;
+
+   void activateLocation() {
+    getCityFromIP(); // Chama o método para obter a cidade
+  }
+
+    Future<void> getCityFromIP() async {
+    try {
+      final response = await http.get(Uri.parse('http://ip-api.com/json/'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        selectedCity.value = data['city'] ?? 'Cidade desconhecida';
+        Get.snackbar('Localização Detectada', 'Cidade: ${selectedCity.value}');
+      } else {
+        Get.snackbar('Erro', 'Não foi possível obter a localização');
+      }
+    } catch (e) {
+      Get.snackbar('Erro', 'Falha ao obter cidade: $e');
+    }
+  }
+
 }
