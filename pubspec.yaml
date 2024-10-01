@@ -46,6 +46,7 @@ dependencies:
   # location: ^4.3.0 # Remova ou comente esta linha temporariamente
   geolocator: ^13.0.1
   http: ^1.2.2
+  shared_preferences: ^2.0.14
 
 
 
