@@ -1,33 +1,30 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/models/product_item.dart';
+import 'package:meu_app/pages/comidasPage.dart';
 import 'package:meu_app/pages/desejosPage.dart';
+import 'package:meu_app/pages/eventosPage.dart';
+import 'package:meu_app/pages/inicioPage.dart';
 import 'package:meu_app/pages/interessesPage.dart';
+import 'package:meu_app/pages/produtosPage.dart';
 import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
 import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/type_item.dart';
 import 'package:meu_app/widgets/product_widget.dart';
-import 'pages/comidasPage.dart';
-import 'pages/produtosPage.dart';
-import 'pages/eventosPage.dart';
-import 'controllers/my_home_page_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Get.put(MyHomePageController());
   runApp(const MyApp());
 }
 
@@ -37,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Promoapp',
       initialRoute: '/home',
       getPages: [
         GetPage(name: '/home', page: () => MyHomePage()),
@@ -57,7 +54,14 @@ class MyHomePage extends StatelessWidget {
   final ComidasController controllerComida = Get.put(ComidasController());
   final EventosController controllerEvento = Get.put(EventosController());
 
-  Future<void> showProductForm(String imageUrl) async {
+  // Definindo as páginas
+  final List<Widget> _pages = [
+    InicioPage(), // Deve ser a primeira na lista
+    const ProdutosPage(),
+    const DesejosPage(),
+    InteressesPage(),
+  ];
+ Future<void> showProductForm(String imageUrl) async {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController locationController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
@@ -231,8 +235,7 @@ class MyHomePage extends StatelessWidget {
       Get.snackbar('Erro', 'Nenhuma imagem foi capturada.');
     }
   }
-
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -260,99 +263,24 @@ class MyHomePage extends StatelessWidget {
           controller.updateSelectedCity(newCity);
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 20),
-            Obx(() {
-              // Verifica se a cidade foi selecionada
-              if (controller.selectedCity.value == 'Selecione uma cidade') {
-                return Column(
-                  children: [
-                    const Text(
-                      'Nenhuma cidade selecionada',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Ação para ativar localização
-                        controller.activateLocation();
-                      },
-                      child: const Text('Ligar Localização'),
-                    ),
-                  ],
-                );
-              } else {
-                return Text(
-                  'Cidade Selecionada: ${controller.selectedCity}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                );
-              }
-            }),
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 20.0,
-              runSpacing: 10.0,
-              children: <Widget>[
-                TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
-                const TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
-                const TypeItem(name: 'Eventos', destinationPage: EventosPage()),
-              ],
-            ),
-            const SizedBox(height: 25),
-            caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
-            const SizedBox(height: 5),
-            headerProducts(),
-            Expanded(
-              child: Obx(() {
-                if (controller.filteredProducts.isEmpty) {
-                  return const Center(
-                      child: Text('Nenhum produto disponível',
-                          style: TextStyle(color: Colors.white)));
-                }
-
-                return SingleChildScrollView(
-                  child: Wrap(
-                    runSpacing: 10.0,
-                    children: controller.filteredProducts.map((product) {
-                      return ProductWidget(product: product);
-                    }).toList(),
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
+      body: Obx(() {
+        return Container(
+          color: const Color.fromRGBO(0, 12, 36, 1), // Cor de fundo
+          child: IndexedStack(
+            index: controller.selectedIndex.value,
+            children: _pages,
+          ),
+        );
+      }),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Início',
-              ),
+                  icon: Icon(Icons.add_circle_outline), label: 'Publicar'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle_outline),
-                label: 'Publicar',
-              ),
+                  icon: Icon(Icons.shopping_basket), label: 'Sacola'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_basket),
-                label: 'Sacola',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.star),
-                label: 'Interesses',
-              ),
+                  icon: Icon(Icons.star), label: 'Interesses'),
             ],
             currentIndex: controller.selectedIndex.value,
             selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
@@ -370,20 +298,10 @@ class MyHomePage extends StatelessWidget {
               if (controller.selectedCity.value == 'Selecione uma cidade') {
                 controller.showCitySelectionAlert();
               } else {
-                controller.selectedIndex.value = index;
-                switch (index) {
-                  case 0:
-                    Get.toNamed('/home');
-                    break;
-                  case 1:
-                    await _pickImageFromCamera();
-                    break;
-                  case 2:
-                    Get.toNamed('/desejo');
-                    break;
-                  case 3:
-                    Get.toNamed('/interesses');
-                    break;
+                if (index == 1) {
+                  await _pickImageFromCamera();
+                } else {
+                  controller.selectedIndex.value = index;
                 }
               }
             },
