@@ -36,7 +36,7 @@ class ProductDetailsPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: SizedBox(
-                    width: double.infinity, // Preenche a largura disponível
+                    width: double.infinity,
                     height: 250,
                     child: product.imageUrl.startsWith('http')
                         ? Image.network(
@@ -57,26 +57,64 @@ class ProductDetailsPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize
-                        .min, // Permite que a coluna use o mínimo de espaço necessário
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.start, // Ajuste conforme necessário
                     children: [
-                      FloatingActionButton(
-                        onPressed: () {
-                          // Ação para reportar o produto
-                          _showReportDialog(context);
-                        },
-                        backgroundColor: Color.fromARGB(255, 94, 10, 5),
-                        child: const Icon(Icons.report, color: Colors.white),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 40,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                _showReportDialog(context);
+                              },
+                              backgroundColor:
+                                  const Color.fromARGB(255, 94, 10, 5),
+                              child: const Icon(Icons.report,
+                                  color: Colors.white,
+                                  size: 20), // Ajustando o tamanho do ícone
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Reportar',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                          height: 4), // Espaçamento entre o ícone e o texto
-                      const Text(
-                        'Reportar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12, // Tamanho da fonte do texto
-                        ),
+                      const SizedBox(width: 5.0), // Espaço horizontal
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 40,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                _showReportDialog(context);
+                              },
+                              backgroundColor:
+                                  const Color.fromARGB(255, 17, 1, 32),
+                              child: const Icon(Icons.shopping_bag_rounded,
+                                  color: Color.fromARGB(255, 253, 253, 253),
+                                  size: 20), // Ajustando o tamanho do ícone
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Sacola',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -85,26 +123,59 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  product.type,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    backgroundColor: Color.fromARGB(255, 38, 31, 73),
-                    color: Color.fromARGB(255, 255, 255, 255),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(118, 3, 13, 196),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      double fontSizeType = 15.0;
+
+                      // Ajusta o tamanho do texto de product.type com base no comprimento de product.name
+                      if (product.name.length > 10) {
+                        fontSizeType =
+                            14.0; // Diminuir o tamanho da fonte de product.type
+                      }
+
+                      return Text(
+                        product.type,
+                        style: TextStyle(
+                          fontSize: fontSizeType,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(width: 16.0),
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
+                const SizedBox(
+                    width: 10.0), // Espaço entre o tipo do produto e o nome
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      double fontSizeName =
+                          product.name.length > 10 ? 17.0 : 22.0;
+                      return Text(
+                        product.name,
+                        style: TextStyle(
+                          fontSize: fontSizeName,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow
+                            .ellipsis, // Adiciona reticências se o texto for muito longo
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                // Botões de avaliação
                 ElevatedButton(
                   onPressed: () {
                     // Ação para avaliar o produto (thumb down)
@@ -117,7 +188,7 @@ class ProductDetailsPage extends StatelessWidget {
                     color: Color.fromARGB(255, 230, 1, 1),
                   ),
                 ),
-                const SizedBox(width: 5.0), // Espaço entre os botões
+                const SizedBox(width: 5.0),
                 ElevatedButton(
                   onPressed: () {
                     // Ação para avaliar o produto (thumb up)
@@ -164,7 +235,7 @@ class ProductDetailsPage extends StatelessWidget {
               padding:
                   const EdgeInsets.all(16.0), // Adicionando padding interno
               // child: Text(
-              //   product.description, // Supondo que o modelo ProductItem tenha uma descrição
+              //   product.description, // ProductItem deve ter uma descrição
               //   style: const TextStyle(
               //     color: Colors.white, // Cor do texto
               //     fontSize: 16, // Tamanho da fonte
@@ -172,7 +243,6 @@ class ProductDetailsPage extends StatelessWidget {
               // ),
             ),
             const SizedBox(height: 16.0),
-            // Adicionando o título para as avaliações
             const Text(
               'AVALIAÇÕES',
               style: TextStyle(
@@ -273,7 +343,7 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // Aqui você pode adicionar a lógica para reportar o produto
+                //Lógica para reportar o produto
                 Navigator.of(context).pop(); // Fecha o diálogo
               },
               child: const Text("Reportar"),
