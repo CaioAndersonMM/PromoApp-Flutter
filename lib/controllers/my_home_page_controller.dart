@@ -7,10 +7,13 @@ import 'package:meu_app/databases/db_firestore.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageController extends GetxController {
   var allproducts = <ProductItem>[].obs;
   var filteredProducts = <ProductItem>[].obs;
+  var currentPageIndex = 0.obs;
+  var currentFilterCriteria = 'Tudo'.obs;
 
   // Variável reativa para armazenar o caminho da imagem
   var imagePath = ''.obs;
@@ -19,11 +22,11 @@ class MyHomePageController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
+    _loadSelectedCity(); // Carrega a cidade selecionada ao iniciar
     print('Iniciando MyHomePageController');
-    print(filteredProducts);
     _loadProducts().then((__) {
-      filterAndSortProducts('Mais Baratos',
-          'Tudo'); // Espera a conclusão do carregamento dos produtos para filtrar e ordenar de primeira
+      filterAndSortProducts('Mais Baratos', 'Tudo');
     });
   }
 
@@ -124,16 +127,25 @@ class MyHomePageController extends GetxController {
 
   var selectedIndex = 0.obs;
 
-  void updateSelectedCity(String newCity) {
-    selectedCity.value = newCity;
-  }
+void updateSelectedCity(String newCity) async {
+  selectedCity.value = newCity;
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('selectedCity', newCity);
+  Get.snackbar('Cidade Atualizada', 'A cidade foi alterada para $newCity'); // Notifica o usuário
+}
 
   void showCitySelectionAlert() {
     Get.snackbar(
         'Aviso', 'Por favor, selecione uma cidade ou ative a localização.');
   }
 
+ Future<void> _loadSelectedCity() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    selectedCity.value = prefs.getString('selectedCity') ?? 'Selecione uma cidade';
+  }
+
   void filterAndSortProducts(String sortCriteria, String filterCriteria) {
+    currentFilterCriteria.value = filterCriteria; // Armazena o critério atual
     List<ProductItem> tempProducts = List.from(allproducts);
 
     switch (filterCriteria) {
@@ -172,17 +184,22 @@ class MyHomePageController extends GetxController {
 
   var isLocationEnabled = false.obs;
 
-   void activateLocation() {
-    getCityFromIP(); // Chama o método para obter a cidade
+  Future<void> activateLocation() async {
+    await getCityFromIP(); // Chama o método para obter a cidade
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('selectedCity', selectedCity.value); // Armazena a cidade no SharedPreferences
+    filterAndSortProducts('Mais Baratos', 'Tudo');
   }
 
-    Future<void> getCityFromIP() async {
+  Future<void> getCityFromIP() async {
     try {
       final response = await http.get(Uri.parse('http://ip-api.com/json/'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         selectedCity.value = data['city'] ?? 'Cidade desconhecida';
         Get.snackbar('Localização Detectada', 'Cidade: ${selectedCity.value}');
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('selectedCity', selectedCity.value); // Atualiza a cidade no SharedPreferences
       } else {
         Get.snackbar('Erro', 'Não foi possível obter a localização');
       }
@@ -190,5 +207,4 @@ class MyHomePageController extends GetxController {
       Get.snackbar('Erro', 'Falha ao obter cidade: $e');
     }
   }
-
 }
