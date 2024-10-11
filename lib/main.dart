@@ -6,21 +6,19 @@ import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/pages/comidasPage.dart';
+import 'package:meu_app/pages/cadastroPage.dart';
 import 'package:meu_app/pages/desejosPage.dart';
-import 'package:meu_app/pages/eventosPage.dart';
 import 'package:meu_app/pages/inicioPage.dart';
 import 'package:meu_app/pages/interessesPage.dart';
+import 'package:meu_app/pages/loginPage.dart';
 import 'package:meu_app/pages/produtosPage.dart';
-import 'package:meu_app/pages/user_profile.dart';
-import 'package:meu_app/widgets/caixa_pesquisa.dart';
-import 'package:meu_app/widgets/header_products.dart';
-import 'package:meu_app/widgets/menu_cidades.dart';
-import 'package:meu_app/widgets/type_item.dart';
-import 'package:meu_app/widgets/product_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meu_app/pages/user_profile.dart';
+import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,13 +33,41 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Promoapp',
-      initialRoute: '/home',
+      initialRoute: '/', //rota de verificação de autenticação
       getPages: [
+        GetPage(name: '/', page: () => AuthCheck()), // Verifica a autenticação primeiro
         GetPage(name: '/home', page: () => MyHomePage()),
+        GetPage(name: '/login', page: () => LoginPage()),
+        GetPage(name: '/cadastro', page: () => CadastroPage()),
         GetPage(name: '/userProfile', page: () => const UserProfilePage()),
         GetPage(name: '/desejo', page: () => DesejosPage()),
         GetPage(name: '/interesses', page: () => InteressesPage()),
       ],
+    );
+  }
+}
+
+class AuthCheck extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // Se o usuário está autenticado, redireciona para a home
+        if (snapshot.connectionState == ConnectionState.active) {
+          final User? user = snapshot.data;
+          if (user == null) {
+            return LoginPage(); // Não autenticado, vai para a tela de login
+          } else {
+            return MyHomePage(); // Usuário autenticado, vai para a home
+          }
+        } else {
+          // Exibe uma tela de carregamento enquanto verifica o estado
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+      },
     );
   }
 }
@@ -227,12 +253,24 @@ class MyHomePage extends StatelessWidget {
 
       // Armazena a URL do arquivo salvo no controlador (ou use onde precisar)
       controller.imagePath.value = savedImage.path;
-      Get.snackbar('Foto Capturada', 'A imagem foi salva com sucesso!');
+      Get.snackbar('Foto Capturada', 'A imagem foi salva com sucesso!',
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10),
+      );
 
       // Chama o método para mostrar o formulário de adição do produto
       await showProductForm(savedImage.path);
     } else {
-      Get.snackbar('Erro', 'Nenhuma imagem foi capturada.');
+      Get.snackbar('Erro', 'Nenhuma imagem foi capturada.',
+       backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10),
+      );
     }
   }
   @override
