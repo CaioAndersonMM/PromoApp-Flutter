@@ -38,10 +38,18 @@ class _CadastroPageState extends State<CadastroPage> {
     // }
 
     if (emailController.text == 'admin' && passwordController.text == 'admin') {
-      Get.snackbar('Sucesso', 'Login efetuado com sucesso!');
+      Get.snackbar('Sucesso', 'Login efetuado com sucesso!',  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10),);
       Get.offNamed('/home');
     } else {
-      Get.snackbar('Erro', 'Usuário ou senha inválidos!');
+      Get.snackbar('Erro', 'Usuário ou senha inválidos!',  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10),);
     }
   }
 
@@ -133,12 +141,22 @@ class _CadastroPageState extends State<CadastroPage> {
             const SizedBox(height: 80),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(
-                    double.infinity, 50), // Largura máxima e altura fixa
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                shadowColor: const Color.fromARGB(118, 3, 13, 196),
+                elevation: 5,
               ),
               onPressed: _register,
-              child: const Text('Cadastrar',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'Cadastrar',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 255, 255, 255)),
+              ),
             ),
             const SizedBox(height: 30),
           ],
