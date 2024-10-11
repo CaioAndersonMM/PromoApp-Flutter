@@ -1,12 +1,11 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageController extends GetxController {
@@ -127,21 +126,37 @@ class MyHomePageController extends GetxController {
 
   var selectedIndex = 0.obs;
 
-void updateSelectedCity(String newCity) async {
-  selectedCity.value = newCity;
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('selectedCity', newCity);
-  Get.snackbar('Cidade Atualizada', 'A cidade foi alterada para $newCity'); // Notifica o usuário
-}
+  void updateSelectedCity(String newCity) async {
+    selectedCity.value = newCity;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('selectedCity', newCity);
+    Get.snackbar(
+      'Cidade Atualizada',
+      'A cidade foi alterada para $newCity',
+      backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      borderRadius: 10,
+      margin: const EdgeInsets.all(10),
+    ); // Notifica o usuário
+  }
 
   void showCitySelectionAlert() {
     Get.snackbar(
-        'Aviso', 'Por favor, selecione uma cidade ou ative a localização.');
+      'Aviso',
+      'Por favor, selecione uma cidade ou ative a localização.',
+      backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 10,
+      margin: const EdgeInsets.all(10),
+    );
   }
 
- Future<void> _loadSelectedCity() async {
+  Future<void> _loadSelectedCity() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    selectedCity.value = prefs.getString('selectedCity') ?? 'Selecione uma cidade';
+    selectedCity.value =
+        prefs.getString('selectedCity') ?? 'Selecione uma cidade';
   }
 
   void filterAndSortProducts(String sortCriteria, String filterCriteria) {
@@ -197,14 +212,39 @@ void updateSelectedCity(String newCity) async {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         selectedCity.value = data['city'] ?? 'Cidade desconhecida';
-        Get.snackbar('Localização Detectada', 'Cidade: ${selectedCity.value}');
+        Get.snackbar(
+          'Localização Detectada',
+          'Cidade: ${selectedCity.value}',
+          backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          borderRadius: 10,
+          margin: const EdgeInsets.all(10),
+        );
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('selectedCity', selectedCity.value); // Atualiza a cidade no SharedPreferences
+        prefs.setString('selectedCity',
+            selectedCity.value); // Atualiza a cidade no SharedPreferences
       } else {
-        Get.snackbar('Erro', 'Não foi possível obter a localização');
+        Get.snackbar(
+          'Erro',
+          'Não foi possível obter a localização',
+          backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          borderRadius: 10,
+          margin: const EdgeInsets.all(10),
+        );
       }
     } catch (e) {
-      Get.snackbar('Erro', 'Falha ao obter cidade: $e');
+      Get.snackbar(
+        'Erro',
+        'Falha ao obter cidade: $e',
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10),
+      );
     }
   }
 }
