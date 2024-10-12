@@ -1,25 +1,16 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/pages/comidasPage.dart';
-import 'package:meu_app/pages/desejosPage.dart';
 import 'package:meu_app/pages/eventosPage.dart';
-import 'package:meu_app/pages/interessesPage.dart';
 import 'package:meu_app/pages/produtosPage.dart';
-import 'package:meu_app/pages/user_profile.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
-import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/type_item.dart';
 import 'package:meu_app/widgets/product_widget.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class InicioPage extends StatelessWidget {
   InicioPage({super.key});
@@ -31,7 +22,7 @@ class InicioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(  // Adicionei 'return' e removi 'body:'
+    return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
         children: <Widget>[
