@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -58,6 +59,9 @@ class EventosController extends GetxController {
 
       events.add(event);
       print('Evento salvo no Firestore: ${event.name}');
+      // Chama o _loadProducts do MyHomePageController
+      MyHomePageController homePageController = Get.find();
+      await homePageController.updateProducts();
     } catch (e) {
       print('Erro ao salvar evento: $e');
     }
