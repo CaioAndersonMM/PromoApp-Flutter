@@ -19,7 +19,6 @@ import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -35,7 +34,9 @@ class MyApp extends StatelessWidget {
       title: 'Promoapp',
       initialRoute: '/', //rota de verificação de autenticação
       getPages: [
-        GetPage(name: '/', page: () => AuthCheck()), // Verifica a autenticação primeiro
+        GetPage(
+            name: '/',
+            page: () => AuthCheck()), // Verifica a autenticação primeiro
         GetPage(name: '/home', page: () => MyHomePage()),
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/cadastro', page: () => CadastroPage()),
@@ -87,7 +88,8 @@ class MyHomePage extends StatelessWidget {
     const DesejosPage(),
     InteressesPage(),
   ];
- Future<void> showProductForm(String imageUrl) async {
+
+  Future<void> showProductForm(String imageUrl) async {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController locationController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
@@ -197,7 +199,11 @@ class MyHomePage extends StatelessWidget {
                                   child: const Text('Cancelar'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    controller.isLoading.value =
+                                        true; // Inicia o carregamento
+                                    Navigator.of(context).pop();
+
                                     double price =
                                         double.tryParse(priceController.text) ??
                                             0.0;
@@ -210,15 +216,20 @@ class MyHomePage extends StatelessWidget {
                                       type: selectedType,
                                     );
 
-                                    if (selectedType == 'Comida') {
-                                      controllerComida.addProduct(product);
-                                    } else if (selectedType == 'Produto') {
-                                      controllerProduto.addProduct(product);
-                                    } else if (selectedType == 'Evento') {
-                                      controllerEvento.addEvent(product);
+                                    try {
+                                      if (selectedType == 'Comida') {
+                                        await controllerComida
+                                            .addProduct(product);
+                                      } else if (selectedType == 'Produto') {
+                                        await controllerProduto
+                                            .addProduct(product);
+                                      } else if (selectedType == 'Evento') {
+                                        await controllerEvento
+                                            .addEvent(product);
+                                      }
+                                    } finally {
+                                      controller.isLoading.value = false;
                                     }
-
-                                    Navigator.of(context).pop();
                                   },
                                   child: const Text('Adicionar'),
                                 ),
@@ -253,7 +264,9 @@ class MyHomePage extends StatelessWidget {
 
       // Armazena a URL do arquivo salvo no controlador (ou use onde precisar)
       controller.imagePath.value = savedImage.path;
-      Get.snackbar('Foto Capturada', 'A imagem foi salva com sucesso!',
+      Get.snackbar(
+        'Foto Capturada',
+        'A imagem foi salva com sucesso!',
         backgroundColor: const Color.fromARGB(255, 3, 41, 117),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -264,8 +277,10 @@ class MyHomePage extends StatelessWidget {
       // Chama o método para mostrar o formulário de adição do produto
       await showProductForm(savedImage.path);
     } else {
-      Get.snackbar('Erro', 'Nenhuma imagem foi capturada.',
-       backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+      Get.snackbar(
+        'Erro',
+        'Nenhuma imagem foi capturada.',
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
         borderRadius: 10,
@@ -273,6 +288,7 @@ class MyHomePage extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -302,12 +318,23 @@ class MyHomePage extends StatelessWidget {
         },
       ),
       body: Obx(() {
-        return Container(
-          color: const Color.fromRGBO(0, 12, 36, 1), // Cor de fundo
-          child: IndexedStack(
-            index: controller.selectedIndex.value,
-            children: _pages,
-          ),
+        return Stack(
+          children: [
+            Container(
+              color: const Color.fromRGBO(0, 12, 36, 1), // Cor de fundo
+              child: IndexedStack(
+                index: controller.selectedIndex.value,
+                children: _pages,
+              ),
+            ),
+            if (controller.isLoading.value)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         );
       }),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
@@ -337,7 +364,9 @@ class MyHomePage extends StatelessWidget {
                 controller.showCitySelectionAlert();
               } else {
                 if (index == 1) {
+                  controller.isLoading.value = true; // Inicia o carregamento
                   await _pickImageFromCamera();
+                  controller.isLoading.value = false; // Finaliza o carregamento
                 } else {
                   controller.selectedIndex.value = index;
                 }
