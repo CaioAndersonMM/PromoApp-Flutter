@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/desejos_controller.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/main.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:meu_app/pages/myhomepage.dart';
 import 'package:meu_app/widgets/product_widget.dart'; // Supondo que você tenha um widget para exibir produtos
 
 class DesejosPage extends StatelessWidget {

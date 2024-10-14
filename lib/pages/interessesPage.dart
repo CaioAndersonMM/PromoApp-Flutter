@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/interesses_controller.dart';
-import 'package:meu_app/main.dart';
+import 'package:meu_app/pages/myhomepage.dart';
 import 'package:meu_app/widgets/caixa_interesses.dart';
-import 'package:meu_app/widgets/caixa_pesquisa.dart';
 
 class InteressesPage extends StatelessWidget {
   InteressesPage({Key? key}) : super(key: key);
