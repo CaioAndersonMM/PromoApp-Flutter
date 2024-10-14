@@ -12,6 +12,7 @@ class MyHomePageController extends GetxController {
   var filteredProducts = <ProductItem>[].obs;
   var currentPageIndex = 0.obs;
   var currentFilterCriteria = 'Tudo'.obs;
+  var isLoading = false.obs; // Variável de estado de carregamento
 
   // Variável reativa para armazenar o caminho da imagem
   var imagePath = ''.obs;

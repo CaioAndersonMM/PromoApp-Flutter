@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProdutosController extends GetxController {
   var products = <ProductItem>[].obs;
   final FirebaseFirestore _firestore = DBFirestore.get();
+  var isLoading = false.obs;
 
   @override
   void onInit() {

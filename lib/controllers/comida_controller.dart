@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 class ComidasController extends GetxController {
   var products = <ProductItem>[].obs;
   final FirebaseFirestore _firestore = DBFirestore.get();
+  var isLoading = false.obs; // Variável de estado de carregamento
 
   @override
   void onInit() {
@@ -49,6 +50,7 @@ class ComidasController extends GetxController {
   }
 
   Future<void> addProduct(ProductItem product) async {
+    isLoading.value = true;
     try {
       // Obtém a posição atual
       Position position = await Geolocator.getCurrentPosition(
@@ -75,6 +77,8 @@ class ComidasController extends GetxController {
       await homePageController.updateProducts();
     } catch (e) {
       print('Erro ao salvar produto: $e');
+    } finally {
+      isLoading.value = false; // Finaliza o estado de carregamento
     }
   }
 }
