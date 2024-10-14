@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/product_item.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -128,7 +129,7 @@ class ProductDetailsPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(118, 3, 13, 196),
+                    color: const Color.fromARGB(118, 3, 13, 196),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: LayoutBuilder(
@@ -146,7 +147,7 @@ class ProductDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: fontSizeType,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -166,7 +167,7 @@ class ProductDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: fontSizeName,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow
@@ -243,14 +244,34 @@ class ProductDetailsPage extends StatelessWidget {
               // ),
             ),
             const SizedBox(height: 16.0),
-            const Text(
-              'AVALIAÇÕES',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+
+            Row(
+              children: [
+                const Text(
+                  'AVALIAÇÕES',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    _showAddReviewDialog(context);
+                  },
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text(
+                    'Avaliar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 5, 20, 94),
+                  ),
+                ),
+              ],
             ),
+
             const SizedBox(height: 10.0),
             // Lista de avaliações fictícias
             _buildReviewList(),
@@ -353,4 +374,70 @@ class ProductDetailsPage extends StatelessWidget {
       },
     );
   }
+}
+
+void _showAddReviewDialog(BuildContext context) {
+  final TextEditingController reviewController = TextEditingController();
+  int selectedStars = 0;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Adicionar sua avaliação"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Quantas estrelas você dá para este produto?"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: Icon(
+                    size: 30,
+                    index < selectedStars ? Icons.star : Icons.star_border,
+                    color: const Color.fromARGB(255, 172, 156, 13),
+                  ),
+                  onPressed: () {
+                    selectedStars = index + 1;
+                    (context as Element).markNeedsBuild();
+                  },
+                );
+              }),
+            ),
+            TextField(
+              controller: reviewController,
+              decoration: const InputDecoration(
+                labelText: "Sua avaliação",
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Fecha o diálogo
+            },
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.snackbar(
+                'Avaliação feita',
+                'Obrigado! Outros usuários poderão ver sua avaliação.',
+                backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+                colorText: Colors.white,
+                snackPosition: SnackPosition.BOTTOM,
+                borderRadius: 10,
+                margin: const EdgeInsets.all(10),
+              );
+              Navigator.of(context).pop(); // Fecha o diálogo
+            },
+            child: const Text("Adicionar"),
+          ),
+        ],
+      );
+    },
+  );
 }
