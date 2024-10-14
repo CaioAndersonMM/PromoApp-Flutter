@@ -67,13 +67,15 @@ class InicioPage extends StatelessWidget {
             spacing: 20.0,
             runSpacing: 10.0,
             children: <Widget>[
-              TypeItem(name: 'Comidas', destinationPage: ComidasPage()),
-              const TypeItem(name: 'Produtos', destinationPage: ProdutosPage()),
-              const TypeItem(name: 'Eventos', destinationPage: EventosPage()),
+              TypeItem(name: 'Em Alta', destinationPage: ComidasPage()),
+              const TypeItem(
+                  name: 'Especiais', destinationPage: ProdutosPage()),
+              const TypeItem(
+                  name: 'Mais Perto', destinationPage: EventosPage()),
             ],
           ),
           const SizedBox(height: 25),
-           caixaPesquisa(
+          caixaPesquisa(
             placeholder: 'Pesquisar produtos, lojas, promoções...',
             controller: searchController,
             onChanged: (value) {
@@ -104,6 +106,13 @@ class InicioPage extends StatelessWidget {
               );
             }),
           ),
+          if (controller.isLoading.value)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );
