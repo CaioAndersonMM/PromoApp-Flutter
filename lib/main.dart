@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/cadastro', page: () => CadastroPage()),
         GetPage(name: '/userProfile', page: () => const UserProfilePage()),
-        GetPage(name: '/desejo', page: () => DesejosPage()),
+        GetPage(name: '/desejo', page: () => const DesejosPage()),
         GetPage(name: '/interesses', page: () => InteressesPage()),
       ],
     );
@@ -214,6 +214,8 @@ class MyHomePage extends StatelessWidget {
                                       location: locationController.text,
                                       price: price,
                                       type: selectedType,
+                                      description: descriptionController.text,
+                                      rate: null,
                                     );
 
                                     try {
@@ -221,12 +223,25 @@ class MyHomePage extends StatelessWidget {
                                         await controllerComida
                                             .addProduct(product);
                                       } else if (selectedType == 'Produto') {
+                                        print('Adicionando produto');
                                         await controllerProduto
                                             .addProduct(product);
                                       } else if (selectedType == 'Evento') {
                                         await controllerEvento
                                             .addEvent(product);
                                       }
+                                    } catch (e) {
+                                      print('Erro ao adicionar produto: $e');
+                                      Get.snackbar(
+                                        'Erro',
+                                        'Falha ao adicionar produto: $e',
+                                        backgroundColor:
+                                            const Color.fromARGB(255, 61, 2, 2),
+                                        colorText: Colors.white,
+                                        snackPosition: SnackPosition.TOP,
+                                        borderRadius: 10,
+                                        margin: const EdgeInsets.all(10),
+                                      );
                                     } finally {
                                       controller.isLoading.value = false;
                                     }
@@ -304,12 +319,50 @@ class MyHomePage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Get.toNamed('/userProfile', arguments: controller.dadosUsuario);
-            },
-          ),
+          Obx(() {
+            return Row(
+              children: [
+                if (controller.selectedIndex.value == 0)
+                  IconButton(
+                    icon: const Icon(Icons.message),
+                    onPressed: () {
+                            showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Notificações Recentes'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('03:00 - Videogame em oferta na Pichau'),
+                  Text('10:00 - Promoções de roupas na C&A'),
+                  Text('13:55 - Desconto em eletrônico na Amazon'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Fechar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+                    },
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.person),
+                  onPressed: () {
+                    Get.toNamed('/userProfile',
+                        arguments: controller.dadosUsuario);
+                  },
+                ),
+              ],
+            );
+          }),
         ],
       ),
       drawer: MenuCidades(
@@ -343,9 +396,10 @@ class MyHomePage extends StatelessWidget {
               BottomNavigationBarItem(
                   icon: Icon(Icons.add_circle_outline), label: 'Publicar'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_basket), label: 'Sacola'),
+                  icon: Icon(Icons.assignment_turned_in_outlined),
+                  label: 'Salvos'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.star), label: 'Interesses'),
+                  icon: Icon(Icons.saved_search), label: 'Interesses'),
             ],
             currentIndex: controller.selectedIndex.value,
             selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
