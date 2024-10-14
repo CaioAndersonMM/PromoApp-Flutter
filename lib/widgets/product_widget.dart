@@ -106,8 +106,8 @@ class ProductWidget extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(
-                      Icons.shopping_bag_outlined,
-                      color: Colors.blue,
+                      Icons.assignment_returned_rounded,
+                      color: Color.fromARGB(192, 21, 99, 163),
                     ),
                     onPressed: () async {
                       final dbHelper = DatabaseHelper();
@@ -129,14 +129,27 @@ class ProductWidget extends StatelessWidget {
                       );
                     },
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.remove_red_eye_rounded,
-                      color: Colors.blue,
+                  Container(
+                    width: 25, // Largura do quadrado
+                    height: 25, // Altura do quadrado
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: _getRateColor(product.rate), // Cor da borda cinza
+                      ),
+                      borderRadius:
+                          BorderRadius.circular(5), // Bordas arredondadas
                     ),
-                    onPressed: () {
-                      // Ação quando o ícone é pressionado
-                    },
+                    child: Center(
+                      child: Text(
+                        product.rate?.toString() ??
+                            '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
+                        style: TextStyle(
+                          color: _getRateColor(product.rate), // Cor do texto
+                          fontWeight: FontWeight.bold, // Negrito
+                          fontSize: 15, // Tamanho da fonte
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -145,5 +158,18 @@ class ProductWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getRateColor(double? rate) {
+    if (rate == null)
+      return const Color.fromARGB(220, 4, 22, 104); // Cor atual
+    final rateValue = rate;
+    if (rateValue < 3) {
+      return const Color.fromARGB(255, 116, 17, 17)!; // Vermelho escuro
+    } else if (rateValue == 3 || rateValue == 3.7) {
+      return const Color.fromARGB(220, 4, 22, 104); // Cor atual
+    } else {
+      return Color.fromARGB(255, 13, 114, 18)!; // Verde escuro
+    }
   }
 }

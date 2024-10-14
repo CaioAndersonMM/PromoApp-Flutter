@@ -119,7 +119,7 @@ class ProductDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           const Text(
-                            'Sacola',
+                            'Salvar',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
