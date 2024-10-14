@@ -65,7 +65,7 @@ class ProductDetailsPage extends StatelessWidget {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 50,
                             height: 40,
                             child: FloatingActionButton(
@@ -93,12 +93,22 @@ class ProductDetailsPage extends StatelessWidget {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 50,
                             height: 40,
                             child: FloatingActionButton(
                               onPressed: () {
-                                _showReportDialog(context);
+                                // _showReportDialog(context);
+                                Get.snackbar(
+                                  'Produto adicionado a sacola!',
+                                  'Você poderá vê-lo acessando o menu.',
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 3, 41, 117),
+                                  colorText: Colors.white,
+                                  snackPosition: SnackPosition.TOP,
+                                  borderRadius: 10,
+                                  margin: const EdgeInsets.all(10),
+                                );
                               },
                               backgroundColor:
                                   const Color.fromARGB(255, 17, 1, 32),
@@ -266,7 +276,7 @@ class ProductDetailsPage extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 5, 20, 94),
+                    backgroundColor: const Color.fromARGB(255, 5, 20, 94),
                   ),
                 ),
               ],
@@ -349,12 +359,29 @@ class ProductDetailsPage extends StatelessWidget {
   }
 
   void _showReportDialog(BuildContext context) {
+    final TextEditingController _reportReasonController =
+        TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Reportar Produto"),
-          content: const Text("Deseja realmente reportar este produto?"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Deseja realmente reportar este produto?"),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _reportReasonController,
+                decoration: const InputDecoration(
+                  hintText: "Explique o motivo do reporte",
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -364,7 +391,17 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                //Lógica para reportar o produto
+                Get.snackbar(
+                  'Reporte feito',
+                  'Moderadores irão verificar e tomar as devidas providências.',
+                  backgroundColor: const Color.fromARGB(255, 73, 3, 3),
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.TOP,
+                  borderRadius: 10,
+                  margin: const EdgeInsets.all(10),
+                );
+                String reportReason = _reportReasonController.text;
+                // Adicione a lógica para lidar com o motivo do reporte aqui
                 Navigator.of(context).pop(); // Fecha o diálogo
               },
               child: const Text("Reportar"),
