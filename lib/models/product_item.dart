@@ -5,6 +5,8 @@ class ProductItem {
   final String location;
   final double price;
   final String type;
+  final String? description;
+  final double? rate;
 
   ProductItem({
     this.id,
@@ -13,6 +15,8 @@ class ProductItem {
     required this.location,
     required this.price,
     required this.type,
+    this.description,
+    this.rate,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +27,8 @@ class ProductItem {
       'location': location,
       'price': price,
       'type': type,
+      'description': description,
+      'rate': rate,
     };
   }
 
@@ -34,6 +40,8 @@ class ProductItem {
       location: map['location'],
       price: map['price'],
       type: map['type'],
+      description: map['description'],
+      rate: map['rate'],
     );
   }
 }
