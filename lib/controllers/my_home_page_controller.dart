@@ -118,7 +118,6 @@ class MyHomePageController extends GetxController {
       print('Todos os produtos carregados: $allProducts');
 
       filterAndSortProducts(currentFilterCriteria.value, 'Tudo');
-
     } catch (e) {
       print('Erro ao carregar produtos: $e');
     }
@@ -169,48 +168,60 @@ class MyHomePageController extends GetxController {
         prefs.getString('selectedCity') ?? 'Selecione uma cidade';
   }
 
-  void filterAndSortProducts(String sortCriteria, String filterCriteria) {
-  currentFilterCriteria.value = filterCriteria; // Armazena o critério atual
-  List<ProductItem> tempProducts = List.from(allproducts);
+  void filterAndSortProducts(String sortCriteria, String filterCriteria,
+      {String searchQuery = ''}) {
+    currentFilterCriteria.value = filterCriteria; // Armazena o critério atual
+    List<ProductItem> tempProducts = List.from(allproducts);
 
-  // Ajustando o filtro
-  if (filterCriteria == 'Comidas') {
-    filterCriteria = 'Comida';
-  } else if (filterCriteria == 'Produtos') {
-    filterCriteria = 'Produto';
-  } else if (filterCriteria == 'Eventos') {
-    filterCriteria = 'Evento';
+    switch (filterCriteria) {
+      case 'Comidas':
+        filterCriteria = 'Comida';
+        break;
+      case 'Produtos':
+        filterCriteria = 'Produto';
+        break;
+      case 'Eventos':
+        filterCriteria = 'Evento';
+        break;
+    }
+
+    // Filtrando produtos por tipo
+    if (filterCriteria != 'Tudo') {
+      tempProducts = tempProducts
+          .where((product) => product.type == filterCriteria)
+          .toList();
+    }
+
+    // Filtrando produtos por pesquisa
+    if (searchQuery.isNotEmpty) {
+      tempProducts = tempProducts
+          .where((product) =>
+              product.name.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    switch (sortCriteria) {
+      case 'Mais Baratos':
+        tempProducts.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Mais Recentes':
+        // Lógica para ordenar mais recentes pode ser implementada aqui
+        break;
+      case 'Mais Comprados':
+        // Adicione aqui a lógica de "mais comprados" se disponível
+        break;
+    }
+
+    filteredProducts.value = tempProducts;
   }
-
-  // Filtrando produtos por tipo
-  if (filterCriteria != 'Tudo') {
-    tempProducts = tempProducts.where((product) => product.type == filterCriteria).toList();
-  }
-
-  // Ordenando produtos conforme o critério
-  switch (sortCriteria) {
-    case 'Mais Baratos':
-      tempProducts.sort((a, b) => a.price.compareTo(b.price));
-      break;
-    case 'Mais Recentes':
-      // Adicione a lógica para ordenar por data se necessário
-      break;
-    case 'Mais Comprados':
-      // Adicione a lógica para "mais comprados" se disponível
-      break;
-  }
-
-  // Atualizando a lista reativa de produtos filtrados
-  filteredProducts.assignAll(tempProducts); // Isso garante que a UI será notificada da mudança
-  print(filteredProducts.iterator);
-}
 
   var isLocationEnabled = false.obs;
 
   Future<void> activateLocation() async {
     await getCityFromIP(); // Chama o método para obter a cidade
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('selectedCity', selectedCity.value); // Armazena a cidade no SharedPreferences
+    prefs.setString('selectedCity',
+        selectedCity.value); // Armazena a cidade no SharedPreferences
     filterAndSortProducts('Mais Baratos', 'Tudo');
   }
 

@@ -19,6 +19,7 @@ class InicioPage extends StatelessWidget {
   final ProdutosController controllerProduto = Get.put(ProdutosController());
   final ComidasController controllerComida = Get.put(ComidasController());
   final EventosController controllerEvento = Get.put(EventosController());
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,17 @@ class InicioPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 25),
-          caixaPesquisa('Pesquisar produtos, lojas, promoções...'),
+           caixaPesquisa(
+            placeholder: 'Pesquisar produtos, lojas, promoções...',
+            controller: searchController,
+            onChanged: (value) {
+              controller.filterAndSortProducts(
+                'Mais Baratos',
+                controller.currentFilterCriteria.value,
+                searchQuery: value,
+              );
+            },
+          ),
           const SizedBox(height: 5),
           headerProducts(),
           Expanded(
