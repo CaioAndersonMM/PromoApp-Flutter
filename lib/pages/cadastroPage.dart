@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meu_app/services/auth.dart';
 
 class CadastroPage extends StatefulWidget {
   @override
@@ -10,12 +11,13 @@ class CadastroPage extends StatefulWidget {
 }
 
 class _CadastroPageState extends State<CadastroPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   final TextEditingController userController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  AuthService authServ = AuthService();
 
   final List<String> cities = [
     'Mossoró',
@@ -26,30 +28,23 @@ class _CadastroPageState extends State<CadastroPage> {
   String selectedCity = 'Mossoró';
 
   Future<void> _register() async {
-    // try {
-    //   UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-    //     email: emailController.text,
-    //     password: passwordController.text,
-    //   );
-    //   // Autenticação bem-sucedida, redireciona para a página inicial
-    //   Get.offNamed('/home');
-    // } catch (e) {
-    //   Get.snackbar('Erro de login', 'Falha na autenticação: $e');
-    // }
+    String message = await authServ.cadastrarUsuario(
+      email: emailController.text,
+      password: passwordController.text,
+      name: userController.text,
+      city: cityController.text,
+    );
 
-    if (emailController.text == 'admin' && passwordController.text == 'admin') {
-      Get.snackbar('Sucesso', 'Login efetuado com sucesso!',  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        borderRadius: 10,
-        margin: const EdgeInsets.all(10),);
-      Get.offNamed('/home');
+    if (message == '') {
+      Get.offNamed('/login');
     } else {
-      Get.snackbar('Erro', 'Usuário ou senha inválidos!',  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+      Get.snackbar('Erro', message,
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         borderRadius: 10,
-        margin: const EdgeInsets.all(10),);
+        margin: const EdgeInsets.all(10),
+      );
     }
   }
 

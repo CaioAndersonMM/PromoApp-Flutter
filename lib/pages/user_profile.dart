@@ -8,6 +8,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserProfileController controller = Get.put(UserProfileController());
+    controller.loadUserProfile();
 
     return Scaffold(
       appBar: AppBar(

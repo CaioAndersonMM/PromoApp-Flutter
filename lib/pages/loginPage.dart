@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meu_app/services/auth.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,9 +9,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  AuthService authServ = AuthService();
 
   void _loginConvidado() {
     Get.offNamed('/home');
@@ -28,39 +28,26 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // try {
-    //   UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-    //     email: emailController.text,
-    //     password: passwordController.text,
-    //   );
-    //   // Autenticação bem-sucedida, redireciona para a página inicial
-    //   Get.offNamed('/home');
-    // } catch (e) {
-    //   Get.snackbar('Erro de login', 'Falha na autenticação: $e');
-    // }
+    
+    String message = await authServ.logarUsuario(
+      email: emailController.text,
+      password: passwordController.text,
+    );
 
-    if (emailController.text == 'admin' && passwordController.text == 'admin') {
-      Get.snackbar(
-        'Sucesso',
-        'Login efetuado com sucesso!',
+    if (message == '') {
+      Get.offNamed('/home');
+    } else {
+      Get.snackbar('Erro', message,
         backgroundColor: const Color.fromARGB(255, 3, 41, 117),
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         borderRadius: 10,
         margin: const EdgeInsets.all(10),
       );
-      Get.offNamed('/home');
-    } else {
-      Get.snackbar(
-        'Erro',
-        'Usuário ou senha inválidos!',
-        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-        colorText: const Color.fromARGB(255, 255, 255, 255),
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 10,
-        margin: const EdgeInsets.all(10),
-      );
     }
+
+
+
   }
 
   @override
