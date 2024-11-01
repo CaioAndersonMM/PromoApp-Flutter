@@ -33,6 +33,7 @@ class ProdutosController extends GetxController {
         double price = (data['price'] as num).toDouble();
 
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],

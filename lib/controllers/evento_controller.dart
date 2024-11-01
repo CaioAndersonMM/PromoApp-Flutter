@@ -24,6 +24,7 @@ class EventosController extends GetxController {
       List<ProductItem> eventList = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],

@@ -1,5 +1,5 @@
 class ProductItem {
-  final int? id;
+  final String? id;
   final String name;
   final String imageUrl;
   final String location;
@@ -10,11 +10,11 @@ class ProductItem {
   final double? rate;
 
   ProductItem({
-    this.id,
+    this.id = "",
     required this.name,
     required this.imageUrl,
     required this.location,
-    this.store = " - - - ",
+    this.store = "",
     required this.price,
     required this.type,
     this.description,

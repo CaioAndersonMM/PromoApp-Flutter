@@ -69,6 +69,7 @@ class MyHomePageController extends GetxController {
       List<ProductItem> comidaProducts = comidasSnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
@@ -84,6 +85,7 @@ class MyHomePageController extends GetxController {
       List<ProductItem> produtosList = produtosSnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
@@ -99,6 +101,7 @@ class MyHomePageController extends GetxController {
       List<ProductItem> eventosList = eventosSnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/pages/produtosDetailPage.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/productSave.dart';
 import '../models/product_item.dart';
 
 class ProductWidget extends StatelessWidget {
@@ -14,7 +15,7 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = Get.find<MyHomePageController>().dadosUsuario['id'];
+    final String userId = AuthService().getUserId();
     return GestureDetector(
       onTap: () {
         // Navega para a página de detalhes do produto
@@ -45,22 +46,19 @@ class ProductWidget extends StatelessWidget {
                 child: SizedBox(
                   width: 80,
                   height: 80,
-                  child: product.imageUrl
-                          .startsWith('http') // Verifica se a URL é de rede
+                  child: product.imageUrl.startsWith('http') // Verifica se a URL é de rede
                       ? Image.network(
                           product.imageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                                Icons.error); // Ícone de erro se falhar
+                            return const Icon(Icons.error); // Ícone de erro se falhar
                           },
                         )
                       : Image.file(
                           File(product.imageUrl), // Carrega a imagem local
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                                Icons.error); // Ícone de erro se falhar
+                            return const Icon(Icons.error); // Ícone de erro se falhar
                           },
                         ),
                 ),
@@ -110,22 +108,30 @@ class ProductWidget extends StatelessWidget {
                       color: Color.fromARGB(192, 21, 99, 163),
                     ),
                     onPressed: () async {
-                      final dbHelper = DatabaseHelper();
-                      await dbHelper.inserirDesejo(1, product.id!);
+                      final authService = AuthService(); // Cria uma instância do AuthService
+                      final productSaveService = ProductSaveService(); // Cria uma instância do ProductSaveService
+
+                      print("\n\n\n\n\n\n\n\n");
+                      print("kakaka ${product.name}");
+                      print("kakaka ${product.id}");
+                      print("aqui");
+
+                      // Salva o produto favorito
+                      await productSaveService.salvarProduto(userId, product.id!); // Chama a função para salvar o produto
+
                       Get.snackbar(
                         'Sucesso',
                         'Produto adicionado aos desejos!',
                         backgroundColor: Colors.white, // Fundo branco
                         colorText: Colors.blue[800], // Texto azul escuro
-                        snackPosition: SnackPosition
-                            .BOTTOM, // Posiciona o snackbar na parte inferior
+                        snackPosition: SnackPosition.BOTTOM, // Posiciona o snackbar na parte inferior
                         borderRadius: 8.0, // Borda arredondada opcional
                         margin: const EdgeInsets.all(10.0), // Margem opcional
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10.0), // Padding opcional
-                        duration:
-                            const Duration(seconds: 2), // Duração do snackbar
+                          horizontal: 20.0,
+                          vertical: 10.0,
+                        ), // Padding opcional
+                        duration: const Duration(seconds: 2), // Duração do snackbar
                       );
                     },
                   ),
@@ -136,13 +142,11 @@ class ProductWidget extends StatelessWidget {
                       border: Border.all(
                         color: _getRateColor(product.rate), // Cor da borda cinza
                       ),
-                      borderRadius:
-                          BorderRadius.circular(5), // Bordas arredondadas
+                      borderRadius: BorderRadius.circular(5), // Bordas arredondadas
                     ),
                     child: Center(
                       child: Text(
-                        product.rate?.toString() ??
-                            '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
+                        product.rate?.toString() ?? '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
                         style: TextStyle(
                           color: _getRateColor(product.rate), // Cor do texto
                           fontWeight: FontWeight.bold, // Negrito
@@ -161,8 +165,7 @@ class ProductWidget extends StatelessWidget {
   }
 
   Color _getRateColor(double? rate) {
-    if (rate == null)
-      return const Color.fromARGB(220, 4, 22, 104); // Cor atual
+    if (rate == null) return const Color.fromARGB(220, 4, 22, 104); // Cor atual
     final rateValue = rate;
     if (rateValue < 3) {
       return const Color.fromARGB(255, 116, 17, 17)!; // Vermelho escuro

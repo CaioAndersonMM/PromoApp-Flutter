@@ -34,6 +34,7 @@ class ComidasController extends GetxController {
             .toDouble();
 
         return ProductItem(
+          id: doc.id,
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
