@@ -36,6 +36,7 @@ class ProdutosController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: price,
           type: "Produto",
         );
@@ -78,6 +79,7 @@ class ProdutosController extends GetxController {
         'name': product.name,
         'imageUrl': product.imageUrl,
         'location': product.location,
+        'store': product.store,
         'coords': {
           'latitude': position.latitude,
           'longitude': position.longitude,

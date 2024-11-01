@@ -37,6 +37,7 @@ class ComidasController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: price,
           type: "Comida",
         );
@@ -66,6 +67,7 @@ class ComidasController extends GetxController {
           'longitude': position.longitude,
         },
         'location': product.location,
+        'store': product.store,
         'price': product.price,
       });
 

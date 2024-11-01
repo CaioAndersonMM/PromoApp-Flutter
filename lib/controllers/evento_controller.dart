@@ -27,6 +27,7 @@ class EventosController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: data['price'],
           type: "Evento",
         );
@@ -55,6 +56,7 @@ class EventosController extends GetxController {
           'longitude': position.longitude,
         },
         'location': event.location,
+        'store': event.store,
         'price': event.price,
       });
 

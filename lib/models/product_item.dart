@@ -3,6 +3,7 @@ class ProductItem {
   final String name;
   final String imageUrl;
   final String location;
+  final String store;
   final double price;
   final String type;
   final String? description;
@@ -13,6 +14,7 @@ class ProductItem {
     required this.name,
     required this.imageUrl,
     required this.location,
+    this.store = " - - - ",
     required this.price,
     required this.type,
     this.description,

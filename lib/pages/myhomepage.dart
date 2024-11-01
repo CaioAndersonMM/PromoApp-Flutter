@@ -13,7 +13,6 @@ import 'package:meu_app/pages/produtosPage.dart';
 import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/custom_widgets.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:meu_app/models/product_item.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -32,11 +31,12 @@ class MyHomePage extends StatelessWidget {
 
   Future<void> showProductForm(String imageUrl) async {
     final TextEditingController nameController = TextEditingController();
-    final TextEditingController locationController = TextEditingController();
+    final TextEditingController storeController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
 
     String selectedType = 'Produto';
+    String selectedLocation = controller.selectedCity.value;
 
     await showDialog<void>(
       context: Get.context!,
@@ -85,23 +85,52 @@ class MyHomePage extends StatelessWidget {
                               ),
                             const SizedBox(height: 20),
                             buildTextField(nameController, 'Nome do Produto'),
-                            buildTextField(locationController, 'Estabelecimento'),
+                            const SizedBox(height: 10),
+
+                            // Substituição pelo DropdownButton
+                            DropdownButtonFormField<String>(
+                              value: selectedLocation,
+                              items: [
+                                DropdownMenuItem(
+                                  value: controller.selectedCity.value,
+                                  child: Obx(() => Text(controller.selectedCity.value)),
+                                ),
+                                const DropdownMenuItem(
+                                  value: 'Internet',
+                                  child: Text('Internet'),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedLocation = value!;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Origem do Produto',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+                            buildTextField(storeController, 'Loja'),
                             buildTextField(priceController, 'Preço', keyboardType: TextInputType.number),
                             buildTextField(descriptionController, 'Descrição'),
                             buildDropdownButton(selectedType, setState),
                             const SizedBox(height: 20),
                             buildDialogActions(
-                                context,
-                                controller,
-                                controllerProduto,
-                                controllerComida,
-                                controllerEvento,
-                                nameController,
-                                locationController,
-                                priceController,
-                                descriptionController,
-                                selectedType,
-                                imageUrl),
+                              context,
+                              controller,
+                              controllerProduto,
+                              controllerComida,
+                              controllerEvento,
+                              nameController,
+                              selectedLocation,
+                              storeController,
+                              priceController,
+                              descriptionController,
+                              selectedType,
+                              imageUrl,
+                            ),
                           ],
                         ),
                       ),
@@ -115,6 +144,7 @@ class MyHomePage extends StatelessWidget {
       },
     );
   }
+
 
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();

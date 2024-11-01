@@ -82,7 +82,7 @@ class ProductWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      product.location,
+                      '${product.location}: ${product.store}',
                       style: const TextStyle(
                         fontSize: 15,
                         color: Colors.grey,

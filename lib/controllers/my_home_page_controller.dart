@@ -72,6 +72,7 @@ class MyHomePageController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: (data['price'] is num)
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
@@ -86,6 +87,7 @@ class MyHomePageController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: (data['price'] is num)
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
@@ -100,6 +102,7 @@ class MyHomePageController extends GetxController {
           name: data['name'],
           imageUrl: data['imageUrl'],
           location: data['location'],
+          store: data['store'] ?? '',
           price: (data['price'] is num)
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
@@ -140,6 +143,10 @@ class MyHomePageController extends GetxController {
     selectedCity.value = newCity;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('selectedCity', newCity);
+    
+    // Atualiza os produtos após a mudança de cidade
+    filterAndSortProducts(currentFilterCriteria.value, 'Tudo');
+    
     Get.snackbar(
       'Cidade Atualizada',
       'A cidade foi alterada para $newCity',
@@ -174,6 +181,7 @@ class MyHomePageController extends GetxController {
     currentFilterCriteria.value = filterCriteria; // Armazena o critério atual
     List<ProductItem> tempProducts = List.from(allproducts);
 
+    // Filtrando produtos por tipo
     switch (filterCriteria) {
       case 'Comidas':
         filterCriteria = 'Comida';
@@ -184,6 +192,9 @@ class MyHomePageController extends GetxController {
       case 'Eventos':
         filterCriteria = 'Evento';
         break;
+      case 'Tudo':
+      default:
+        break;
     }
 
     // Filtrando produtos por tipo
@@ -193,6 +204,13 @@ class MyHomePageController extends GetxController {
           .toList();
     }
 
+    // Filtrando produtos por localização (internet ou natal)
+    tempProducts = tempProducts
+        .where((product) =>
+            product.location.toLowerCase() == 'internet' ||
+            product.location.toLowerCase() == selectedCity.value.toLowerCase())
+        .toList();
+
     // Filtrando produtos por pesquisa
     if (searchQuery.isNotEmpty) {
       tempProducts = tempProducts
@@ -201,6 +219,7 @@ class MyHomePageController extends GetxController {
           .toList();
     }
 
+    // Ordenação
     switch (sortCriteria) {
       case 'Mais Baratos':
         tempProducts.sort((a, b) => a.price.compareTo(b.price));
@@ -213,7 +232,7 @@ class MyHomePageController extends GetxController {
         break;
     }
 
-    filteredProducts.value = tempProducts;
+    filteredProducts.value = tempProducts; // Atualiza a lista filtrada
   }
 
   var isLocationEnabled = false.obs;
@@ -241,30 +260,11 @@ class MyHomePageController extends GetxController {
           borderRadius: 10,
           margin: const EdgeInsets.all(10),
         );
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('selectedCity',
-            selectedCity.value); // Atualiza a cidade no SharedPreferences
       } else {
-        Get.snackbar(
-          'Erro',
-          'Não foi possível obter a localização',
-          backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          borderRadius: 10,
-          margin: const EdgeInsets.all(10),
-        );
+        print('Erro ao obter cidade: ${response.statusCode}');
       }
     } catch (e) {
-      Get.snackbar(
-        'Erro',
-        'Falha ao obter cidade: $e',
-        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 10,
-        margin: const EdgeInsets.all(10),
-      );
+      print('Erro ao obter cidade: $e');
     }
   }
 }
