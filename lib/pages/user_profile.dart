@@ -43,7 +43,7 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
   }
 
   int calcularNivel(int? numAvaliacoes, int? numPostagens) {
-    if (numAvaliacoes == null || numPostagens == null) {
+    if (numAvaliacoes == null || numPostagens == null || (numAvaliacoes == 0 && numPostagens == 0)) {
       return 0; // Nível padrão se algum dado estiver ausente
     }
 
