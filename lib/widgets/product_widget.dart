@@ -8,6 +8,7 @@ import 'package:meu_app/pages/produtosDetailPage.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/productSave.dart';
 import '../models/product_item.dart';
+
 final DesejosController desejosController = Get.put(DesejosController());
 
 class ProductWidget extends StatelessWidget {
@@ -53,19 +54,22 @@ class ProductWidget extends StatelessWidget {
                 child: SizedBox(
                   width: 80,
                   height: 80,
-                  child: product.imageUrl.startsWith('http') // Verifica se a URL é de rede
+                  child: product.imageUrl
+                          .startsWith('http') // Verifica se a URL é de rede
                       ? Image.network(
                           product.imageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(Icons.error); // Ícone de erro se falhar
+                            return const Icon(
+                                Icons.error); // Ícone de erro se falhar
                           },
                         )
                       : Image.file(
                           File(product.imageUrl), // Carrega a imagem local
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(Icons.error); // Ícone de erro se falhar
+                            return const Icon(
+                                Icons.error); // Ícone de erro se falhar
                           },
                         ),
                 ),
@@ -112,34 +116,38 @@ class ProductWidget extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       Icons.assignment_returned_rounded,
-                      color: isFavorite == true 
-                        ? Colors.red
-                        : Color.fromARGB(192, 21, 99, 163),
+                      color: isFavorite == true
+                          ? Colors.red
+                          : Color.fromARGB(192, 21, 99, 163),
                     ),
                     onPressed: () async {
-                      final authService = AuthService(); // Cria uma instância do AuthService
-                      final productSaveService = ProductSaveService(); // Cria uma instância do ProductSaveService
+                      final authService =
+                          AuthService(); // Cria uma instância do AuthService
+                      final productSaveService =
+                          ProductSaveService(); // Cria uma instância do ProductSaveService
 
-                      if (isFavorite == true)
-                        await productSaveService.apagarProduto(userId, product.id!);
-                      else
-                        await productSaveService.salvarProduto(userId, product.id!);
-                      
+                      if (isFavorite == true) {
+                        await productSaveService.apagarProduto(
+                            userId, product.id!);
+                        Get.find<DesejosController>().loadDesejos();
+                      } else {
+                        await productSaveService.salvarProduto(
+                            userId, product.id!);
+                        Get.find<DesejosController>().loadDesejos();
+                      }
+
                       desejosController.loadDesejos();
 
                       Get.snackbar(
                         'Sucesso',
-                        isFavorite == true? 'Produto removido dos desejos!': 'Produto adicionado aos desejos!',
-                        backgroundColor: Colors.white, // Fundo branco
-                        colorText: Colors.blue[800], // Texto azul escuro
-                        snackPosition: SnackPosition.BOTTOM, // Posiciona o snackbar na parte inferior
-                        borderRadius: 8.0, // Borda arredondada opcional
+                        isFavorite == true
+                            ? 'Produto removido dos desejos!'
+                            : 'Produto adicionado aos desejos!',
+                        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                        borderRadius: 10,
                         margin: const EdgeInsets.all(10.0), // Margem opcional
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 10.0,
-                        ), // Padding opcional
-                        duration: const Duration(seconds: 2), // Duração do snackbar
                       );
                     },
                   ),
@@ -148,13 +156,16 @@ class ProductWidget extends StatelessWidget {
                     height: 25, // Altura do quadrado
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: _getRateColor(product.rate), // Cor da borda cinza
+                        color:
+                            _getRateColor(product.rate), // Cor da borda cinza
                       ),
-                      borderRadius: BorderRadius.circular(5), // Bordas arredondadas
+                      borderRadius:
+                          BorderRadius.circular(5), // Bordas arredondadas
                     ),
                     child: Center(
                       child: Text(
-                        product.rate?.toString() ?? '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
+                        product.rate?.toString() ??
+                            '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
                         style: TextStyle(
                           color: _getRateColor(product.rate), // Cor do texto
                           fontWeight: FontWeight.bold, // Negrito
