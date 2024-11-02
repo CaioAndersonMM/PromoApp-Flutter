@@ -8,6 +8,8 @@ class ProductItem {
   final String type;
   final String? description;
   final double? rate;
+  final double? latitude; // opcional
+  final double? longitude; // opcional
 
   ProductItem({
     this.id = "",
@@ -19,6 +21,8 @@ class ProductItem {
     required this.type,
     this.description,
     this.rate,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +35,10 @@ class ProductItem {
       'type': type,
       'description': description,
       'rate': rate,
+      'coords': {
+        'latitude': latitude,
+        'longitude': longitude,
+      },
     };
   }
 
@@ -44,6 +52,8 @@ class ProductItem {
       type: map['type'],
       description: map['description'],
       rate: map['rate'],
+      latitude: map['coords']?['latitude'],
+      longitude: map['coords']?['longitude'],
     );
   }
 }
