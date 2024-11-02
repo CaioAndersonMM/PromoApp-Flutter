@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/desejos_controller.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/pages/produtosDetailPage.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/productSave.dart';
@@ -48,30 +46,13 @@ class ProductWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Imagem do produto
+              // Imagem do produto com verificação de tipo
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: SizedBox(
                   width: 80,
                   height: 80,
-                  child: product.imageUrl
-                          .startsWith('http') // Verifica se a URL é de rede
-                      ? Image.network(
-                          product.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                                Icons.error); // Ícone de erro se falhar
-                          },
-                        )
-                      : Image.file(
-                          File(product.imageUrl), // Carrega a imagem local
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                                Icons.error); // Ícone de erro se falhar
-                          },
-                        ),
+                  child: _getProductImage(product),
                 ),
               ),
               const SizedBox(width: 16.0),
@@ -118,25 +99,19 @@ class ProductWidget extends StatelessWidget {
                       Icons.assignment_returned_rounded,
                       color: isFavorite == true
                           ? Colors.red
-                          : Color.fromARGB(192, 21, 99, 163),
+                          : const Color.fromARGB(192, 21, 99, 163),
                     ),
                     onPressed: () async {
-                      final authService =
-                          AuthService(); // Cria uma instância do AuthService
-                      final productSaveService =
-                          ProductSaveService(); // Cria uma instância do ProductSaveService
+                      final authService = AuthService();
+                      final productSaveService = ProductSaveService();
 
                       if (isFavorite == true) {
-                        await productSaveService.apagarProduto(
-                            userId, product.id!);
-                        Get.find<DesejosController>().loadDesejos();
+                        await productSaveService.apagarProduto(userId, product.id!);
+                        desejosController.loadDesejos();
                       } else {
-                        await productSaveService.salvarProduto(
-                            userId, product.id!);
-                        Get.find<DesejosController>().loadDesejos();
+                        await productSaveService.salvarProduto(userId, product.id!);
+                        desejosController.loadDesejos();
                       }
-
-                      desejosController.loadDesejos();
 
                       Get.snackbar(
                         'Sucesso',
@@ -147,29 +122,26 @@ class ProductWidget extends StatelessWidget {
                         colorText: Colors.white,
                         snackPosition: SnackPosition.BOTTOM,
                         borderRadius: 10,
-                        margin: const EdgeInsets.all(10.0), // Margem opcional
+                        margin: const EdgeInsets.all(10.0),
                       );
                     },
                   ),
                   Container(
-                    width: 25, // Largura do quadrado
-                    height: 25, // Altura do quadrado
+                    width: 25,
+                    height: 25,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color:
-                            _getRateColor(product.rate), // Cor da borda cinza
+                        color: _getRateColor(product.rate),
                       ),
-                      borderRadius:
-                          BorderRadius.circular(5), // Bordas arredondadas
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
                       child: Text(
-                        product.rate?.toString() ??
-                            '5', // Converte o número de avaliação para string ou exibe '-' se for nulo
+                        product.rate?.toString() ?? '5',
                         style: TextStyle(
-                          color: _getRateColor(product.rate), // Cor do texto
-                          fontWeight: FontWeight.bold, // Negrito
-                          fontSize: 15, // Tamanho da fonte
+                          color: _getRateColor(product.rate),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
                         ),
                       ),
                     ),
@@ -183,15 +155,52 @@ class ProductWidget extends StatelessWidget {
     );
   }
 
+  Widget _getProductImage(ProductItem product) {
+    // Determina a URL da imagem com base no tipo do produto
+    String imageUrl;
+    if (product.type == 'Produto') {
+      imageUrl = 'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png';
+    } else if (product.type == 'Comida') {
+      imageUrl = 'https://img.freepik.com/vetores-premium/ilustracao-colorida-de-desenhos-animados-de-comida_1305385-66378.jpg?semt=ais_hybrid';
+    } else if (product.type == 'Evento') {
+      imageUrl = 'https://thumbs.dreamstime.com/b/no-show-isolado-ilustra%C3%A7%C3%B5es-do-vetor-de-desenho-animado-grupo-amigos-sorridentes-se-divertem-concerto-evento-grandioso-festival-256583009.jpg';
+    } else {
+      imageUrl = 'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png'; // Imagem padrão
+    }
+
+    // Carrega a imagem da rede ou arquivo local, conforme necessário
+    return product.imageUrl.startsWith('http')
+        ? Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.network(
+                'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png',
+                fit: BoxFit.cover,
+              );
+            },
+          )
+        : Image.file(
+            File(product.imageUrl),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.network(
+                'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png',
+                fit: BoxFit.cover,
+              );
+            },
+          );
+  }
+
   Color _getRateColor(double? rate) {
-    if (rate == null) return const Color.fromARGB(220, 4, 22, 104); // Cor atual
+    if (rate == null) return const Color.fromARGB(220, 4, 22, 104);
     final rateValue = rate;
     if (rateValue < 3) {
-      return const Color.fromARGB(255, 116, 17, 17)!; // Vermelho escuro
+      return const Color.fromARGB(255, 116, 17, 17);
     } else if (rateValue == 3 || rateValue == 3.7) {
-      return const Color.fromARGB(220, 4, 22, 104); // Cor atual
+      return const Color.fromARGB(220, 4, 22, 104);
     } else {
-      return Color.fromARGB(255, 13, 114, 18)!; // Verde escuro
+      return const Color.fromARGB(255, 13, 114, 18);
     }
   }
 }
