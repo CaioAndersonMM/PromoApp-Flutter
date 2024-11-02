@@ -22,12 +22,11 @@ class DesejosPage extends StatelessWidget {
         ),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
         iconTheme: const IconThemeData(color: Colors.white),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Get.offAll(() => MyHomePage());
-        //   },
-        // ),
+        leading: IconButton(
+          icon: const Icon(Icons.shopping_bag_outlined),
+          onPressed: () {
+          },
+        ),
       ),
       body: GetBuilder<DesejosController>(
         builder: (_) {
