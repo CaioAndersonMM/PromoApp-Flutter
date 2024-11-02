@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/models/product_item.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/countProductRate.dart';
 import 'package:meu_app/widgets/product_widget.dart';
 
 class ProdutosPage extends StatelessWidget {
   const ProdutosPage({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +75,7 @@ class ProdutosPage extends StatelessWidget {
     String name = '';
     String location = '';
     double price = 0.0;
+    var countProductService = CountProductRatingService();
 
     showDialog(
       context: context,
@@ -112,6 +116,7 @@ class ProdutosPage extends StatelessWidget {
             TextButton(
               child: const Text('Adicionar'),
               onPressed: () {
+
                 if (name.isNotEmpty && location.isNotEmpty && price > 0) {
                   controller.addProduct(ProductItem(
                     name: name,

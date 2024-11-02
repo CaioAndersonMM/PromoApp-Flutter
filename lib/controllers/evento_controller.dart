@@ -4,11 +4,16 @@ import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/countPosts.dart';
+import 'package:meu_app/services/countProductRate.dart';
 
 class EventosController extends GetxController {
   var events = <ProductItem>[].obs;
   final FirebaseFirestore _firestore = DBFirestore.get();
   var isLoading = false.obs;
+  var countPostService = CountPostService();
+  var countProductService = CountProductRatingService();
 
   @override
   void onInit() {
@@ -60,6 +65,8 @@ class EventosController extends GetxController {
         'store': event.store,
         'price': event.price,
       });
+      
+      countPostService.adicionarPost(AuthService().getUserId());
 
       events.add(event);
       print('Evento salvo no Firestore: ${event.name}');

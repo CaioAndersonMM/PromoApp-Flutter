@@ -4,11 +4,17 @@ import 'package:meu_app/models/product_item.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/countPosts.dart';
+import 'package:meu_app/services/countProductRate.dart';
 
 class ComidasController extends GetxController {
   var products = <ProductItem>[].obs;
   final FirebaseFirestore _firestore = DBFirestore.get();
   var isLoading = false.obs; // Variável de estado de carregamento
+  var countPostService = CountPostService();
+  var countProductService = CountProductRatingService();
+  
 
   @override
   void onInit() {
@@ -52,6 +58,7 @@ class ComidasController extends GetxController {
   }
 
   Future<void> addProduct(ProductItem product) async {
+
     isLoading.value = true;
     try {
       // Obtém a posição atual
@@ -71,6 +78,8 @@ class ComidasController extends GetxController {
         'store': product.store,
         'price': product.price,
       });
+      
+      countPostService.adicionarPost(AuthService().getUserId());
 
       // Atualiza a lista de produtos após a inserção
       products.add(product);

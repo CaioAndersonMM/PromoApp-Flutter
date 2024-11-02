@@ -78,8 +78,6 @@ class MyHomePageController extends GetxController {
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
           type: "Comida",
-          latitude: data['coords']?['latitude'],
-          longitude: data['coords']?['longitude'],
         );
       }).toList();
 
@@ -96,8 +94,6 @@ class MyHomePageController extends GetxController {
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
           type: "Produto",
-          latitude: data['coords']?['latitude'],
-          longitude: data['coords']?['longitude'],
         );
       }).toList();
 
@@ -114,8 +110,6 @@ class MyHomePageController extends GetxController {
               ? (data['price'] as num).toDouble()
               : 0.0, // Verifica se é num
           type: "Evento",
-          latitude: data['coords']?['latitude'],
-          longitude: data['coords']?['longitude'],
         );
       }).toList();
 
@@ -152,10 +146,10 @@ class MyHomePageController extends GetxController {
     selectedCity.value = newCity;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('selectedCity', newCity);
-
+    
     // Atualiza os produtos após a mudança de cidade
     filterAndSortProducts(currentFilterCriteria.value, 'Tudo');
-
+    
     Get.snackbar(
       'Cidade Atualizada',
       'A cidade foi alterada para $newCity',
@@ -278,8 +272,7 @@ class MyHomePageController extends GetxController {
   }
 
   List<ProductItem> getProductsByIds(List<String> productIds) {
-    return allproducts
-        .where((product) => productIds.contains(product.id))
-        .toList();
+    return allproducts.where((product) => productIds.contains(product.id)).toList();
   }
+
 }

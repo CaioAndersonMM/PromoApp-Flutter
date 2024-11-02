@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/countProductRate.dart';
 import '../models/product_item.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -415,6 +417,8 @@ class ProductDetailsPage extends StatelessWidget {
 
 void _showAddReviewDialog(BuildContext context) {
   final TextEditingController reviewController = TextEditingController();
+  final CountProductRatingService pts = CountProductRatingService();
+  final String userId = AuthService().getUserId();
   int selectedStars = 0;
 
   showDialog(
@@ -460,6 +464,8 @@ void _showAddReviewDialog(BuildContext context) {
           ),
           TextButton(
             onPressed: () {
+              pts.adicionarAvaliacao(AuthService().getUserId());
+
               Get.snackbar(
                 'Avaliação feita',
                 'Obrigado! Outros usuários poderão ver sua avaliação.',

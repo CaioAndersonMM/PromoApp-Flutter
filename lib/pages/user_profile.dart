@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/user_profile_controller.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/countPosts.dart';
+import 'package:meu_app/services/countProductRate.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -12,25 +17,57 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  late String userId;
+  late Future<int> numAvaliacoes;
+  late Future<int> numPostagens;
 
   @override
   void initState() {
     super.initState();
+    userId = AuthService().getUserId();
+    numAvaliacoes = CountProductRatingService().obterAvaliacao(userId);
+    numPostagens = CountPostService().obterPostagens(userId);
 
-    // Inicializa o AnimationController
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat(); // Repetir a animação continuamente
+    )..repeat();
 
-    // Define a animação da rotação
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Limpa o controller
+    _controller.dispose();
     super.dispose();
+  }
+
+  int calcularNivel(int? numAvaliacoes, int? numPostagens) {
+    if (numAvaliacoes == null || numPostagens == null) {
+      return 0; // Nível padrão se algum dado estiver ausente
+    }
+
+    double resultado = log(numAvaliacoes + 2*numPostagens) / log(2);
+    
+    return resultado.floor();    
+  }
+
+  Widget _buildUserInfoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color.fromARGB(255, 75, 113, 188)),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 18, color: Color.fromARGB(255, 255, 255, 255)),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -64,30 +101,52 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
             const SizedBox(height: 16),
             Container(
               decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 8, 2, 46),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
-                ),
-              ],
+                color: const Color.fromARGB(255, 8, 2, 46),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildUserInfoRow(Icons.person, 'Nome: ${controller.userName.value}'),
-                _buildUserInfoRow(Icons.star, 'Avaliações: ${controller.reviewCount.value}'),
-                _buildUserInfoRow(Icons.post_add, 'Postagens: ${controller.postCount.value}'),
-                _buildUserInfoRow(Icons.approval_outlined, 'Nível: ${controller.userLevel.value}'),
-              ],
+              child: FutureBuilder<int>( // Para avaliações
+                future: numAvaliacoes,
+                builder: (context, avaliacoesSnapshot) {
+                  if (avaliacoesSnapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (avaliacoesSnapshot.hasError) {
+                    return Text('Erro: ${avaliacoesSnapshot.error}');
+                  } else {
+                    return FutureBuilder<int>( // Para postagens
+                      future: numPostagens,
+                      builder: (context, postSnapshot) {
+                        if (postSnapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (postSnapshot.hasError) {
+                          return Text('Erro: ${postSnapshot.error}');
+                        } else {
+                          int nivel = calcularNivel(avaliacoesSnapshot.data, postSnapshot.data);
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildUserInfoRow(Icons.person, 'Nome: ${controller.userName.value}'),
+                              _buildUserInfoRow(Icons.star, 'Avaliações: ${avaliacoesSnapshot.data}'),
+                              _buildUserInfoRow(Icons.post_add, 'Postagens: ${postSnapshot.data}'),
+                              _buildUserInfoRow(Icons.approval_outlined, 'Nível: $nivel'),
+                            ],
+                          );
+                        }
+                      },
+                    );
+                  }
+                },
               ),
             ),
             const SizedBox(height: 20),
-           
             const Text(
               'Minhas Avaliações',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -95,28 +154,28 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
             const Divider(),
             Expanded(
               child: Container(
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 8, 2, 46),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 8, 2, 46),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                ],
-              ),
-              child: ListView.builder(
-                itemCount: 5, // Número de avaliações fictícias
-                itemBuilder: (context, index) {
-                return ListTile(
-                  leading: const Icon(Icons.comment, color: Color.fromARGB(255, 75, 113, 188)),
-                  title: Text('Comentário ${index + 1}', style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-                  subtitle: const Text('Esta é uma avaliação fictícia.',style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-                );
-                },
-              ),
+                child: ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: const Icon(Icons.comment, color: Color.fromARGB(255, 75, 113, 188)),
+                      title: Text('Comentário ${index + 1}', style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+                      subtitle: const Text('Esta é uma avaliação fictícia.', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -133,7 +192,7 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
-                itemCount: 6, // Número de postagens fictícias
+                itemCount: 6,
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
@@ -145,14 +204,12 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
                         animation: _animation,
                         builder: (context, child) {
                           return Transform.rotate(
-                            angle: _animation.value * 2.0 * 3.14159, // 2π radianos para completar uma rotação
-                            // ignore: prefer_const_constructors
+                            angle: _animation.value * 2.0 * 3.14159,
                             child: Icon(
-                              Icons.local_fire_department_rounded, // Seta para indicar carregamento
+                              Icons.local_fire_department_rounded,
                               size: 40,
                               color: const Color.fromARGB(255, 75, 113, 188),
                             ),
-                            
                           );
                         },
                       ),
@@ -163,24 +220,6 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildUserInfoRow(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color.fromARGB(255, 75, 113, 188)),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 18, color: Color.fromARGB(255, 255, 255, 255)),
-            ),
-          ),
-        ],
       ),
     );
   }
