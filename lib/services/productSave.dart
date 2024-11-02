@@ -6,7 +6,7 @@ class ProductSaveService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> salvarProduto(String userId, String productId) async {
-    DocumentReference userDoc = _firestore.collection('favorite-products').doc(userId);
+    DocumentReference userDoc = _firestore.collection('users').doc(userId);
 
     await userDoc.set({
       'favoriteProducts': FieldValue.arrayUnion([productId]),
@@ -14,7 +14,7 @@ class ProductSaveService {
   }
 
   Future<void> apagarProduto(String userId, String productId) async {
-    DocumentReference userDoc = _firestore.collection('favorite-products').doc(userId);
+    DocumentReference userDoc = _firestore.collection('users').doc(userId);
 
     await userDoc.set({
       'favoriteProducts': FieldValue.arrayRemove([productId]),
@@ -23,7 +23,7 @@ class ProductSaveService {
 
 
   Future<List<String>> obterProdutosFavoritados(String userId) async {
-    DocumentReference userDoc = _firestore.collection('favorite-products').doc(userId);
+    DocumentReference userDoc = _firestore.collection('users').doc(userId);
 
     DocumentSnapshot snapshot = await userDoc.get();
 
