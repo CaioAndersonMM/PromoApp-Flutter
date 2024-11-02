@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/countProductRate.dart';
+import 'package:meu_app/services/review.dart';
 import '../models/product_item.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -270,7 +271,7 @@ class ProductDetailsPage extends StatelessWidget {
                 const Spacer(),
                 ElevatedButton.icon(
                   onPressed: () {
-                    _showAddReviewDialog(context);
+                    _showAddReviewDialog(context, product);
                   },
                   icon: const Icon(Icons.add, color: Colors.white),
                   label: const Text(
@@ -415,10 +416,13 @@ class ProductDetailsPage extends StatelessWidget {
   }
 }
 
-void _showAddReviewDialog(BuildContext context) {
+void _showAddReviewDialog(BuildContext context, ProductItem product) {
   final TextEditingController reviewController = TextEditingController();
   final CountProductRatingService pts = CountProductRatingService();
+  final ReviewService rvServ = ReviewService();
   final String userId = AuthService().getUserId();
+  var productId = product.id ?? 'erro';
+
   int selectedStars = 0;
 
   showDialog(
@@ -441,7 +445,7 @@ void _showAddReviewDialog(BuildContext context) {
                   ),
                   onPressed: () {
                     selectedStars = index + 1;
-                    (context as Element).markNeedsBuild();
+                    (context as Element).markNeedsBuild(); // Atualiza a UI
                   },
                 );
               }),
@@ -449,7 +453,7 @@ void _showAddReviewDialog(BuildContext context) {
             TextField(
               controller: reviewController,
               decoration: const InputDecoration(
-                labelText: "Sua avaliação",
+                labelText: 'Sua Avaliação',
               ),
               maxLines: 3,
             ),
@@ -464,18 +468,31 @@ void _showAddReviewDialog(BuildContext context) {
           ),
           TextButton(
             onPressed: () {
-              pts.adicionarAvaliacao(AuthService().getUserId());
+              if (selectedStars > 0) {
+                pts.adicionarAvaliacao(userId); // Adiciona a avaliação
+                rvServ.salvarAvaliacao(productId, reviewController.text, selectedStars.toDouble());
 
-              Get.snackbar(
-                'Avaliação feita',
-                'Obrigado! Outros usuários poderão ver sua avaliação.',
-                backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-                colorText: Colors.white,
-                snackPosition: SnackPosition.BOTTOM,
-                borderRadius: 10,
-                margin: const EdgeInsets.all(10),
-              );
-              Navigator.of(context).pop(); // Fecha o diálogo
+                Get.snackbar(
+                  'Avaliação feita',
+                  'Obrigado! Outros usuários poderão ver sua avaliação.',
+                  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  borderRadius: 10,
+                  margin: const EdgeInsets.all(10),
+                );
+                Navigator.of(context).pop(); // Fecha o diálogo
+              } else {
+                Get.snackbar(
+                  'Erro',
+                  'Por favor, selecione uma avaliação.',
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  borderRadius: 10,
+                  margin: const EdgeInsets.all(10),
+                );
+              }
             },
             child: const Text("Adicionar"),
           ),
@@ -484,3 +501,4 @@ void _showAddReviewDialog(BuildContext context) {
     },
   );
 }
+
