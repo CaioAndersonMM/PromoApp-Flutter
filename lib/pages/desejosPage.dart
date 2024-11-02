@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/desejos_controller.dart';
-import 'package:meu_app/pages/myhomepage.dart';
-import 'package:meu_app/widgets/product_widget.dart'; // Supondo que você tenha um widget para exibir produtos
+import 'package:meu_app/widgets/product_widget.dart';
 
 class DesejosPage extends StatelessWidget {
   const DesejosPage({super.key});
@@ -10,14 +9,12 @@ class DesejosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DesejosController controller = Get.put(DesejosController());
-    controller.loadDesejos();
 
     return Scaffold(
       appBar: AppBar(
-        // ignore: prefer_const_constructors
-        title: Text(
+        title: const Text(
           'Sacola de itens desejados',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -25,28 +22,37 @@ class DesejosPage extends StatelessWidget {
         ),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
         iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.offAll(() => MyHomePage());
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Get.offAll(() => MyHomePage());
+        //   },
+        // ),
       ),
-      body: Obx(() {
-        if (controller.desejos.isEmpty) {
-          return const Center(
-            child: Text('Nenhum desejo encontrado'),
-          );
-        }
+      body: GetBuilder<DesejosController>(
+        builder: (_) {
+          if (controller.desejos.isEmpty) {
+            return const Center(
+              child: Text('Nenhum desejo encontrado'),
+            );
+          }
 
-        return ListView.builder(
-          itemCount: controller.desejos.length,
-          itemBuilder: (context, index) {
-            final product = controller.desejos[index];
-            return ProductWidget(product: product, isFavorite: true,);
-          },
-        );
-      }),
+          return Container(
+            color: const Color.fromRGBO(0, 12, 36, 1), // Background color
+            child: ListView.builder(
+              itemCount: controller.desejos.length,
+              itemBuilder: (context, index) {
+                final product = controller.desejos[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0), // Add vertical spacing
+                  child: ProductWidget(product: product, isFavorite: true),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
