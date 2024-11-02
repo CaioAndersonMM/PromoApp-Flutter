@@ -2,16 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/desejos_controller.dart';
 import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/pages/produtosDetailPage.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/productSave.dart';
 import '../models/product_item.dart';
+final DesejosController desejosController = Get.put(DesejosController());
 
 class ProductWidget extends StatelessWidget {
   final ProductItem product;
+  final bool? isFavorite;
 
-  const ProductWidget({super.key, required this.product});
+  const ProductWidget({
+    super.key,
+    required this.product,
+    this.isFavorite = false, // Valor padrão é false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,25 +110,26 @@ class ProductWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.assignment_returned_rounded,
-                      color: Color.fromARGB(192, 21, 99, 163),
+                      color: isFavorite == true 
+                        ? Colors.red
+                        : Color.fromARGB(192, 21, 99, 163),
                     ),
                     onPressed: () async {
                       final authService = AuthService(); // Cria uma instância do AuthService
                       final productSaveService = ProductSaveService(); // Cria uma instância do ProductSaveService
 
-                      print("\n\n\n\n\n\n\n\n");
-                      print("kakaka ${product.name}");
-                      print("kakaka ${product.id}");
-                      print("aqui");
-
-                      // Salva o produto favorito
-                      await productSaveService.salvarProduto(userId, product.id!); // Chama a função para salvar o produto
+                      if (isFavorite == true)
+                        await productSaveService.apagarProduto(userId, product.id!);
+                      else
+                        await productSaveService.salvarProduto(userId, product.id!);
+                      
+                      desejosController.loadDesejos();
 
                       Get.snackbar(
                         'Sucesso',
-                        'Produto adicionado aos desejos!',
+                        isFavorite == true? 'Produto removido dos desejos!': 'Produto adicionado aos desejos!',
                         backgroundColor: Colors.white, // Fundo branco
                         colorText: Colors.blue[800], // Texto azul escuro
                         snackPosition: SnackPosition.BOTTOM, // Posiciona o snackbar na parte inferior

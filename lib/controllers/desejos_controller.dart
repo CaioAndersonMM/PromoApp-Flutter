@@ -1,10 +1,14 @@
 import 'package:get/get.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/productSave.dart';
 
 class DesejosController extends GetxController {
   var desejos = <ProductItem>[].obs;
-  var userId = 1.obs;  // Id do usuário, defina conforme necessário
+  final ProductSaveService productSaveService = ProductSaveService();
+  final String userId = AuthService().getUserId();
+  final MyHomePageController controller = Get.find<MyHomePageController>(); // Obtenha a instância correta
 
   @override
   void onInit() {
@@ -14,8 +18,10 @@ class DesejosController extends GetxController {
 
   Future<void> loadDesejos() async {
     try {
-      final dbHelper = DatabaseHelper();
-      desejos.value = await dbHelper.getDesejos(userId.value);
+      List<String> favoriteProductIds = await productSaveService.obterProdutosFavoritados(userId);
+
+      desejos.assignAll(controller.getProductsByIds(favoriteProductIds));
+      
     } catch (e) {
       print('Erro ao carregar desejos: $e');
     }

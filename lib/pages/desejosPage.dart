@@ -10,6 +10,7 @@ class DesejosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DesejosController controller = Get.put(DesejosController());
+    controller.loadDesejos();
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +43,7 @@ class DesejosPage extends StatelessWidget {
           itemCount: controller.desejos.length,
           itemBuilder: (context, index) {
             final product = controller.desejos[index];
-            return ProductWidget(product: product); // Certifique-se de que ProductWidget está configurado para exibir produtos
+            return ProductWidget(product: product, isFavorite: true,);
           },
         );
       }),

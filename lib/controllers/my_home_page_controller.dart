@@ -270,4 +270,9 @@ class MyHomePageController extends GetxController {
       print('Erro ao obter cidade: $e');
     }
   }
+
+  List<ProductItem> getProductsByIds(List<String> productIds) {
+    return allproducts.where((product) => productIds.contains(product.id)).toList();
+  }
+
 }

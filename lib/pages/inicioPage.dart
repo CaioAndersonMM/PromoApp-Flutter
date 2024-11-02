@@ -100,7 +100,7 @@ class InicioPage extends StatelessWidget {
                 child: Wrap(
                   runSpacing: 10.0,
                   children: controller.filteredProducts.map((product) {
-                    return ProductWidget(product: product);
+                    return ProductWidget(product: product,);
                   }).toList(),
                 ),
               );

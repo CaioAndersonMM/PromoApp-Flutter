@@ -13,6 +13,15 @@ class ProductSaveService {
     }, SetOptions(merge: true));
   }
 
+  Future<void> apagarProduto(String userId, String productId) async {
+    DocumentReference userDoc = _firestore.collection('favorite-products').doc(userId);
+
+    await userDoc.set({
+      'favoriteProducts': FieldValue.arrayRemove([productId]),
+    }, SetOptions(merge: true));
+  }
+
+
   Future<List<String>> obterProdutosFavoritados(String userId) async {
     DocumentReference userDoc = _firestore.collection('favorite-products').doc(userId);
 
