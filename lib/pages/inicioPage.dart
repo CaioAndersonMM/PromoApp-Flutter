@@ -7,6 +7,7 @@ import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/pages/comidasPage.dart' as comidas;
 import 'package:meu_app/pages/eventosPage.dart';
 import 'package:meu_app/pages/especiaisPage.dart';
+import 'package:meu_app/pages/pertosPages.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
 import 'package:meu_app/widgets/header_products.dart';
 import 'package:meu_app/widgets/type_item.dart';
@@ -70,8 +71,8 @@ class InicioPage extends StatelessWidget {
               TypeItem(name: 'Em Alta', destinationPage: comidas.ComidasPage()),
               TypeItem(
                   name: 'Especiais', destinationPage: EspeciaisPage()),
-              const TypeItem(
-                  name: 'Mais Perto', destinationPage: EventosPage()),
+              TypeItem(
+                  name: 'Mais Perto', destinationPage: PertosPage()),
             ],
           ),
           const SizedBox(height: 25),
@@ -100,7 +101,7 @@ class InicioPage extends StatelessWidget {
                 child: Wrap(
                   runSpacing: 10.0,
                   children: controller.filteredProducts.map((product) {
-                    return ProductWidget(product: product,);
+                    return ProductWidget(product: product);
                   }).toList(),
                 ),
               );
