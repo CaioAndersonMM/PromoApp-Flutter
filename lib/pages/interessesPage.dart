@@ -24,12 +24,12 @@ class InteressesPage extends StatelessWidget {
         ),
         backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
         iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.offAll(() => MyHomePage());
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Get.offAll(() => MyHomePage());
+        //   },
+        // ),
       ),
       body: Container(
         color: const Color.fromRGBO(0, 12, 36, 1), // Fundo azul escuro
