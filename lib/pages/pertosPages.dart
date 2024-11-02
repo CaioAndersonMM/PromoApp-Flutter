@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/models/product_item.dart'; // Modelo do produto
-import 'package:meu_app/controllers/produto_controller.dart'; // Controlador de produtos
 
 class PertosPage extends StatelessWidget {
   PertosPage({Key? key}) : super(key: key);
 
-  final ProdutosController controller = Get.put(ProdutosController());
+  final MyHomePageController controller = Get.put(MyHomePageController());
 
   @override
   Widget build(BuildContext context) {
@@ -61,19 +61,29 @@ class PertosPage extends StatelessWidget {
   }
 
   List<ProductItem> _getNearbyProducts(Position position) {
+    print('Obtendo produtos próximos...');
     // Simulando a lógica de proximidade; substitua com sua lógica real
-    return controller.products.where((product) {
+    return controller.allproducts.where((product) {
+      // Imprima as coordenadas dos produtos
+      print('Produto: ${product.toMap()}');
 
-      // return _calculateDistance(position.latitude, position.longitude, product.latitude, product.longitude) < 10.0;
-
-      // Simulando a lógica de proximidade; substitua com sua lógica real
-      var latitude;
-      var longitude;
-      return _calculateDistance(position.latitude, position.longitude, latitude, longitude) < 10.0;
+      
+      // Verifique se latitude e longitude não são nulos antes de calcular a distância
+      if (product.latitude != null && product.longitude != null) {
+        print('Calculando distância para o produto: ${product.name}');
+        double distance = _calculateDistance(position.latitude, position.longitude, product.latitude!, product.longitude!);
+        print('Distância para o produto ${product.name}: $distance km');
+        return distance < 10.0; // Filtra produtos dentro de 10 km
+      }
+      print('Produto ${product.name} não tem coordenadas válidas.');
+      return false;
     }).toList();
   }
 
   double _calculateDistance(double userLat, double userLong, double productLat, double productLong) {
-    return Geolocator.distanceBetween(userLat, userLong, productLat, productLong) / 1000; // Distância em km
+    double distanceInMeters = Geolocator.distanceBetween(userLat, userLong, productLat, productLong);
+    double distanceInKm = distanceInMeters / 1000; // Distância em km
+    print('Distância calculada: $distanceInKm km'); // Adiciona um log para depuração
+    return distanceInKm;
   }
 }
