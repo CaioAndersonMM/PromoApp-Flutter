@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meu_app/services/LikesService.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/countProductRate.dart';
 import 'package:meu_app/services/review.dart';
@@ -18,8 +19,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late Future<List<Map<String, dynamic>>> _reviewsFuture;
-  var _dislikeCount;
-  var _likeCount;
+  LikesService likesService = LikesService();
 
   @override
   void initState() {
@@ -35,6 +35,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+  final String userId = AuthService().getUserId();
+  final String name = AuthService().getUserName();
+  var productId = widget.product.id ?? 'erro';
+  final Future<int> numDislikes = likesService.obterQuantidadeDislikes(productId);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -148,18 +153,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             width: 40,
                             height: 40,
-                            child: FloatingActionButton(
-                              onPressed: () {},
-                              backgroundColor:
-                                  const Color.fromARGB(255, 145, 3, 3),
-                              child: Text('${_dislikeCount ?? 0}',
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 253, 253, 253),
-                                      fontSize: 20)),
+                            child: FutureBuilder<int>(
+                              future: likesService.obterQuantidadeDislikes(productId),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return FloatingActionButton(
+                                    onPressed: () {},
+                                    backgroundColor: const Color.fromARGB(255, 145, 3, 3),
+                                    child: const Text('Erro', style: TextStyle(color: Colors.white, fontSize: 20)),
+                                  );
+                                } else {
+                                  final numDislikes = snapshot.data ?? 0; // Use 0 se for null
+                                  return FloatingActionButton(
+                                    onPressed: () {},
+                                    backgroundColor: const Color.fromARGB(255, 145, 3, 3),
+                                    child: Text('$numDislikes', style: const TextStyle(color: Colors.white, fontSize: 20)),
+                                  );
+                                }
+                              },
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(width: 5.0),
                       Column(
                         mainAxisSize: MainAxisSize.min,
@@ -167,18 +185,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             width: 40,
                             height: 40,
-                            child: FloatingActionButton(
-                              onPressed: () {},
-                              backgroundColor:
-                                  const Color.fromARGB(255, 22, 1, 160),
-                              child: Text('${_likeCount ?? 0}',
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 253, 253, 253),
-                                      fontSize: 20)),
+                            child: FutureBuilder<int>(
+                              future: likesService.obterQuantidadeLikes(productId), // Supondo que existe uma função similar para likes
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return FloatingActionButton(
+                                    onPressed: () {},
+                                    backgroundColor: const Color.fromARGB(255, 22, 1, 160),
+                                    child: const Text('Erro', style: TextStyle(color: Colors.white, fontSize: 20)),
+                                  );
+                                } else {
+                                  final numLikes = snapshot.data ?? 0; // Use 0 se for null
+                                  return FloatingActionButton(
+                                    onPressed: () {},
+                                    backgroundColor: const Color.fromARGB(255, 22, 1, 160),
+                                    child: Text('$numLikes', style: const TextStyle(color: Colors.white, fontSize: 20)),
+                                  );
+                                }
+                              },
                             ),
                           ),
                         ],
                       ),
+
                     ],
                   ),
                 ),
@@ -241,7 +272,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 // Botões de avaliação
                 ElevatedButton(
                   onPressed: () {
-                    // Ação para avaliar o produto (thumb down)
+                    likesService.adicionarDislike(productId, userId);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -257,8 +288,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 const SizedBox(width: 5.0),
                 ElevatedButton(
-                  onPressed: () {
-                    // Ação para avaliar o produto (thumb up)
+                  onPressed: () {                               
+                    likesService.adicionarLike(productId, userId);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 251, 251, 251),
