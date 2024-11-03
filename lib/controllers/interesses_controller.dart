@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/database.dart';
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/interest.dart';
 
 class InteressesController extends GetxController {
   var interesses = <String>[].obs;
-  var userId = 1.obs;  // Id do usuário, defina conforme necessário
+  final userId = 1.obs;
+  final InterestService interestServ = InterestService();
 
   @override
   void onInit() {
@@ -13,21 +14,36 @@ class InteressesController extends GetxController {
   }
 
   Future<void> loadInteresses() async {
+    final String userId = AuthService().getUserId();
+
     try {
-      final dbHelper = DatabaseHelper();
-      // interesses.value = await dbHelper.getDesejos(userId.value);
+      List<String> interessesCarregados = await interestServ.obterInteresses(userId);
+      interesses.assignAll(interessesCarregados);
     } catch (e) {
       print('Erro ao carregar interesses: $e');
     }
   }
 
-  removeInteresse(String interesse) {
-    // Implemente a remoção de um interesse
+  Future<void> removeInteresse(String interesse) async {
+    final String userId = AuthService().getUserId();
+
+    try {
+      await interestServ.removerInteresse(userId, interesse);
+      await loadInteresses();
+    } catch (e) {
+      print('Erro ao remover interesse: $e');
+    }
   }
 
-  addInteresse(String interesse) {
-    // Implemente a adição de um interesse
-  print('Adicionando interesse: $interesse');
-    // interesses.add(interesse);
+  Future<void> addInteresse(String interesse) async {
+    final String userId = AuthService().getUserId();
+
+    try {
+      await interestServ.adicionarInteresse(userId, interesse);
+      await loadInteresses();
+      print('Adicionando interesse: $interesse');
+    } catch (e) {
+      print('Erro ao adicionar interesse: $e');
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/services/LikesService.dart';
+import 'package:meu_app/services/likes.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/countProductRate.dart';
 import 'package:meu_app/services/review.dart';

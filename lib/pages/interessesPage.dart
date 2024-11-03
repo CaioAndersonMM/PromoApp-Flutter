@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meu_app/controllers/interesses_controller.dart';
-import 'package:meu_app/pages/myhomepage.dart';
 import 'package:meu_app/widgets/caixa_interesses.dart';
 
 class InteressesPage extends StatelessWidget {
@@ -27,7 +26,7 @@ class InteressesPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.workspaces_outlined),
           onPressed: () {
-            // Get.offAll(() => MyHomePage());
+            // Navegação para a página inicial ou outra ação
           },
         ),
       ),
@@ -41,15 +40,15 @@ class InteressesPage extends StatelessWidget {
             children: <Widget>[
               const Text(
                 'Adicione seus interesses para receber recomendações personalizadas e acompanhar conteúdos relacionados.',
-                style: TextStyle(color: Colors.white70), // Estilo do texto
-                textAlign: TextAlign.center, // Centraliza o texto
+                style: TextStyle(color: Colors.white70),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              caixaInteresses("Adicione um interesse", interestController), // Chamando a nova caixa de pesquisa            
+              caixaInteresses("Adicione um interesse", interestController),
               const SizedBox(height: 10),
-              _buildAddButton(), // Chama o botão para adicionar
+              _buildAddButton(),
               const SizedBox(height: 20),
-              _buildInterestChips(), // Chama os chips de interesses
+              _buildInterestChips(),
             ],
           ),
         ),
@@ -70,13 +69,13 @@ class InteressesPage extends StatelessWidget {
     );
   }
 
-    Widget _buildInterestChips() {
+  Widget _buildInterestChips() {
     return Obx(() {
       if (controller.interesses.isEmpty) {
         return const Text(
           'Não há interesses cadastrados',
-          style: TextStyle(color: Colors.white70), // Estilo do texto
-          textAlign: TextAlign.center, // Centraliza o texto
+          style: TextStyle(color: Colors.white70),
+          textAlign: TextAlign.center,
         );
       }
       return Wrap(
@@ -84,7 +83,7 @@ class InteressesPage extends StatelessWidget {
         runSpacing: 10,
         children: controller.interesses.map((interesse) {
           return Chip(
-            label: Text(interesse), // Exibe o interesse adicionado
+            label: Text(interesse),
             deleteIcon: const Icon(Icons.close),
             onDeleted: () {
               controller.removeInteresse(interesse);
