@@ -47,6 +47,9 @@ class ComidasController extends GetxController {
           store: data['store'] ?? '',
           price: price,
           type: "Comida",
+          description: data['description'],
+          likes: data['likes'],
+          dislikes: data['dislikes'],
         );
       }).toList();
 
@@ -77,6 +80,9 @@ class ComidasController extends GetxController {
         'location': product.location,
         'store': product.store,
         'price': product.price,
+        'description': product.description,
+        'likes': product.likes,
+        'dislikes': product.dislikes,
       });
       
       countPostService.adicionarPost(AuthService().getUserId());

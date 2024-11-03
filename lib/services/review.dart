@@ -5,19 +5,32 @@ class ReviewService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> salvarAvaliacao(String productId, String review, double rating) async {
+  Future<void> salvarAvaliacao(String productId, String review, double rating, String name) async {
+    User? user = _firebaseAuth.currentUser;
+
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
     await productDoc.set({
-      'reviews': FieldValue.arrayUnion([{'review': review, 'rating': rating}]),
+      'reviews': FieldValue.arrayUnion([{
+        'review': review,
+        'rating': rating,
+        'name': name,
+      }]),
     }, SetOptions(merge: true));
   }
 
   Future<void> apagarAvaliacao(String productId, String review, double rating) async {
+    User? user = _firebaseAuth.currentUser;
+    String? username = user?.displayName ?? 'Anônimo';
+
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
     await productDoc.set({
-      'reviews': FieldValue.arrayRemove([{'review': review, 'rating': rating}]),
+      'reviews': FieldValue.arrayRemove([{
+        'review': review,
+        'rating': rating,
+        'username': username,
+      }]),
     }, SetOptions(merge: true));
   }
 
@@ -29,7 +42,7 @@ class ReviewService {
     if (snapshot.exists) {
       Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
-      // Modificando para armazenar uma lista de mapas que contém a review e a rating
+      // Converte a lista de avaliações para incluir review, rating e username
       List<Map<String, dynamic>> reviews = List<Map<String, dynamic>>.from(data?['reviews'] ?? []);
       return reviews;
     }

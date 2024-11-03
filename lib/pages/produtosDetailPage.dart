@@ -386,7 +386,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    review['username'] ?? 'Usuário desconhecido',
+                    review['name'] ?? 'Usuário desconhecido',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -435,6 +435,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     final CountProductRatingService pts = CountProductRatingService();
     final ReviewService rvServ = ReviewService();
     final String userId = AuthService().getUserId();
+    final String name = AuthService().getUserName();
     var productId = widget.product.id ?? 'erro';
 
     int selectedStars = 0;
@@ -489,8 +490,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   onPressed: () {
                     if (selectedStars > 0) {
                       pts.adicionarAvaliacao(userId);
-                      rvServ.salvarAvaliacao(productId, reviewController.text,
-                          selectedStars.toDouble());
+                      rvServ.salvarAvaliacao(productId, reviewController.text, selectedStars.toDouble(), name);
 
                       Get.snackbar(
                         'Avaliação feita',

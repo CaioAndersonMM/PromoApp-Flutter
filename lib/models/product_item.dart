@@ -7,6 +7,8 @@ class ProductItem {
   final double price;
   final String type;
   final String? description;
+  final int likes;
+  final int dislikes;
   final double? rate;
   final double? latitude; // opcional
   final double? longitude; // opcional
@@ -20,6 +22,8 @@ class ProductItem {
     required this.price,
     required this.type,
     this.description,
+    this.likes = 0,
+    this.dislikes = 0,
     this.rate,
     this.latitude,
     this.longitude,
@@ -34,6 +38,8 @@ class ProductItem {
       'price': price,
       'type': type,
       'description': description,
+      'likes': likes,
+      'dislikes': dislikes,
       'rate': rate,
       'coords': {
         'latitude': latitude,
@@ -51,6 +57,8 @@ class ProductItem {
       price: map['price'],
       type: map['type'],
       description: map['description'],
+      likes: map['likes'],
+      dislikes: map['dislikes'],
       rate: map['rate'],
       latitude: map['coords']?['latitude'],
       longitude: map['coords']?['longitude'],

@@ -45,6 +45,9 @@ class ProdutosController extends GetxController {
           store: data['store'] ?? '',
           price: price,
           type: "Produto",
+          description: data['description'],
+          likes: data['likes'],
+          dislikes: data['dislikes'],
         );
       }).toList();
 
@@ -91,6 +94,9 @@ class ProdutosController extends GetxController {
           'longitude': position.longitude,
         },
         'price': product.price,
+        'description': product.description,
+        'likes': product.likes,
+        'dislikes': product.dislikes,
       });
       
       countPostService.adicionarPost(AuthService().getUserId());
