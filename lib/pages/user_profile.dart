@@ -153,29 +153,40 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
             ),
             const Divider(),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 8, 2, 46),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: const Icon(Icons.comment, color: Color.fromARGB(255, 75, 113, 188)),
-                      title: Text('Comentário ${index + 1}', style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-                      subtitle: const Text('Esta é uma avaliação fictícia.', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+              child: FutureBuilder<int>(
+                future: numPostagens,
+                builder: (context, avaliacoesSnapshot) {
+                  if (avaliacoesSnapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (avaliacoesSnapshot.hasError) {
+                    return Text('Erro: ${avaliacoesSnapshot.error}');
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 8, 2, 46),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ListView.builder(
+                        itemCount: avaliacoesSnapshot.data ?? 0,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: const Icon(Icons.comment, color: Color.fromARGB(255, 75, 113, 188)),
+                            title: Text('Comentário ${index + 1}', style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+                            subtitle: const Text('Avaliação feita pelo usuário.', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
+                  }
+                },
               ),
             ),
             const SizedBox(height: 20),
@@ -185,36 +196,47 @@ class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProv
             ),
             const Divider(),
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 8, 2, 46),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: AnimatedBuilder(
-                        animation: _animation,
-                        builder: (context, child) {
-                          return Transform.rotate(
-                            angle: _animation.value * 2.0 * 3.14159,
-                            child: Icon(
-                              Icons.local_fire_department_rounded,
-                              size: 40,
-                              color: const Color.fromARGB(255, 75, 113, 188),
-                            ),
-                          );
-                        },
+              child: FutureBuilder<int>(
+                future: numPostagens,
+                builder: (context, postSnapshot) {
+                  if (postSnapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (postSnapshot.hasError) {
+                    return Text('Erro: ${postSnapshot.error}');
+                  } else {
+                    return GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
                       ),
-                    ),
-                  );
+                      itemCount: postSnapshot.data ?? 0,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 8, 2, 46),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: AnimatedBuilder(
+                              animation: _animation,
+                              builder: (context, child) {
+                                return Transform.rotate(
+                                  angle: _animation.value * 2.0 * 3.14159,
+                                  child: const Icon(
+                                    Icons.local_fire_department_rounded,
+                                    size: 40,
+                                    color: Color.fromARGB(255, 75, 113, 188),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),
