@@ -21,7 +21,6 @@ class ProductWidget extends StatelessWidget {
 
   Future<void> toggleFavoriteStatus() async {
     final String userId = AuthService().getUserId();
-    final authService = AuthService();
     final productSaveService = ProductSaveService();
 
     if (isFavorite == true) {

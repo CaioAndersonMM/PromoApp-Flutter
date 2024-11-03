@@ -11,7 +11,8 @@ Widget headerProducts() {
   final List<String> sortOptions = [
     'Mais Baratos',
     'Mais Recentes',
-    'Mais Comprados'
+    'Mais Comprados',
+    'Interesses'
   ];
 
   final List<String> sortOptions2 = ['Tudo', 'Comidas', 'Produtos', 'Eventos'];

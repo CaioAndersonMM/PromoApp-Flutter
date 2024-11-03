@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:meu_app/databases/db_firestore.dart';
 import 'package:meu_app/models/product_item.dart';
 import 'package:http/http.dart' as http;
+import 'package:meu_app/services/auth.dart';
+import 'package:meu_app/services/interest.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageController extends GetxController {
@@ -12,7 +14,9 @@ class MyHomePageController extends GetxController {
   var filteredProducts = <ProductItem>[].obs;
   var currentPageIndex = 0.obs;
   var currentFilterCriteria = 'Tudo'.obs;
-  var isLoading = false.obs; // Variável de estado de carregamento
+  var isLoading = false.obs;
+  InterestService interestServ = InterestService();
+  final String userId = AuthService().getUserId();
 
   // Variável reativa para armazenar o caminho da imagem
   var imagePath = ''.obs;
@@ -184,8 +188,9 @@ class MyHomePageController extends GetxController {
         prefs.getString('selectedCity') ?? 'Selecione uma cidade';
   }
 
-  void filterAndSortProducts(String sortCriteria, String filterCriteria,
-      {String searchQuery = ''}) {
+  Future<void> filterAndSortProducts(String sortCriteria, String filterCriteria,
+  
+      {String searchQuery = ''}) async {
     currentFilterCriteria.value = filterCriteria; // Armazena o critério atual
     List<ProductItem> tempProducts = List.from(allproducts);
 
@@ -238,9 +243,22 @@ class MyHomePageController extends GetxController {
       case 'Mais Comprados':
         // Adicione aqui a lógica de "mais comprados" se disponível
         break;
+      case 'Interesses':
+        List<String> interests = await interestServ.obterInteresses(userId);
+        
+        tempProducts.sort((a, b) {
+          bool aMatches = interests.any((interest) => a.name.toLowerCase().contains(interest));
+          bool bMatches = interests.any((interest) => b.name.toLowerCase().contains(interest));
+          
+          if (aMatches && !bMatches) return -1;
+          if (!aMatches && bMatches) return 1;
+          return a.name.compareTo(b.name);
+        });
+        break;
+
     }
 
-    filteredProducts.value = tempProducts; // Atualiza a lista filtrada
+    filteredProducts.value = tempProducts;
   }
 
   var isLocationEnabled = false.obs;
