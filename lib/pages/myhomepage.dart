@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
 import 'package:meu_app/controllers/my_home_page_controller.dart';
@@ -12,11 +14,8 @@ import 'package:meu_app/pages/interessesPage.dart';
 import 'package:meu_app/pages/produtosPage.dart';
 import 'package:meu_app/widgets/menu_cidades.dart';
 import 'package:meu_app/widgets/custom_widgets.dart';
-import 'package:path_provider/path_provider.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
-
   final MyHomePageController controller = Get.put(MyHomePageController());
   final ProdutosController controllerProduto = Get.put(ProdutosController());
   final ComidasController controllerComida = Get.put(ComidasController());
@@ -35,7 +34,7 @@ class MyHomePage extends StatelessWidget {
     final TextEditingController priceController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
 
-    String selectedType = 'Produto';
+    RxString selectedType = 'Produto'.obs;
     String selectedLocation = controller.selectedCity.value;
 
     await showDialog<void>(
@@ -85,15 +84,14 @@ class MyHomePage extends StatelessWidget {
                               ),
                             const SizedBox(height: 20),
                             buildTextField(nameController, 'Nome do Produto'),
-                            const SizedBox(height: 10),
-
-                            // Substituição pelo DropdownButton
+                            const SizedBox(height: 30),
                             DropdownButtonFormField<String>(
                               value: selectedLocation,
                               items: [
                                 DropdownMenuItem(
                                   value: controller.selectedCity.value,
-                                  child: Obx(() => Text(controller.selectedCity.value)),
+                                  child: Obx(() =>
+                                      Text(controller.selectedCity.value)),
                                 ),
                                 const DropdownMenuItem(
                                   value: 'Internet',
@@ -110,12 +108,15 @@ class MyHomePage extends StatelessWidget {
                                 border: OutlineInputBorder(),
                               ),
                             ),
-
                             const SizedBox(height: 10),
                             buildTextField(storeController, 'Loja'),
-                            buildTextField(priceController, 'Preço', keyboardType: TextInputType.number),
+
+                            buildTextField(priceController, 'Preço',
+                                keyboardType: TextInputType.number),
                             buildTextField(descriptionController, 'Descrição'),
-                            buildDropdownButton(selectedType, setState),
+                            const SizedBox(height: 30),
+
+                           buildDropdownButton(selectedType, setState),
                             const SizedBox(height: 20),
                             buildDialogActions(
                               context,
@@ -145,7 +146,6 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -157,8 +157,8 @@ class MyHomePage extends StatelessWidget {
       final String newFilePath = '$appPath/$fileName.png';
 
       final File savedImage = await File(pickedFile.path).copy(newFilePath);
-
       controller.imagePath.value = savedImage.path;
+
       Get.snackbar(
         'Foto Capturada',
         'A imagem foi salva com sucesso!',
@@ -212,7 +212,8 @@ class MyHomePage extends StatelessWidget {
           ],
         );
       }),
-      bottomNavigationBar: Obx(() => buildBottomNavigationBar(controller, _pickImageFromCamera)),
+      bottomNavigationBar:
+          Obx(() => buildBottomNavigationBar(controller, _pickImageFromCamera)),
     );
   }
 }

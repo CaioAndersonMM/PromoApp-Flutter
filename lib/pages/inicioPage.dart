@@ -4,8 +4,7 @@ import 'package:meu_app/controllers/my_home_page_controller.dart';
 import 'package:meu_app/controllers/produto_controller.dart';
 import 'package:meu_app/controllers/comida_controller.dart';
 import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/pages/comidasPage.dart' as comidas;
-import 'package:meu_app/pages/eventosPage.dart';
+import 'package:meu_app/pages/altasPage.dart';
 import 'package:meu_app/pages/especiaisPage.dart';
 import 'package:meu_app/pages/pertosPages.dart';
 import 'package:meu_app/widgets/caixa_pesquisa.dart';
@@ -68,7 +67,7 @@ class InicioPage extends StatelessWidget {
             spacing: 20.0,
             runSpacing: 10.0,
             children: <Widget>[
-              TypeItem(name: 'Em Alta', destinationPage: comidas.ComidasPage()),
+              TypeItem(name: 'Em Alta', destinationPage: AltasPage()),
               TypeItem(
                   name: 'Especiais', destinationPage: EspeciaisPage()),
               TypeItem(
