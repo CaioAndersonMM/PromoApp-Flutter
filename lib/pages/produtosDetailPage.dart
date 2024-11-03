@@ -4,19 +4,41 @@ import 'package:get/get.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/countProductRate.dart';
 import 'package:meu_app/services/review.dart';
+import 'package:meu_app/widgets/product_widget.dart';
 import '../models/product_item.dart';
 
-class ProductDetailsPage extends StatelessWidget {
+class ProductDetailsPage extends StatefulWidget {
   final ProductItem product;
 
   const ProductDetailsPage({super.key, required this.product});
+
+  @override
+  _ProductDetailsPageState createState() => _ProductDetailsPageState();
+}
+
+class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  late Future<List<Map<String, dynamic>>> _reviewsFuture;
+  var _dislikeCount;
+  var _likeCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReviews();
+  }
+
+  void _loadReviews() {
+    setState(() {
+      _reviewsFuture = ReviewService().obterAvaliacoes(widget.product.id ?? '');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          product.name,
+          widget.product.name,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -28,7 +50,6 @@ class ProductDetailsPage extends StatelessWidget {
       ),
       backgroundColor: const Color.fromRGBO(0, 12, 36, 1),
       body: SingleChildScrollView(
-        // Adicionando SingleChildScrollView
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,28 +58,7 @@ class ProductDetailsPage extends StatelessWidget {
               alignment: Alignment
                   .bottomLeft, // Alinhamento do botão no canto inferior esquerdo
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 250,
-                    child: product.imageUrl.startsWith('http')
-                        ? Image.network(
-                            product.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.error);
-                            },
-                          )
-                        : Image.file(
-                            File(product.imageUrl),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.error);
-                            },
-                          ),
-                  ),
-                ),
+                _getProductImage(widget.product),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -83,16 +83,27 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          const Text(
-                            'Reportar',
-                            style: TextStyle(
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                  255, 94, 10, 5), // Cor de fundo
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Bordas arredondadas
+                            ),
+                            child: const Text(
+                              'Reportar',
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,
-                                fontWeight: FontWeight.bold),
-                          ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                      const SizedBox(width: 5.0), // Espaço horizontal
+                      const SizedBox(width: 5.0),
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -101,32 +112,70 @@ class ProductDetailsPage extends StatelessWidget {
                             height: 40,
                             child: FloatingActionButton(
                               onPressed: () {
-                                // _showReportDialog(context);
-                                Get.snackbar(
-                                  'Produto adicionado a sacola!',
-                                  'Você poderá vê-lo acessando o menu.',
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 3, 41, 117),
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.TOP,
-                                  borderRadius: 10,
-                                  margin: const EdgeInsets.all(10),
-                                );
+                                _salvarProdutoNaSacola();
                               },
                               backgroundColor:
                                   const Color.fromARGB(255, 17, 1, 32),
                               child: const Icon(Icons.shopping_bag_rounded,
                                   color: Color.fromARGB(255, 253, 253, 253),
-                                  size: 20), // Ajustando o tamanho do ícone
+                                  size: 20),
                             ),
                           ),
                           const SizedBox(height: 2),
-                          const Text(
-                            'Salvar',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 4.0),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                  255, 17, 1, 32), // Cor de fundo
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Bordas arredondadas
+                            ),
+                            child: const Text(
+                              'Salvar',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: FloatingActionButton(
+                              onPressed: () {},
+                              backgroundColor:
+                                  const Color.fromARGB(255, 145, 3, 3),
+                              child: Text('${_dislikeCount ?? 0}',
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 253, 253, 253),
+                                      fontSize: 20)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 5.0),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: FloatingActionButton(
+                              onPressed: () {},
+                              backgroundColor:
+                                  const Color.fromARGB(255, 22, 1, 160),
+                              child: Text('${_likeCount ?? 0}',
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 253, 253, 253),
+                                      fontSize: 20)),
+                            ),
                           ),
                         ],
                       ),
@@ -150,13 +199,13 @@ class ProductDetailsPage extends StatelessWidget {
                       double fontSizeType = 15.0;
 
                       // Ajusta o tamanho do texto de product.type com base no comprimento de product.name
-                      if (product.name.length > 10) {
+                      if (widget.product.name.length > 10) {
                         fontSizeType =
                             14.0; // Diminuir o tamanho da fonte de product.type
                       }
 
                       return Text(
-                        product.type,
+                        widget.product.type,
                         style: TextStyle(
                           fontSize: fontSizeType,
                           fontWeight: FontWeight.bold,
@@ -174,9 +223,9 @@ class ProductDetailsPage extends StatelessWidget {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       double fontSizeName =
-                          product.name.length > 10 ? 17.0 : 22.0;
+                          widget.product.name.length > 10 ? 17.0 : 22.0;
                       return Text(
-                        product.name,
+                        widget.product.name,
                         style: TextStyle(
                           fontSize: fontSizeName,
                           fontWeight: FontWeight.bold,
@@ -197,9 +246,13 @@ class ProductDetailsPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   ),
-                  child: const Icon(
-                    Icons.thumb_down,
-                    color: Color.fromARGB(255, 230, 1, 1),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.thumb_down,
+                        color: Color.fromARGB(255, 230, 1, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 5.0),
@@ -210,15 +263,19 @@ class ProductDetailsPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 251, 251, 251),
                   ),
-                  child: const Icon(
-                    Icons.thumb_up,
-                    color: Color.fromARGB(255, 0, 41, 246),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.thumb_up,
+                        color: Color.fromARGB(255, 0, 41, 246),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
             Text(
-              'Localização: ${product.location}',
+              'Localização: ${widget.product.location}',
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.grey,
@@ -226,7 +283,7 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Preço: R\$ ${product.price.toStringAsFixed(2)}',
+              'Preço: R\$ ${widget.product.price.toStringAsFixed(2)}',
               style: const TextStyle(
                 fontSize: 22,
                 color: Colors.green,
@@ -234,6 +291,7 @@ class ProductDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Container(
+              width: double.infinity, // Ocupe toda a largura disponível
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 15, 0, 66),
                 borderRadius: BorderRadius.circular(12.0),
@@ -246,18 +304,17 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              padding:
-                  const EdgeInsets.all(16.0), // Adicionando padding interno
-              // child: Text(
-              //   product.description, // ProductItem deve ter uma descrição
-              //   style: const TextStyle(
-              //     color: Colors.white, // Cor do texto
-              //     fontSize: 16, // Tamanho da fonte
-              //   ),
-              // ),
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                widget.product.description ??
+                    'Descrição do produto não disponível',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
             ),
             const SizedBox(height: 16.0),
-
             Row(
               children: [
                 const Text(
@@ -271,7 +328,7 @@ class ProductDetailsPage extends StatelessWidget {
                 const Spacer(),
                 ElevatedButton.icon(
                   onPressed: () {
-                    _showAddReviewDialog(context, product);
+                    _showAddReviewDialog(context);
                   },
                   icon: const Icon(Icons.add, color: Colors.white),
                   label: const Text(
@@ -284,26 +341,34 @@ class ProductDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 10.0),
-            // Lista de avaliações fictícias
-            _buildReviewList(product.id ?? ''),
+            _buildReviewList(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReviewList(String productId) {
+  Widget _buildReviewList() {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: ReviewService().obterAvaliacoes(productId), // Chama a função que obtém as avaliações
-      builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+      future: _reviewsFuture,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator()); // Exibe um carregando enquanto espera
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Erro ao carregar avaliações: ${snapshot.error}'));
+          return Center(
+              child: Text('Erro ao carregar avaliações: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Nenhuma avaliação disponível.'));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 50.0),
+              child: Text(
+                'Nenhuma avaliação disponível.',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
         }
 
         List<Map<String, dynamic>> reviews = snapshot.data!;
@@ -317,31 +382,44 @@ class ProductDetailsPage extends StatelessWidget {
                 color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.person, // Ícone do usuário
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 10.0), // Espaço entre ícone e texto
-                  Expanded(
-                    child: Text(
-                      review['review'], // Use o campo correto da avaliação
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+                  Text(
+                    review['username'] ?? 'Usuário desconhecido',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Estrelas
+                  const SizedBox(height: 8.0),
                   Row(
-                    children: List.generate(review['rating'].toInt(), (index) {
-                      return const Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                        size: 20,
-                      );
-                    }),
+                    children: [
+                      const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: Text(
+                          review['review'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children:
+                            List.generate(review['rating'].toInt(), (index) {
+                          return const Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                            size: 20,
+                          );
+                        }),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -352,6 +430,101 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 
+  void _showAddReviewDialog(BuildContext context) {
+    final TextEditingController reviewController = TextEditingController();
+    final CountProductRatingService pts = CountProductRatingService();
+    final ReviewService rvServ = ReviewService();
+    final String userId = AuthService().getUserId();
+    var productId = widget.product.id ?? 'erro';
+
+    int selectedStars = 0;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Adicionar avaliação"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Quantas estrelas você dá para este produto?"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          size: 30,
+                          index < selectedStars
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: const Color.fromARGB(255, 172, 156, 13),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            selectedStars = index + 1;
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  TextField(
+                    controller: reviewController,
+                    decoration: const InputDecoration(
+                      labelText: 'Escreva sua avaliação',
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancelar"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (selectedStars > 0) {
+                      pts.adicionarAvaliacao(userId);
+                      rvServ.salvarAvaliacao(productId, reviewController.text,
+                          selectedStars.toDouble());
+
+                      Get.snackbar(
+                        'Avaliação feita',
+                        'Obrigado! Outros usuários poderão ver sua avaliação.',
+                        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                        borderRadius: 10,
+                        margin: const EdgeInsets.all(10),
+                      );
+
+                      _loadReviews(); // Recarrega as avaliações para atualizar a interface
+                      Navigator.of(context).pop();
+                    } else {
+                      Get.snackbar(
+                        'Erro',
+                        'Por favor, selecione uma avaliação.',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                        borderRadius: 10,
+                        margin: const EdgeInsets.all(10),
+                      );
+                    }
+                  },
+                  child: const Text("Adicionar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _showReportDialog(BuildContext context) {
     final TextEditingController _reportReasonController =
@@ -406,91 +579,57 @@ class ProductDetailsPage extends StatelessWidget {
       },
     );
   }
-}
 
-void _showAddReviewDialog(BuildContext context, ProductItem product) {
-  final TextEditingController reviewController = TextEditingController();
-  final CountProductRatingService pts = CountProductRatingService();
-  final ReviewService rvServ = ReviewService();
-  final String userId = AuthService().getUserId();
-  var productId = product.id ?? 'erro';
+  Widget _getProductImage(ProductItem product) {
+    // Determina a URL da imagem com base no tipo do produto
+    String imageUrl;
+    if (product.type == 'Produto') {
+      imageUrl =
+          'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png';
+    } else if (product.type == 'Comida') {
+      imageUrl =
+          'https://img.freepik.com/vetores-premium/ilustracao-colorida-de-desenhos-animados-de-comida_1305385-66378.jpg';
+    } else if (product.type == 'Evento') {
+      imageUrl =
+          'https://thumbs.dreamstime.com/b/no-show-isolado-ilustra%C3%A7%C3%B5es-do-vetor-de-desenho-animado-grupo-amigos-sorridentes-se-divertem-concerto-evento-grandioso-festival-256583009.jpg';
+    } else {
+      imageUrl =
+          'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png'; // Imagem padrão
+    }
 
-  int selectedStars = 0;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Exibe uma imagem genérica de fallback dependendo do tipo de produto
+            String fallbackImage;
+            if (product.type == 'Produto') {
+              fallbackImage = 'assets/images/generic_product.png';
+            } else if (product.type == 'Comida') {
+              fallbackImage = 'assets/images/generic_food.png';
+            } else if (product.type == 'Evento') {
+              fallbackImage = 'assets/images/generic_event.png';
+            } else {
+              fallbackImage = 'assets/images/generic_default.png';
+            }
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Adicionar sua avaliação"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Quantas estrelas você dá para este produto?"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) {
-                return IconButton(
-                  icon: Icon(
-                    size: 30,
-                    index < selectedStars ? Icons.star : Icons.star_border,
-                    color: const Color.fromARGB(255, 172, 156, 13),
-                  ),
-                  onPressed: () {
-                    selectedStars = index + 1;
-                    (context as Element).markNeedsBuild(); // Atualiza a UI
-                  },
-                );
-              }),
-            ),
-            TextField(
-              controller: reviewController,
-              decoration: const InputDecoration(
-                labelText: 'Sua Avaliação',
-              ),
-              maxLines: 3,
-            ),
-          ],
+            return Image.asset(
+              fallbackImage,
+              fit: BoxFit.cover,
+            );
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fecha o diálogo
-            },
-            child: const Text("Cancelar"),
-          ),
-          TextButton(
-            onPressed: () {
-              if (selectedStars > 0) {
-                pts.adicionarAvaliacao(userId); // Adiciona a avaliação
-                rvServ.salvarAvaliacao(productId, reviewController.text, selectedStars.toDouble());
+      ),
+    );
+  }
 
-                Get.snackbar(
-                  'Avaliação feita',
-                  'Obrigado! Outros usuários poderão ver sua avaliação.',
-                  backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-                  colorText: Colors.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  borderRadius: 10,
-                  margin: const EdgeInsets.all(10),
-                );
-                Navigator.of(context).pop(); // Fecha o diálogo
-              } else {
-                Get.snackbar(
-                  'Erro',
-                  'Por favor, selecione uma avaliação.',
-                  backgroundColor: Colors.red,
-                  colorText: Colors.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  borderRadius: 10,
-                  margin: const EdgeInsets.all(10),
-                );
-              }
-            },
-            child: const Text("Adicionar"),
-          ),
-        ],
-      );
-    },
-  );
+  void _salvarProdutoNaSacola() {
+    var productWidget = ProductWidget(product: widget.product);
+    productWidget.toggleFavoriteStatus();
+  }
 }
-
