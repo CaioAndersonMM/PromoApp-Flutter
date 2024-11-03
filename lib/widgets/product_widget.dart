@@ -19,9 +19,40 @@ class ProductWidget extends StatelessWidget {
     this.isFavorite = false, // Valor padrão é false
   });
 
+  Future<void> toggleFavoriteStatus() async {
+    final String userId = AuthService().getUserId();
+    final authService = AuthService();
+    final productSaveService = ProductSaveService();
+
+    if (isFavorite == true) {
+      await productSaveService.apagarProduto(userId, product.id!);
+      desejosController.loadDesejos();
+      Get.snackbar(
+        'Sucesso',
+        'Produto removido dos desejos!',
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10.0),
+      );
+    } else {
+      await productSaveService.salvarProduto(userId, product.id!);
+      desejosController.loadDesejos();
+      Get.snackbar(
+        'Sucesso',
+        'Produto adicionado aos desejos!',
+        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 10,
+        margin: const EdgeInsets.all(10.0),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String userId = AuthService().getUserId();
     return GestureDetector(
       onTap: () {
         // Navega para a página de detalhes do produto
@@ -46,7 +77,6 @@ class ProductWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Imagem do produto com verificação de tipo
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: SizedBox(
@@ -56,7 +86,6 @@ class ProductWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16.0),
-              // Informações do produto
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +119,6 @@ class ProductWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16.0),
-              // Ícones para ver mais detalhes
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -101,30 +129,7 @@ class ProductWidget extends StatelessWidget {
                           ? Colors.red
                           : const Color.fromARGB(192, 21, 99, 163),
                     ),
-                    onPressed: () async {
-                      final authService = AuthService();
-                      final productSaveService = ProductSaveService();
-
-                      if (isFavorite == true) {
-                        await productSaveService.apagarProduto(userId, product.id!);
-                        desejosController.loadDesejos();
-                      } else {
-                        await productSaveService.salvarProduto(userId, product.id!);
-                        desejosController.loadDesejos();
-                      }
-
-                      Get.snackbar(
-                        'Sucesso',
-                        isFavorite == true
-                            ? 'Produto removido dos desejos!'
-                            : 'Produto adicionado aos desejos!',
-                        backgroundColor: const Color.fromARGB(255, 3, 41, 117),
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.BOTTOM,
-                        borderRadius: 10,
-                        margin: const EdgeInsets.all(10.0),
-                      );
-                    },
+                    onPressed: toggleFavoriteStatus,
                   ),
                   Container(
                     width: 25,
@@ -156,19 +161,21 @@ class ProductWidget extends StatelessWidget {
   }
 
   Widget _getProductImage(ProductItem product) {
-    // Determina a URL da imagem com base no tipo do produto
     String imageUrl;
     if (product.type == 'Produto') {
-      imageUrl = 'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png';
+      imageUrl =
+          'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png';
     } else if (product.type == 'Comida') {
-      imageUrl = 'https://img.freepik.com/vetores-premium/ilustracao-colorida-de-desenhos-animados-de-comida_1305385-66378.jpg?semt=ais_hybrid';
+      imageUrl =
+          'https://img.freepik.com/vetores-premium/ilustracao-colorida-de-desenhos-animados-de-comida_1305385-66378.jpg?semt=ais_hybrid';
     } else if (product.type == 'Evento') {
-      imageUrl = 'https://thumbs.dreamstime.com/b/no-show-isolado-ilustra%C3%A7%C3%B5es-do-vetor-de-desenho-animado-grupo-amigos-sorridentes-se-divertem-concerto-evento-grandioso-festival-256583009.jpg';
+      imageUrl =
+          'https://thumbs.dreamstime.com/b/no-show-isolado-ilustra%C3%A7%C3%B5es-do-vetor-de-desenho-animado-grupo-amigos-sorridentes-se-divertem-concerto-evento-grandioso-festival-256583009.jpg';
     } else {
-      imageUrl = 'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png'; // Imagem padrão
+      imageUrl =
+          'https://radio93fm.com.br/wp-content/uploads/2019/02/produto.png';
     }
 
-    // Carrega a imagem da rede ou arquivo local, conforme necessário
     return product.imageUrl.startsWith('http')
         ? Image.network(
             imageUrl,
@@ -194,13 +201,8 @@ class ProductWidget extends StatelessWidget {
 
   Color _getRateColor(double? rate) {
     if (rate == null) return const Color.fromARGB(220, 4, 22, 104);
-    final rateValue = rate;
-    if (rateValue < 3) {
-      return const Color.fromARGB(255, 116, 17, 17);
-    } else if (rateValue == 3 || rateValue == 3.7) {
-      return const Color.fromARGB(220, 4, 22, 104);
-    } else {
-      return const Color.fromARGB(255, 13, 114, 18);
-    }
+    if (rate < 3) return const Color.fromARGB(255, 116, 17, 17);
+    if (rate == 3 || rate == 3.7) return const Color.fromARGB(220, 4, 22, 104);
+    return const Color.fromARGB(255, 13, 114, 18);
   }
 }
