@@ -38,8 +38,6 @@ class MyHomePageController extends GetxController {
         'price': product.price,
         'type': product.type,
         'description': product.description,
-        'likes': product.likes,
-        'dislikes': product.dislikes,
         
       });
       print('Produto adicionado ao Firestore: ${product.name}');
@@ -83,8 +81,6 @@ class MyHomePageController extends GetxController {
               : 0.0, // Verifica se é num
           type: "Comida",
           description: data['description'],
-          likes: data['likes'],
-          dislikes: data['dislikes'],
         );
       }).toList();
 
@@ -102,8 +98,6 @@ class MyHomePageController extends GetxController {
               : 0.0, // Verifica se é num
           type: "Produto",
           description: data['description'],
-          likes: data['likes'],
-          dislikes: data['dislikes'],
         );
       }).toList();
 
@@ -121,8 +115,6 @@ class MyHomePageController extends GetxController {
               : 0.0, // Verifica se é num
           type: "Evento",
           description: data['description'],
-          likes: data['likes'],
-          dislikes: data['dislikes'],
         );
       }).toList();
 

@@ -37,8 +37,6 @@ class EventosController extends GetxController {
           price: data['price'],
           type: "Evento",
           description: data['description'],
-          likes: data['likes'],
-          dislikes: data['dislikes'],
         );
       }).toList();
 
@@ -68,8 +66,6 @@ class EventosController extends GetxController {
         'store': event.store,
         'price': event.price,
         'description': event.description,
-        'likes': event.likes,
-        'dislikes': event.dislikes,
       });
       
       countPostService.adicionarPost(AuthService().getUserId());
