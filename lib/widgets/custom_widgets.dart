@@ -18,12 +18,12 @@ TextField buildTextField(TextEditingController controller, String labelText,
 }
 
 DropdownButton<String> buildDropdownButton(
-    String selectedType, StateSetter setState) {
+    RxString selectedType, StateSetter setState) {
   return DropdownButton<String>(
-    value: selectedType,
+    value: selectedType.value,
     onChanged: (String? newValue) {
       setState(() {
-        selectedType = newValue ?? 'Comida';
+        selectedType.value = newValue ?? 'Comida';
       });
     },
     items: <String>['Comida', 'Produto', 'Evento']
@@ -47,21 +47,32 @@ Row buildDialogActions(
     TextEditingController storeController,
     TextEditingController priceController,
     TextEditingController descriptionController,
-    String selectedType,
+    RxString selectedType,
     String imageUrl) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       ElevatedButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(); // Fecha o diálogo
         },
         child: const Text('Cancelar'),
       ),
       ElevatedButton(
         onPressed: () async {
           controller.isLoading.value = true;
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(); // Fecha o diálogo de entrada
+
+          // Exibe diálogo de loading
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
 
           double price = double.tryParse(priceController.text) ?? 0.0;
 
@@ -71,19 +82,29 @@ Row buildDialogActions(
             location: locationController,
             store: storeController.text,
             price: price,
-            type: selectedType,
+            type: selectedType.value,
             description: descriptionController.text,
             rate: null,
           );
 
           try {
-            if (selectedType == 'Comida') {
+            // Adiciona o produto baseado no tipo selecionado
+            if (selectedType.value == 'Comida') {
               await controllerComida.addProduct(product);
-            } else if (selectedType == 'Produto') {
+            } else if (selectedType.value == 'Produto') {
               await controllerProduto.addProduct(product);
-            } else if (selectedType == 'Evento') {
+            } else if (selectedType.value == 'Evento') {
               await controllerEvento.addEvent(product);
             }
+            Get.snackbar(
+              'Sucesso',
+              'Produto adicionado com sucesso!',
+              backgroundColor: const Color.fromARGB(255, 3, 75, 44),
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              borderRadius: 10,
+              margin: const EdgeInsets.all(10),
+            );
           } catch (e) {
             Get.snackbar(
               'Erro',
@@ -95,7 +116,8 @@ Row buildDialogActions(
               margin: const EdgeInsets.all(10),
             );
           } finally {
-            controller.isLoading.value = false;
+              Navigator.of(context).pop(); // Fecha o loading dialog
+              controller.isLoading.value = false;
           }
         },
         child: const Text('Adicionar'),
@@ -164,14 +186,17 @@ AppBar buildAppBar(BuildContext context, MyHomePageController controller) {
   );
 }
 
-BottomNavigationBar buildBottomNavigationBar(
-    MyHomePageController controller, Future<void> Function() pickImageFromCamera) {
+BottomNavigationBar buildBottomNavigationBar(MyHomePageController controller,
+    Future<void> Function() pickImageFromCamera) {
   return BottomNavigationBar(
     items: const <BottomNavigationBarItem>[
       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
-      BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Publicar'),
-      BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in_outlined), label: 'Salvos'),
-      BottomNavigationBarItem(icon: Icon(Icons.saved_search), label: 'Interesses'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline), label: 'Publicar'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.assignment_turned_in_outlined), label: 'Salvos'),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.saved_search), label: 'Interesses'),
     ],
     currentIndex: controller.selectedIndex.value,
     selectedItemColor: const Color.fromARGB(255, 3, 26, 102),
