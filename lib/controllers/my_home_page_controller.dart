@@ -249,12 +249,16 @@ class MyHomePageController extends GetxController {
         tempProducts.sort((a, b) {
           bool aMatches = interests.any((interest) => a.name.toLowerCase().contains(interest));
           bool bMatches = interests.any((interest) => b.name.toLowerCase().contains(interest));
-          
-          if (aMatches && !bMatches) return -1;
-          if (!aMatches && bMatches) return 1;
+
+          // Primeiro, verifique se a tem interesse e b não
+          if (aMatches && !bMatches) return -1; // a deve vir primeiro
+          if (!aMatches && bMatches) return 1;  // b deve vir primeiro
+
+          // Se ambos têm ou não têm interesse, ordene alfabeticamente
           return a.name.compareTo(b.name);
         });
         break;
+
 
     }
 
