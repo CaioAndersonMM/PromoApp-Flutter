@@ -287,79 +287,71 @@ class ProductDetailsPage extends StatelessWidget {
 
             const SizedBox(height: 10.0),
             // Lista de avaliações fictícias
-            _buildReviewList(),
+            _buildReviewList(product.id ?? ''),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReviewList() {
-    // Avaliações fictícias
-    List<Map<String, dynamic>> reviews = [
-      {
-        'text': "Ótimo produto! Recomendo.",
-        'stars': 5,
-      },
-      {
-        'text': "Não atendeu minhas expectativas.",
-        'stars': 2,
-      },
-      {
-        'text': "Excelente qualidade e entrega rápida!",
-        'stars': 4,
-      },
-      {
-        'text': "Vale cada centavo! Muito satisfeito.",
-        'stars': 5,
-      },
-      {
-        'text': "Produto ok, mas poderia ser melhor.",
-        'stars': 3,
-      },
-    ];
+  Widget _buildReviewList(String productId) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: ReviewService().obterAvaliacoes(productId), // Chama a função que obtém as avaliações
+      builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator()); // Exibe um carregando enquanto espera
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Erro ao carregar avaliações: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('Nenhuma avaliação disponível.'));
+        }
 
-    return Column(
-      children: reviews.map((review) {
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 5.0),
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.person, // Ícone do usuário
-                color: Colors.white,
+        List<Map<String, dynamic>> reviews = snapshot.data!;
+
+        return Column(
+          children: reviews.map((review) {
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 5.0),
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8.0),
               ),
-              const SizedBox(width: 10.0), // Espaço entre ícone e texto
-              Expanded(
-                child: Text(
-                  review['text'],
-                  style: const TextStyle(
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.person, // Ícone do usuário
                     color: Colors.white,
-                    fontSize: 16,
                   ),
-                ),
+                  const SizedBox(width: 10.0), // Espaço entre ícone e texto
+                  Expanded(
+                    child: Text(
+                      review['review'], // Use o campo correto da avaliação
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  // Estrelas
+                  Row(
+                    children: List.generate(review['rating'].toInt(), (index) {
+                      return const Icon(
+                        Icons.star,
+                        color: Colors.yellow,
+                        size: 20,
+                      );
+                    }),
+                  ),
+                ],
               ),
-              // Estrelas
-              Row(
-                children: List.generate(review['stars'], (index) {
-                  return const Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                    size: 20,
-                  );
-                }),
-              ),
-            ],
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
+
 
   void _showReportDialog(BuildContext context) {
     final TextEditingController _reportReasonController =
