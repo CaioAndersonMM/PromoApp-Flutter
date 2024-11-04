@@ -1,4 +1,4 @@
-import 'package:meu_app/models/product_item.dart';
+import 'package:Promoapp/models/product_item.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/interest.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/interest.dart';
 
 class InteressesController extends GetxController {
   var interesses = <String>[].obs;

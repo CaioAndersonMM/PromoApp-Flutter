@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meu_app/pages/apppages.dart';
-import 'package:meu_app/pages/loginPage.dart';
-import 'package:meu_app/pages/myhomepage.dart';
+import 'package:Promoapp/pages/apppages.dart';
+import 'package:Promoapp/pages/loginPage.dart';
+import 'package:Promoapp/pages/myhomepage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

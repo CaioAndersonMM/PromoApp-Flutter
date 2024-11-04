@@ -1,19 +1,18 @@
 import 'dart:io';
+import 'package:Promoapp/controllers/comida_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:meu_app/controllers/comida_controller.dart';
-import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/controllers/produto_controller.dart';
-import 'package:meu_app/pages/desejosPage.dart';
-import 'package:meu_app/pages/inicioPage.dart';
-import 'package:meu_app/pages/interessesPage.dart';
-import 'package:meu_app/pages/produtosPage.dart';
-import 'package:meu_app/widgets/menu_cidades.dart';
-import 'package:meu_app/widgets/custom_widgets.dart';
+import 'package:Promoapp/controllers/evento_controller.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/controllers/produto_controller.dart';
+import 'package:Promoapp/pages/desejosPage.dart';
+import 'package:Promoapp/pages/inicioPage.dart';
+import 'package:Promoapp/pages/interessesPage.dart';
+import 'package:Promoapp/pages/produtosPage.dart';
+import 'package:Promoapp/widgets/menu_cidades.dart';
+import 'package:Promoapp/widgets/custom_widgets.dart';
 
 class MyHomePage extends StatelessWidget {
   final MyHomePageController controller = Get.put(MyHomePageController());

@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/services/auth.dart';
+import 'package:Promoapp/services/auth.dart';
 
 class UserProfileController extends GetxController {
   final AuthService authServ = AuthService();

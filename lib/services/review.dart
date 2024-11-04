@@ -6,8 +6,6 @@ class ReviewService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> salvarAvaliacao(String productId, String review, double rating, String name) async {
-    User? user = _firebaseAuth.currentUser;
-
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
     await productDoc.set({

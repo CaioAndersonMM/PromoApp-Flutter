@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/evento_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class EventosPage extends StatelessWidget {
   const EventosPage({super.key});

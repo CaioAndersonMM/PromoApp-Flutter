@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/desejos_controller.dart';
-import 'package:meu_app/pages/produtosDetailPage.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/productSave.dart';
+import 'package:Promoapp/controllers/desejos_controller.dart';
+import 'package:Promoapp/pages/produtosDetailPage.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/productSave.dart';
 import '../models/product_item.dart';
 
 final DesejosController desejosController = Get.put(DesejosController());

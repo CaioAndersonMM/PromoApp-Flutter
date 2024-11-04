@@ -1,11 +1,12 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meu_app/services/auth.dart';
+import 'package:Promoapp/services/auth.dart';
 
 class CadastroPage extends StatefulWidget {
+  const CadastroPage({super.key});
+
   @override
   _CadastroPageState createState() => _CadastroPageState();
 }
@@ -114,7 +115,7 @@ class _CadastroPageState extends State<CadastroPage> {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly
               ],
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 20),
             TextField(

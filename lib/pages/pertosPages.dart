@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/models/product_item.dart'; // Modelo do produto
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/models/product_item.dart'; // Modelo do produto
 
 class PertosPage extends StatelessWidget {
-  PertosPage({Key? key}) : super(key: key);
+  PertosPage({super.key});
 
   final MyHomePageController controller = Get.put(MyHomePageController());
 

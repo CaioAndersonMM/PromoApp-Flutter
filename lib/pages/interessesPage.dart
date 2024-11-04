@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/interesses_controller.dart';
-import 'package:meu_app/widgets/caixa_interesses.dart';
+import 'package:Promoapp/controllers/interesses_controller.dart';
+import 'package:Promoapp/widgets/caixa_interesses.dart';
 
 class InteressesPage extends StatelessWidget {
-  InteressesPage({Key? key}) : super(key: key);
+  InteressesPage({super.key});
 
   final TextEditingController interestController = TextEditingController();
   final InteressesController controller = Get.put(InteressesController());

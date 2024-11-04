@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:meu_app/models/product_item.dart';
+import 'package:Promoapp/models/product_item.dart';
 
 class PagamentoPage extends StatelessWidget {
   final ProductItem product;
 
-  const PagamentoPage({Key? key, required this.product}) : super(key: key);
+  const PagamentoPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +16,6 @@ class PagamentoPage extends StatelessWidget {
     } else {
       discount = product.price * 0.10;
     }
-
-    double finalPrice = product.price - discount;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +44,7 @@ class PagamentoPage extends StatelessWidget {
                 style: const TextStyle(color: Colors.yellow, fontSize: 24),
               ),
               Text(
-                product.store + ', ' + product.location,
+                '${product.store}, ${product.location}',
                 style: const TextStyle(color: Colors.yellow, fontSize: 17),
               ),
               const SizedBox(height: 50),

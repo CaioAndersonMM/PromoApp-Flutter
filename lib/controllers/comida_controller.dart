@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/databases/db_firestore.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/databases/db_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/countPosts.dart';
-import 'package:meu_app/services/countProductRate.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/countPosts.dart';
+import 'package:Promoapp/services/countProductRate.dart';
 
 class ComidasController extends GetxController {
   var products = <ProductItem>[].obs;

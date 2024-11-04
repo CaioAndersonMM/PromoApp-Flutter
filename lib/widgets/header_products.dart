@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
 
 Widget headerProducts() {
   final MyHomePageController controller = Get.find();

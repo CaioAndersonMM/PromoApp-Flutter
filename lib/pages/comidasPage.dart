@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/comida_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/comida_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class ComidasPage extends StatelessWidget {
-  ComidasPage({super.key}); // Remover const
+  const ComidasPage({super.key}); // Remover const
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +66,8 @@ class ComidasPage extends StatelessWidget {
   }
 
   void _showAddProductDialog(
-      BuildContext context, ComidasController controller) {
+    BuildContext context, ComidasController controller) {
     String name = '';
-    String imageUrl = '';
     String location = '';
     double price = 0.0;
 

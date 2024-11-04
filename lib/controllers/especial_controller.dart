@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/databases/db_firestore.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/databases/db_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EspecialController extends GetxController {

@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/databases/db_firestore.dart';
-import 'package:meu_app/models/product_item.dart';
+import 'package:Promoapp/databases/db_firestore.dart';
+import 'package:Promoapp/models/product_item.dart';
 import 'package:http/http.dart' as http;
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/interest.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/interest.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePageController extends GetxController {

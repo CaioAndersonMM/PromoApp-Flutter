@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/produto_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/countProductRate.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/produto_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class ProdutosPage extends StatelessWidget {
   const ProdutosPage({super.key});
@@ -75,7 +73,6 @@ class ProdutosPage extends StatelessWidget {
     String name = '';
     String location = '';
     double price = 0.0;
-    var countProductService = CountProductRatingService();
 
     showDialog(
       context: context,

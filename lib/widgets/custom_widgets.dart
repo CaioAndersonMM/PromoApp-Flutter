@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/controllers/comida_controller.dart';
-import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/controllers/produto_controller.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/controllers/comida_controller.dart';
+import 'package:Promoapp/controllers/evento_controller.dart';
+import 'package:Promoapp/controllers/produto_controller.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
 
 TextField buildTextField(TextEditingController controller, String labelText,
     {TextInputType keyboardType = TextInputType.text}) {

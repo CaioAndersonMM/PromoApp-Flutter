@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:meu_app/services/likes.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/countProductRate.dart';
-import 'package:meu_app/services/review.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/services/likes.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/countProductRate.dart';
+import 'package:Promoapp/services/review.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 import '../models/product_item.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -554,7 +551,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   borderRadius: 10,
                   margin: const EdgeInsets.all(10),
                 );
-                String reportReason = _reportReasonController.text;
                 // Adicione a lógica para lidar com o motivo do reporte aqui
                 Navigator.of(context).pop(); // Fecha o diálogo
               },

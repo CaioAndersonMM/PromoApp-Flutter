@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class AltasPage extends StatefulWidget {
   AltasPage({super.key});

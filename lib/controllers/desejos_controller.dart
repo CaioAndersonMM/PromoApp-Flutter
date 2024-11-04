@@ -1,9 +1,9 @@
 // DesejosController
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/productSave.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/productSave.dart';
 
 class DesejosController extends GetxController {
   var desejos = <ProductItem>[].obs;

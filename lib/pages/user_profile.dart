@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/user_profile_controller.dart';
-import 'package:meu_app/services/auth.dart';
-import 'package:meu_app/services/countPosts.dart';
-import 'package:meu_app/services/countProductRate.dart';
+import 'package:Promoapp/controllers/user_profile_controller.dart';
+import 'package:Promoapp/services/auth.dart';
+import 'package:Promoapp/services/countPosts.dart';
+import 'package:Promoapp/services/countProductRate.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});

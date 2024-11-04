@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/desejos_controller.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/desejos_controller.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class DesejosPage extends StatelessWidget {
   const DesejosPage({super.key});

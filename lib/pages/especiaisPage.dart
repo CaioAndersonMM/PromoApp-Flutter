@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/produto_controller.dart'; // Altere o import para o controlador correto
-import 'package:meu_app/models/product_item.dart';
-import 'package:meu_app/pages/pagamentoPage.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/produto_controller.dart'; // Altere o import para o controlador correto
+import 'package:Promoapp/models/product_item.dart';
+import 'package:Promoapp/pages/pagamentoPage.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class EspeciaisPage extends StatelessWidget {
-  EspeciaisPage({super.key});
+  const EspeciaisPage({super.key});
 
   @override
   Widget build(BuildContext context) {

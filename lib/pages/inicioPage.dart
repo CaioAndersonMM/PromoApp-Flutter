@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meu_app/controllers/my_home_page_controller.dart';
-import 'package:meu_app/controllers/produto_controller.dart';
-import 'package:meu_app/controllers/comida_controller.dart';
-import 'package:meu_app/controllers/evento_controller.dart';
-import 'package:meu_app/pages/altasPage.dart';
-import 'package:meu_app/pages/especiaisPage.dart';
-import 'package:meu_app/pages/pertosPages.dart';
-import 'package:meu_app/widgets/caixa_pesquisa.dart';
-import 'package:meu_app/widgets/header_products.dart';
-import 'package:meu_app/widgets/type_item.dart';
-import 'package:meu_app/widgets/product_widget.dart';
+import 'package:Promoapp/controllers/my_home_page_controller.dart';
+import 'package:Promoapp/controllers/produto_controller.dart';
+import 'package:Promoapp/controllers/comida_controller.dart';
+import 'package:Promoapp/controllers/evento_controller.dart';
+import 'package:Promoapp/pages/altasPage.dart';
+import 'package:Promoapp/pages/especiaisPage.dart';
+import 'package:Promoapp/pages/pertosPages.dart';
+import 'package:Promoapp/widgets/caixa_pesquisa.dart';
+import 'package:Promoapp/widgets/header_products.dart';
+import 'package:Promoapp/widgets/type_item.dart';
+import 'package:Promoapp/widgets/product_widget.dart';
 
 class InicioPage extends StatelessWidget {
   InicioPage({super.key});
