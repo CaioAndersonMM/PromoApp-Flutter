@@ -59,26 +59,21 @@ class PertosPage extends StatelessWidget {
   Future<Position> _getCurrentLocation() async {
     return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
-
-  List<ProductItem> _getNearbyProducts(Position position) {
-    print('Obtendo produtos próximos...');
-    // Simulando a lógica de proximidade; substitua com sua lógica real
-    return controller.allproducts.where((product) {
-      // Imprima as coordenadas dos produtos
-      print('Produto: ${product.toMap()}');
-
+List<ProductItem> _getNearbyProducts(Position position) {
+  return controller.allproducts.where((product) {
+    if (product.latitude != null && product.longitude != null) {
+      print('Usuário: (${position.latitude}, ${position.longitude})');
+      print('Produto: ${product.name} - Coordenadas: (${product.latitude}, ${product.longitude})');
       
-      // Verifique se latitude e longitude não são nulos antes de calcular a distância
-      if (product.latitude != null && product.longitude != null) {
-        print('Calculando distância para o produto: ${product.name}');
-        double distance = _calculateDistance(position.latitude, position.longitude, product.latitude!, product.longitude!);
-        print('Distância para o produto ${product.name}: $distance km');
-        return distance < 10.0; // Filtra produtos dentro de 10 km
-      }
-      print('Produto ${product.name} não tem coordenadas válidas.');
-      return false;
-    }).toList();
-  }
+      double distance = _calculateDistance(
+          position.latitude, position.longitude, product.latitude!, product.longitude!);
+      print('Distância para ${product.name}: $distance km');
+
+      return distance < 10.0;
+    }
+    return false;
+  }).toList();
+}
 
   double _calculateDistance(double userLat, double userLong, double productLat, double productLong) {
     double distanceInMeters = Geolocator.distanceBetween(userLat, userLong, productLat, productLong);
