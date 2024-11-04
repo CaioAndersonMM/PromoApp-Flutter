@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:meu_app/services/likes.dart';
 import 'package:meu_app/services/auth.dart';
 import 'package:meu_app/services/countProductRate.dart';
@@ -19,12 +21,13 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late Future<List<Map<String, dynamic>>> _reviewsFuture;
-  LikesService likesService = LikesService();
+  final LikesService likesService = Get.put(LikesService());
 
   @override
   void initState() {
     super.initState();
     _loadReviews();
+    _loadLikesAndDislikes();
   }
 
   void _loadReviews() {
@@ -33,12 +36,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     });
   }
 
+  void _loadLikesAndDislikes() {
+    likesService.inicializarContagem(widget.product.id ?? '');
+  }
+
   @override
   Widget build(BuildContext context) {
-  final String userId = AuthService().getUserId();
-  final String name = AuthService().getUserName();
-  var productId = widget.product.id ?? 'erro';
-  final Future<int> numDislikes = likesService.obterQuantidadeDislikes(productId);
+    final String userId = AuthService().getUserId();
+    var productId = widget.product.id ?? 'erro';
 
     return Scaffold(
       appBar: AppBar(
@@ -60,15 +65,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
-              alignment: Alignment
-                  .bottomLeft, // Alinhamento do botão no canto inferior esquerdo
+              alignment: Alignment.bottomLeft,
               children: [
                 _getProductImage(widget.product),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.start, // Ajuste conforme necessário
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Column(
                         mainAxisSize: MainAxisSize.min,
@@ -80,22 +83,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               onPressed: () {
                                 _showReportDialog(context);
                               },
-                              backgroundColor:
-                                  const Color.fromARGB(255, 94, 10, 5),
-                              child: const Icon(Icons.report,
-                                  color: Colors.white,
-                                  size: 20), // Ajustando o tamanho do ícone
+                              backgroundColor: const Color.fromARGB(255, 94, 10, 5),
+                              child: const Icon(Icons.report, color: Colors.white, size: 20),
                             ),
                           ),
                           const SizedBox(height: 2),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 4.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(
-                                  255, 94, 10, 5), // Cor de fundo
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Bordas arredondadas
+                              color: const Color.fromARGB(255, 94, 10, 5),
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: const Text(
                               'Reportar',
@@ -119,22 +116,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               onPressed: () {
                                 _salvarProdutoNaSacola();
                               },
-                              backgroundColor:
-                                  const Color.fromARGB(255, 17, 1, 32),
-                              child: const Icon(Icons.shopping_bag_rounded,
-                                  color: Color.fromARGB(255, 253, 253, 253),
-                                  size: 20),
+                              backgroundColor: const Color.fromARGB(255, 17, 1, 32),
+                              child: const Icon(Icons.shopping_bag_rounded, color: Color.fromARGB(255, 253, 253, 253), size: 20),
                             ),
                           ),
                           const SizedBox(height: 2),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 4.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(
-                                  255, 17, 1, 32), // Cor de fundo
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Bordas arredondadas
+                              color: const Color.fromARGB(255, 17, 1, 32),
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: const Text(
                               'Salvar',
@@ -153,31 +144,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             width: 40,
                             height: 40,
-                            child: FutureBuilder<int>(
-                              future: likesService.obterQuantidadeDislikes(productId),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const Center(child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return FloatingActionButton(
-                                    onPressed: () {},
-                                    backgroundColor: const Color.fromARGB(255, 145, 3, 3),
-                                    child: const Text('Erro', style: TextStyle(color: Colors.white, fontSize: 20)),
-                                  );
-                                } else {
-                                  final numDislikes = snapshot.data ?? 0; // Use 0 se for null
-                                  return FloatingActionButton(
-                                    onPressed: () {},
-                                    backgroundColor: const Color.fromARGB(255, 145, 3, 3),
-                                    child: Text('$numDislikes', style: const TextStyle(color: Colors.white, fontSize: 20)),
-                                  );
-                                }
-                              },
-                            ),
+                            child: Obx(() {
+                              return FloatingActionButton(
+                                onPressed: () {},
+                                backgroundColor: const Color.fromARGB(255, 145, 3, 3),
+                                child: Text('${likesService.quantidadeDislikes.value}', style: const TextStyle(color: Colors.white, fontSize: 20)),
+                              );
+                            }),
                           ),
                         ],
                       ),
-
                       const SizedBox(width: 5.0),
                       Column(
                         mainAxisSize: MainAxisSize.min,
@@ -185,31 +161,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             width: 40,
                             height: 40,
-                            child: FutureBuilder<int>(
-                              future: likesService.obterQuantidadeLikes(productId), // Supondo que existe uma função similar para likes
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const Center(child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return FloatingActionButton(
-                                    onPressed: () {},
-                                    backgroundColor: const Color.fromARGB(255, 22, 1, 160),
-                                    child: const Text('Erro', style: TextStyle(color: Colors.white, fontSize: 20)),
-                                  );
-                                } else {
-                                  final numLikes = snapshot.data ?? 0; // Use 0 se for null
-                                  return FloatingActionButton(
-                                    onPressed: () {},
-                                    backgroundColor: const Color.fromARGB(255, 22, 1, 160),
-                                    child: Text('$numLikes', style: const TextStyle(color: Colors.white, fontSize: 20)),
-                                  );
-                                }
-                              },
-                            ),
+                            child: Obx(() {
+                              return FloatingActionButton(
+                                onPressed: () {},
+                                backgroundColor: const Color.fromARGB(255, 22, 1, 160),
+                                child: Text('${likesService.quantidadeLikes.value}', style: const TextStyle(color: Colors.white, fontSize: 20)),
+                              );
+                            }),
                           ),
                         ],
                       ),
-
                     ],
                   ),
                 ),
@@ -229,10 +190,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     builder: (context, constraints) {
                       double fontSizeType = 15.0;
 
-                      // Ajusta o tamanho do texto de product.type com base no comprimento de product.name
                       if (widget.product.name.length > 10) {
-                        fontSizeType =
-                            14.0; // Diminuir o tamanho da fonte de product.type
+                        fontSizeType = 14.0;
                       }
 
                       return Text(
@@ -248,13 +207,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     },
                   ),
                 ),
-                const SizedBox(
-                    width: 10.0), // Espaço entre o tipo do produto e o nome
+                const SizedBox(width: 10.0),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      double fontSizeName =
-                          widget.product.name.length > 10 ? 17.0 : 22.0;
+                      double fontSizeName = widget.product.name.length > 10 ? 17.0 : 22.0;
                       return Text(
                         widget.product.name,
                         style: TextStyle(
@@ -263,13 +220,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           color: const Color.fromARGB(255, 255, 255, 255),
                         ),
                         maxLines: 1,
-                        overflow: TextOverflow
-                            .ellipsis, // Adiciona reticências se o texto for muito longo
+                        overflow: TextOverflow.ellipsis,
                       );
                     },
                   ),
                 ),
-                // Botões de avaliação
                 ElevatedButton(
                   onPressed: () {
                     likesService.adicionarDislike(productId, userId);
@@ -288,7 +243,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 const SizedBox(width: 5.0),
                 ElevatedButton(
-                  onPressed: () {                               
+                  onPressed: () {
                     likesService.adicionarLike(productId, userId);
                   },
                   style: ElevatedButton.styleFrom(
@@ -322,7 +277,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
             const SizedBox(height: 16.0),
             Container(
-              width: double.infinity, // Ocupe toda a largura disponível
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 15, 0, 66),
                 borderRadius: BorderRadius.circular(12.0),
@@ -337,8 +292,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                widget.product.description ??
-                    'Descrição do produto não disponível',
+                widget.product.description ?? 'Descrição do produto não disponível',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -379,6 +333,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       ),
     );
   }
+
 
   Widget _buildReviewList() {
     return FutureBuilder<List<Map<String, dynamic>>>(

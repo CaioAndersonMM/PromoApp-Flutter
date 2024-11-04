@@ -1,44 +1,70 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class LikesService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  var quantidadeLikes = 0.obs;
+  var quantidadeDislikes = 0.obs;
+
+  // Método para inicializar a contagem de likes e dislikes
+  Future<void> inicializarContagem(String productId) async {
+    quantidadeLikes.value = await obterQuantidadeLikes(productId);
+    quantidadeDislikes.value = await obterQuantidadeDislikes(productId);
+  }
+
   Future<void> adicionarLike(String productId, String userId) async {
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
-    // Cria o documento se não existir e atualiza as listas de likes e dislikes
+    // Atualiza as listas de likes e dislikes
     await productDoc.set({
       'likes': FieldValue.arrayUnion([userId]),
       'dislikes': FieldValue.arrayRemove([userId]), // Remove dos dislikes se presente
     }, SetOptions(merge: true));
+
+    // Atualiza a contagem de likes
+    quantidadeLikes.value = await obterQuantidadeLikes(productId);
+    quantidadeDislikes.value = await obterQuantidadeDislikes(productId); // Atualiza também os dislikes
   }
 
   Future<void> removerLike(String productId, String userId) async {
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
-    // Cria o documento se não existir e remove o like
+    // Remove o like
     await productDoc.set({
       'likes': FieldValue.arrayRemove([userId]),
     }, SetOptions(merge: true));
+
+    // Atualiza a contagem de likes
+    quantidadeLikes.value = await obterQuantidadeLikes(productId);
+    quantidadeDislikes.value = await obterQuantidadeDislikes(productId); // Atualiza também os dislikes
   }
 
   Future<void> adicionarDislike(String productId, String userId) async {
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
-    // Cria o documento se não existir e atualiza as listas de dislikes e likes
+    // Atualiza as listas de dislikes e likes
     await productDoc.set({
       'dislikes': FieldValue.arrayUnion([userId]),
       'likes': FieldValue.arrayRemove([userId]), // Remove dos likes se presente
     }, SetOptions(merge: true));
+
+    // Atualiza a contagem de dislikes
+    quantidadeDislikes.value = await obterQuantidadeDislikes(productId);
+    quantidadeLikes.value = await obterQuantidadeLikes(productId); // Atualiza também os likes
   }
 
   Future<void> removerDislike(String productId, String userId) async {
     DocumentReference productDoc = _firestore.collection('products').doc(productId);
 
-    // Cria o documento se não existir e remove o dislike
+    // Remove o dislike
     await productDoc.set({
       'dislikes': FieldValue.arrayRemove([userId]),
     }, SetOptions(merge: true));
+
+    // Atualiza a contagem de dislikes
+    quantidadeDislikes.value = await obterQuantidadeDislikes(productId);
+    quantidadeLikes.value = await obterQuantidadeLikes(productId); // Atualiza também os likes
   }
 
   Future<int> obterQuantidadeLikes(String productId) async {
